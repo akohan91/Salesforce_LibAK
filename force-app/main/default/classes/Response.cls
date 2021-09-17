@@ -1,5 +1,5 @@
 /**
-* @author Andrew Kohanovskij <akohan91@gmail.com>
+ * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class Response {
 	protected String status;

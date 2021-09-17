@@ -1,12 +1,18 @@
+/**
+ * @author Andrew Kohanovskij <akohan91@gmail.com>
+ */
 import { LightningElement, api } from 'lwc';
 
 import Cancel from '@salesforce/label/c.Cancel';
 
 export default class LwcModal extends LightningElement {
-	@api size = 'small';
-	@api hideFooter = false;
-	@api hideHeader = false;
-	@api errorModal;
+	@api size = 'small'; // It's used to set the width of the modal. Values: 'small' | 'medium' | 'large'
+	@api hideFooter = false; // It's used to hide the footer of the modal
+	@api hideHeader = false; // It's used to hide the header of the modal
+	/**
+	 * @description Close the modal and returns the Promise to determine the moment when the modal will be closed
+	 * @returns { Promise }
+	 */
 	@api closeModal() {
 		return new Promise(resolve => {
 			this.isOpened = false;
@@ -14,6 +20,10 @@ export default class LwcModal extends LightningElement {
 			resolve();
 		});
 	}
+	/**
+	 * @description Open the modal and returns the Promise to determine the moment when the modal will be Opened
+	 * @returns { Promise }
+	 */
 	@api openModal() {
 		return new Promise(resolve => {
 			this.isOpened = true;
