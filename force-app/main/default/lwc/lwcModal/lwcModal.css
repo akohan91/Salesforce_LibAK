@@ -1,0 +1,13 @@
+.modal-content {
+	padding: 1rem;
+}
+
+.modal-content, .modal-container {
+	transform: none !important;
+}
+
+.hidden-header {
+	padding: 0;
+	border-top: .125rem solid;
+	border-color: white;
+}

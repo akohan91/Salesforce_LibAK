@@ -24,4 +24,12 @@
         <shortDescription>Status Error</shortDescription>
         <value>Error</value>
     </labels>
+    <labels>
+        <fullName>Cancel</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Cancel</shortDescription>
+        <value>Cancel</value>
+    </labels>
 </CustomLabels>

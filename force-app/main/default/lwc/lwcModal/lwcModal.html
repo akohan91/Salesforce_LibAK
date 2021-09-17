@@ -1,0 +1,33 @@
+<template>
+	<div if:true={isOpened}>
+		<section class={modalClass}>
+			<div class="slds-modal__container modal-container">
+				<header class={headerClass}>
+					<lightning-button-icon
+						icon-name="utility:close"
+						variant="border-inverse"
+						class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+						title={label.Cancel}
+						onclick={closeModal}
+					></lightning-button-icon>
+					<h2 class="slds-modal__title slds-hyphenate" if:false={hideHeader}>
+						<slot name="header"></slot>
+					</h2>
+				</header>
+				<div class="slds-modal__content slds-is-relative modal-content">
+					<slot name="body"></slot>
+				</div>
+				<footer if:false={hideFooter} class="slds-modal__footer">
+					<lightning-button
+						class="slds-var-m-left_x-small"
+						label={label.Cancel}
+						title={label.Cancel}
+						onclick={closeModal}
+					></lightning-button>
+					<slot name="buttons"></slot>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</div>
+</template>
