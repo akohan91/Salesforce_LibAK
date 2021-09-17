@@ -3,7 +3,6 @@
  */
 public with sharing abstract class AbstractRestProcessor {
 
-	private static final String NO_PROCESSOR_MSG = System.Label.NoRestProcessor;
 	private RestRequest request;
 
 	/* ABSTRACT METHODS */
@@ -18,12 +17,12 @@ public with sharing abstract class AbstractRestProcessor {
 		String processorName = request.requestURI.toLowerCase().substringAfter('/').replaceAll('/', '');
 		Type processorType   = Type.forName(processorName);
 		if (processorType == null) {
-			throw new RestProcessorException(NO_PROCESSOR_MSG + processorName);
+			throw new RestProcessorException(System.Label.NoRestProcessor + processorName);
 		}
 
 		AbstractRestProcessor processor = (AbstractRestProcessor) processorType.newInstance();
 		if (processor == null) {
-			throw new RestProcessorException(NO_PROCESSOR_MSG + processorName);
+			throw new RestProcessorException(System.Label.NoRestProcessor + processorName);
 		}
 		processor.request = request;
 
