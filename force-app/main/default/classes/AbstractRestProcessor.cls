@@ -3,7 +3,7 @@
  */
 public with sharing abstract class AbstractRestProcessor {
 
-	private static final String NO_PROCESSOR_MSG = 'No RestProcessor Type with Name: ';
+	private static final String NO_PROCESSOR_MSG = System.Label.NoRestProcessor;
 	private RestRequest request;
 
 	/* ABSTRACT METHODS */
