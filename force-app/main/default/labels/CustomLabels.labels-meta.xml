@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Status_Success</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Status Success</shortDescription>
+        <value>Success</value>
+    </labels>
+    <labels>
+        <fullName>Status_Error</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Status Error</shortDescription>
+        <value>Error</value>
+    </labels>
+</CustomLabels>
