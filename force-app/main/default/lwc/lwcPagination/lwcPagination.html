@@ -1,0 +1,21 @@
+<template>
+	<div class="pagination">
+		<lightning-button-icon
+			icon-name="utility:chevronleft"
+			variant="neutral"
+			onclick={handlePrev}
+			disabled={disabled.prev}
+		></lightning-button-icon>
+		<div class="pagination_text">
+			<slot name="title">
+				<div>{paginationMsg}</div>
+			</slot>
+		</div>
+		<lightning-button-icon
+			icon-name="utility:chevronright"
+			variant="neutral"
+			onclick={handleNext}
+			disabled={disabled.next}
+		></lightning-button-icon>
+	</div>
+</template>

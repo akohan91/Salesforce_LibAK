@@ -32,4 +32,12 @@
         <shortDescription>Cancel</shortDescription>
         <value>Cancel</value>
     </labels>
+    <labels>
+        <fullName>PaginationTemplate</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>PaginationTemplate</shortDescription>
+        <value>{0} - {1} of {2}</value>
+    </labels>
 </CustomLabels>
