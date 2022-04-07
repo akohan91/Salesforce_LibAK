@@ -40,4 +40,11 @@
         <shortDescription>PaginationTemplate</shortDescription>
         <value>{0} - {1} of {2}</value>
     </labels>
+    <labels>
+        <fullName>ErrorHappened</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ErrorHappened</shortDescription>
+        <value>An error happened in this Lightning component. Below the details of the error message are shown. These details can be helpful for your admin while trying to solve the error. So please share these details with your administrator. For more information about the error, you can open the console log of your browser.</value>
+    </labels>
 </CustomLabels>
