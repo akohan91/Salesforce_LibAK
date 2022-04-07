@@ -34,14 +34,39 @@
     </labels>
     <labels>
         <fullName>PaginationTemplate</fullName>
-        <categories>All</categories>
+        <categories>lwcPagination</categories>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>PaginationTemplate</shortDescription>
         <value>{0} - {1} of {2}</value>
     </labels>
     <labels>
+        <fullName>PaginationPageSizeError</fullName>
+        <categories>lwcPagination</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>PaginationPageSizeError</shortDescription>
+        <value>Page Size property of lwc pagination component should be a number that greater than 0. Current value is "{0}".</value>
+    </labels>
+    <labels>
+        <fullName>PaginationListSizeError</fullName>
+        <categories>lwcPagination</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>PaginationListSizeError</shortDescription>
+        <value>List Size property of lwc pagination component should be a number. Current value is "{0}".</value>
+    </labels>
+    <labels>
+        <fullName>ContactSystemAdministrator</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ContactSystemAdministrator</shortDescription>
+        <value>Please contact your System Administrator to solve this issue.'</value>
+    </labels>
+    <labels>
         <fullName>ErrorHappened</fullName>
+        <categories>lwcErrorModal</categories>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>ErrorHappened</shortDescription>

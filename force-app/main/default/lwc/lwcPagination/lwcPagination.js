@@ -4,6 +4,8 @@
 import { LightningElement,api } from 'lwc';
 
 import PaginationTemplate from '@salesforce/label/c.PaginationTemplate';
+import PaginationPageSizeError from '@salesforce/label/c.PaginationPageSizeError';
+import PaginationListSizeError from '@salesforce/label/c.PaginationListSizeError';
 export default class Pagination extends LightningElement {
 	// It's used to set number of items on one page
 	_pageSize;
@@ -22,7 +24,7 @@ export default class Pagination extends LightningElement {
 		return this._listSize;
 	}
 	set listSize(value) {
-		if (value) {
+		if (!isNaN(parseInt(value)) ) {
 			this._listSize = parseInt(value);
 		}
 	}
@@ -38,7 +40,7 @@ export default class Pagination extends LightningElement {
 		return this._paginationMsg || result
 			.replace('{0}', this.startView.toString())
 			.replace('{1}', this.endView.toString())
-			.replace('{2}', this.listSize ? this.listSize.toString() : '');
+			.replace('{2}', this.listSize.toString());
 	}
 	set paginationMsg(value) {
 		if (value) {
@@ -66,6 +68,25 @@ export default class Pagination extends LightningElement {
 		this.dispatchPaginationEvent();
 	}
 
+	get errorMessages() {
+		let messages = [];
+		if (isNaN(this.pageSize) || this.pageSize === 0 ) {
+			messages.push(PaginationPageSizeError.replace('{0}',this.pageSize));
+		}
+		if (isNaN(this.listSize)) {
+			messages.push(PaginationListSizeError.replace('{0}', this.listSize))
+		}
+
+		return messages;
+	}
+
+	get show() {
+		return {
+			errorMessage: this.errorMessages.length > 0,
+			pagination: this.errorMessages.length === 0,
+		}
+	}
+
 	get allPages() {
 		return this._listSize % this._pageSize ?
 			parseInt(this.listSize / this.pageSize) + 1 :
@@ -73,8 +94,9 @@ export default class Pagination extends LightningElement {
 	}
 
 	get startView() {
-		return (this.currentPage * this.pageSize) - this.pageSize + 1;
+		return this.listSize > 0 ? (this.currentPage * this.pageSize) - this.pageSize + 1 : 0;
 	};
+
 	get endView() {
 		let temp = this.currentPage * this.pageSize;
 		return temp > this.listSize ? this.listSize : temp;
