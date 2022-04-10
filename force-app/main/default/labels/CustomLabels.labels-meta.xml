@@ -72,4 +72,36 @@
         <shortDescription>ErrorHappened</shortDescription>
         <value>An error happened in this Lightning component. Below the details of the error message are shown. These details can be helpful for your admin while trying to solve the error. So please share these details with your administrator. For more information about the error, you can open the console log of your browser.</value>
     </labels>
+    <labels>
+        <fullName>sObjectAccessError</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sObjectAccessError</shortDescription>
+        <value>You do not have access to the {sObjectName} sObject.</value>
+    </labels>
+    <labels>
+        <fullName>FieldAccessError</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>FieldAccessError</shortDescription>
+        <value>You do not have access to the {fieldName} field of {sObjectName} sObject.</value>
+    </labels>
+    <labels>
+        <fullName>NoSObject</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NoSObject</shortDescription>
+        <value>There is no SObject with API name "{sObjectName}".</value>
+    </labels>
+    <labels>
+        <fullName>NoChildSObject</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NoChildSObject</shortDescription>
+        <value>There is no child SObject with API name "{childSObjectName}" of "{sObjectName}".</value>
+    </labels>
 </CustomLabels>
