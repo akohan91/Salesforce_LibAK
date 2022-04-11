@@ -104,4 +104,12 @@
         <shortDescription>NoChildSObject</shortDescription>
         <value>There is no child SObject with API name "{childSObjectName}" of "{sObjectName}".</value>
     </labels>
+    <labels>
+        <fullName>WrongComparisonOperator</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WrongComparisonOperator</shortDescription>
+        <value>The "{operator}" operator is not available for SOQL condition. You could use one of these: {availableOperators}</value>
+    </labels>
 </CustomLabels>

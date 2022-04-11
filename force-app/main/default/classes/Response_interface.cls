@@ -1,3 +1,6 @@
+/**
+ * @author Andrew Kohanovskij <akohan91@gmail.com>
+ */
 public interface Response_interface {
 
 	/**

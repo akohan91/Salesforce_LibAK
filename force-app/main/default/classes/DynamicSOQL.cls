@@ -2,7 +2,10 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQL {
-	private final String QUERY_TEMPLATE = 'SELECT {fields}{subQueries} FROM {SObject}';
+	private final String QUERY_TEMPLATE =
+	'SELECT {fields}{subQueries} '+
+	'FROM {SObject}' +
+	'{WHERE}';
 	private DescribeSObjectResult sObjectDescription;
 	@TestVisible
 	private List<String> subQueries = new List<String>();
@@ -11,6 +14,7 @@ public with sharing class DynamicSOQL {
 	protected String sObjectName;
 	@TestVisible
 	private List<String> fields = new List<String>();
+	private DynamicSOQLConditionBlock conditionBlock;
 
 	// CONSTRUCTORS
 
@@ -65,7 +69,7 @@ public with sharing class DynamicSOQL {
 
 		this.subQueries.add(
 			'(' +
-			subQuery.soqlString().replace(
+			subQuery.toString().replace(
 				'FROM ' + subQuery.sObjectName,
 				'FROM ' + relation.getRelationshipName()
 			) +
@@ -74,11 +78,16 @@ public with sharing class DynamicSOQL {
 		return this;
 	}
 
+	public DynamicSOQL withConditions(DynamicSOQLConditionBlock conditionBlock) {
+		this.conditionBlock = conditionBlock;
+		return this;
+	}
+
 	/**
 	 * @description Builds a SOQL string
 	 * @return   { String }
 	 */
-	public String soqlString() {
+	public override String toString() {
 		List<String> flsErrors = this.checkFieldAccessibility(this.fields);
 		if (!flsErrors.isEmpty()) {
 			throw new DynamicSOQLException(String.join(flsErrors, ' '));
@@ -87,7 +96,8 @@ public with sharing class DynamicSOQL {
 		return this.QUERY_TEMPLATE
 			.replace('{fields}', String.join(this.fields, ','))
 			.replace('{subQueries}', (!this.subQueries.isEmpty() ? ',' + String.join(this.subQueries, ',') : ''))
-			.replace('{SObject}', this.sObjectName);
+			.replace('{SObject}', this.sObjectName)
+			.replace('{WHERE}', (this.conditionBlock != null ? ' WHERE ' + this.conditionBlock.toString() : ''));
 	}
 
 	/* PRIVATE METHODS */

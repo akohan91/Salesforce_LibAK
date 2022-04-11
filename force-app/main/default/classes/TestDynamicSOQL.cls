@@ -1,5 +1,8 @@
+/**
+ * @author Andrew Kohanovskij <akohan91@gmail.com>
+ */
 @IsTest
-private class DynamicSOQLTest {
+private class TestDynamicSOQL {
 
 	@IsTest
 	static void testConstructor(){
@@ -111,12 +114,28 @@ private class DynamicSOQLTest {
 	}
 
 	@IsTest
-	static void testSoqlString(){
+	static void testWithConditions(){
+		Test.startTest();
+		DynamicSOQL soql = new DynamicSOQL('Account')
+		.withField('Id')
+		.withConditions(
+			new DynamicSOQLConditionBlock('AND')
+			.addCondition( new DynamicSOQLCondition('Name', '=', 'Test'))
+		);
+		System.assertEquals(
+			'SELECT Id FROM Account WHERE (Name = \'Test\')', soql.toString(),
+			'The toString() method returns wrong value.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
+	static void testToString(){
 		Test.startTest();
 		String soql = new DynamicSOQL('Account')
 		.withField('Id')
 		.withSubQuery(new DynamicSOQL('Contact').withField('Id'))
-		.soqlString();
+		.toString();
 		System.assertEquals(
 			'SELECT Id,(SELECT Id FROM Contacts) FROM Account', soql,
 			'The SOQL String is wrong.'
@@ -125,7 +144,7 @@ private class DynamicSOQLTest {
 	}
 
 	@IsTest
-	static void testConstructorFLSError(){
+	static void testToStringFLSError(){
 		Test.startTest();
 		/**
 			TODO:
