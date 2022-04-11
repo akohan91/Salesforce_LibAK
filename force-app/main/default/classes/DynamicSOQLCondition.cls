@@ -2,7 +2,7 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQLCondition {
-	private Set<String> availableOperators = new Set<String>{
+	private final static Set<String> AVAILABLE_OPERATORS = new Set<String>{
 		'=',
 		'!=',
 		'<',
@@ -48,11 +48,11 @@ public with sharing class DynamicSOQLCondition {
 	}
 
 	private DynamicSOQLCondition(String fieldName, String operator) {
-		if (!this.availableOperators.contains(operator)) {
+		if (!AVAILABLE_OPERATORS.contains(operator)) {
 			throw new DynamicSOQLConditionException(
 				Label.WrongComparisonOperator
 				.replace('{operator}', operator)
-				.replace('{availableOperators}', this.availableOperators.toString())
+				.replace('{availableOperators}', AVAILABLE_OPERATORS.toString())
 			);
 		}
 		this.fieldName = String.escapeSingleQuotes(fieldName);

@@ -2,7 +2,8 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQLConditionBlock {
-	private Set<String> availableOperators = new Set<String>{ 'AND', 'OR' };
+	private final static Set<String> AVAILABLE_OPERATORS = new Set<String>{ 'AND', 'OR' };
+
 	@TestVisible
 	private List<DynamicSOQLConditionBlock> blocks;
 	@TestVisible
@@ -46,11 +47,11 @@ public with sharing class DynamicSOQLConditionBlock {
 	 * @return          { DynamicSOQLConditionBlock }
 	 */
 	public DynamicSOQLConditionBlock switchOperator(String operator) {
-		if (!this.availableOperators.contains(operator)) {
+		if (!AVAILABLE_OPERATORS.contains(operator)) {
 			throw new DynamicSOQLConditionBlockException(
 				Label.WrongComparisonOperator
 				.replace('{operator}', operator)
-				.replace('{availableOperators}', this.availableOperators.toString())
+				.replace('{AVAILABLE_OPERATORS}', AVAILABLE_OPERATORS.toString())
 			);
 		}
 		this.operator = operator;

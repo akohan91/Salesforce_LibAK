@@ -16,26 +16,6 @@ private class TestDynamicSOQL {
 	}
 
 	@IsTest
-	static void testConstructorNoSObject(){
-		Test.startTest();
-		Integer excCount = 0;
-		try {
-			DynamicSOQL soql = new DynamicSOQL('FakeSobject');
-		} catch (Exception exc) {
-			excCount++;
-			System.assertEquals(
-				Label.NoSObject.replace('{sObjectName}', 'FakeSobject'), exc.getMessage(),
-				'The NoSObject error message is wrong.'
-			);
-		}
-		System.assertEquals(
-			1, excCount,
-			'The NoSObject exception was not occurred.'
-		);
-		Test.stopTest();
-	}
-
-	@IsTest
 	static void testConstructorSObjectAccessError(){
 		Test.startTest();
 		/**
@@ -66,6 +46,7 @@ private class TestDynamicSOQL {
 		DynamicSOQL soql = new DynamicSOQL('Account')
 		.withField('Name')
 		.withSubQuery(
+			'Contacts',
 			new DynamicSOQL('Contact')
 			.withField('Id')
 		);
@@ -74,7 +55,7 @@ private class TestDynamicSOQL {
 			'The number of added subqueries is wrong.'
 		);
 		System.assertEquals(
-			'(SELECT Id FROM Contacts)', soql.subQueries[0],
+			'SELECT Name,(SELECT Id FROM Contacts) FROM Account', soql.toString(),
 			'The value of added subquery is wrong.'
 		);
 		Test.stopTest();
@@ -90,12 +71,13 @@ private class TestDynamicSOQL {
 		Test.startTest();
 		Integer excCount = 0;
 		try {
-			DynamicSOQL soql = new DynamicSOQL('Account')
+			new DynamicSOQL('Account')
 			.withField('Name')
 			.withSubQuery(
+				'Products',
 				new DynamicSOQL('Product2')
 				.withField('Id')
-			);
+			).toString();
 		} catch (Exception exc) {
 			excCount++;
 			System.assertEquals(
@@ -134,11 +116,31 @@ private class TestDynamicSOQL {
 		Test.startTest();
 		String soql = new DynamicSOQL('Account')
 		.withField('Id')
-		.withSubQuery(new DynamicSOQL('Contact').withField('Id'))
+		.withSubQuery('Contacts', new DynamicSOQL('Contact').withField('Id'))
 		.toString();
 		System.assertEquals(
 			'SELECT Id,(SELECT Id FROM Contacts) FROM Account', soql,
 			'The SOQL String is wrong.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
+	static void testToStringNoSObject(){
+		Test.startTest();
+		Integer excCount = 0;
+		try {
+			new DynamicSOQL('FakeSobject').toString();
+		} catch (Exception exc) {
+			excCount++;
+			System.assertEquals(
+				Label.NoSObject.replace('{sObjectName}', 'FakeSobject'), exc.getMessage(),
+				'The NoSObject error message is wrong.'
+			);
+		}
+		System.assertEquals(
+			1, excCount,
+			'The NoSObject exception was not occurred.'
 		);
 		Test.stopTest();
 	}

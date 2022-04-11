@@ -2,18 +2,17 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQL {
-	private final String QUERY_TEMPLATE =
+	private final static String QUERY_TEMPLATE =
 	'SELECT {fields}{subQueries} '+
 	'FROM {SObject}' +
 	'{WHERE}';
-	private DescribeSObjectResult sObjectDescription;
-	@TestVisible
-	private List<String> subQueries = new List<String>();
 
 	@TestVisible
-	protected String sObjectName;
+	private String sObjectName;
 	@TestVisible
 	private List<String> fields = new List<String>();
+	@TestVisible
+	private Map<String, DynamicSOQL> subQueries = new Map<String, DynamicSOQL>();
 	private DynamicSOQLConditionBlock conditionBlock;
 
 	// CONSTRUCTORS
@@ -23,15 +22,7 @@ public with sharing class DynamicSOQL {
 	 * @return             { DynamicSOQL }
 	 */
 	public DynamicSOQL(String sObjectName) {
-		this.sObjectDescription = Schema.getGlobalDescribe().get(sObjectName)?.getDescribe();
-		if (this.sObjectDescription == null) {
-			throw new DynamicSOQLException(Label.NoSObject.replace('{sObjectName}', sObjectName));
-		}
-		this.sObjectDescription.getChildRelationships();
-		this.sObjectName = this.sObjectDescription.getName();
-		if (!this.sObjectDescription.isAccessible()) {
-			throw new DynamicSOQLException(Label.sObjectAccessError.replace('{sObjectName}', this.sObjectName));
-		}
+		this.sObjectName = sObjectName;
 	}
 
 	/* PUBLIC METHODS */
@@ -51,30 +42,8 @@ public with sharing class DynamicSOQL {
 	 * @param  subQuery { DynamicSOQL } - DynamicSOQL instance
 	 * @return          { DynamicSOQL }
 	 */
-	public DynamicSOQL withSubQuery(DynamicSOQL subQuery) {
-		ChildRelationship relation;
-		for (ChildRelationship relationItem : this.sObjectDescription.getChildRelationships()) {
-			if (String.valueOf(relationItem.getChildSObject()) == subQuery.sObjectName) {
-				relation = relationItem;
-				break;
-			}
-		}
-		if (relation == null) {
-			throw new DynamicSOQLException(
-				Label.NoChildSObject
-					.replace('{childSObjectName}', subQuery.sObjectName)
-					.replace('{sObjectName}', this.sObjectName)
-			);
-		}
-
-		this.subQueries.add(
-			'(' +
-			subQuery.toString().replace(
-				'FROM ' + subQuery.sObjectName,
-				'FROM ' + relation.getRelationshipName()
-			) +
-			')'
-		);
+	public DynamicSOQL withSubQuery(String relationshipName, DynamicSOQL subQuery) {
+		this.subQueries.put(relationshipName, subQuery);
 		return this;
 	}
 
@@ -88,14 +57,13 @@ public with sharing class DynamicSOQL {
 	 * @return   { String }
 	 */
 	public override String toString() {
-		List<String> flsErrors = this.checkFieldAccessibility(this.fields);
-		if (!flsErrors.isEmpty()) {
-			throw new DynamicSOQLException(String.join(flsErrors, ' '));
-		}
+		DescribeSObjectResult sObjectDescription = Schema.getGlobalDescribe().get(sObjectName)?.getDescribe();
+		this.checkAccessibility(this.fields, sObjectDescription);
+		List<String> subQueriesString = this.buidSubqueries(sObjectDescription);
 
-		return this.QUERY_TEMPLATE
+		return QUERY_TEMPLATE
 			.replace('{fields}', String.join(this.fields, ','))
-			.replace('{subQueries}', (!this.subQueries.isEmpty() ? ',' + String.join(this.subQueries, ',') : ''))
+			.replace('{subQueries}', (!subQueriesString.isEmpty() ? ',' + String.join(subQueriesString, ',') : ''))
 			.replace('{SObject}', this.sObjectName)
 			.replace('{WHERE}', (this.conditionBlock != null ? ' WHERE ' + this.conditionBlock.toString() : ''));
 	}
@@ -106,9 +74,18 @@ public with sharing class DynamicSOQL {
 	 * @description Checks the FLS for list of fields
 	 * @return   { String[] } - List of FLS errors
 	 */
-	private List<String> checkFieldAccessibility(List<String> fieldsToFlsCheck) {
+	private void checkAccessibility(List<String> fieldsToFlsCheck, DescribeSObjectResult sObjectDescription) {
+		if (sObjectDescription == null) {
+			throw new DynamicSOQLException(Label.NoSObject.replace('{sObjectName}', sObjectName));
+		}
+		this.sObjectName = sObjectDescription.getName();
+
+		if (!sObjectDescription.isAccessible()) {
+			throw new DynamicSOQLException(Label.sObjectAccessError.replace('{sObjectName}', this.sObjectName));
+		}
+
+		Map<String, SObjectField> fieldsDescribeMap = sObjectDescription.fields.getMap();
 		List<String> errors = new List<String>();
-		Map<String, SObjectField> fieldsDescribeMap = this.sObjectDescription.fields.getMap();
 		for (String fieldName : fieldsToFlsCheck) {
 			if(!fieldsDescribeMap.get(fieldName).getDescribe().isAccessible()) {
 				errors.add(Label.FieldAccessError
@@ -117,7 +94,45 @@ public with sharing class DynamicSOQL {
 				);
 			}
 		}
-		return errors;
+		if (!errors.isEmpty()) {
+			throw new DynamicSOQLException(String.join(errors, ' '));
+		}
+	}
+
+	private List<String> buidSubqueries(DescribeSObjectResult sObjectDescription) {
+		if (this.subQueries == null || this.subQueries.isEmpty()) {
+			return new List<String>();
+		}
+
+		List<String> result = new List<String>();
+
+		Set<String> sObjectRelationsNames = new Set<String>();
+		for (ChildRelationship relationItem : sObjectDescription.getChildRelationships()) {
+			sObjectRelationsNames.add(relationItem.getRelationshipName());
+		}
+
+		for (String childRelationName : this.subQueries.keySet()) {
+			DynamicSOQL subQuery = this.subQueries.get(childRelationName);
+			if (!sObjectRelationsNames.contains(childRelationName)) {
+				throw new DynamicSOQLException(
+					Label.NoChildSObject
+						.replace('{childSObjectName}', subQuery.sObjectName)
+						.replace('{sObjectName}', this.sObjectName)
+				);
+			}
+			result.add('(' + subQuery.toString().replace(
+				'FROM ' + subQuery.sObjectName,
+				'FROM ' + childRelationName
+			) + ')');
+		}
+		return result;
+	}
+
+	// STATIC METHODS
+
+	public static DynamicSOQL parseJSON(String jsonString) {
+		DynamicSOQL soql = (DynamicSOQL)JSON.deserialize(jsonString, DynamicSOQL.class);
+		return soql;
 	}
 
 	public class DynamicSOQLException extends Exception {}
