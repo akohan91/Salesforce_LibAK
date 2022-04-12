@@ -78,7 +78,7 @@ public with sharing class DynamicSOQLConditionBlock {
 			throw new DynamicSOQLConditionBlockException(
 				Label.WrongComparisonOperator
 				.replace('{operator}', this.operator)
-				.replace('{AVAILABLE_OPERATORS}', AVAILABLE_OPERATORS.toString())
+				.replace('{availableOperators}', AVAILABLE_OPERATORS.toString())
 			);
 		}
 	}
