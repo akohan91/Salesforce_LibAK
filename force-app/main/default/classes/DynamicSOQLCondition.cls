@@ -43,8 +43,8 @@ public with sharing class DynamicSOQLCondition {
 
 	public DynamicSOQLCondition(String fieldName, String operator, String value) {
 		this(fieldName, operator);
-		this.value = String.escapeSingleQuotes(value);
-		this.isString = operator.contains(':') ? false : true;
+		this.value = value == null ? 'null' : String.escapeSingleQuotes(value);
+		this.isString = operator.contains(':') || this.value == 'null' ? false : true;
 	}
 
 	private DynamicSOQLCondition(String fieldName, String operator) {

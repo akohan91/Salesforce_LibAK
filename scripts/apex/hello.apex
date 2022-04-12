@@ -12,16 +12,12 @@
 String name = 'LastName 1';
 
 System.debug(
-    Database.query(
-        new DynamicSOQL('Contact')
-        .withField('Id')
-        .withField('FirstName')
-        .withField('LastName')
-        .withConditions(
-            new DynamicSOQLConditionBlock('AND')
-            .addCondition(new DynamicSOQLCondition('LastName', '=:', 'name'))
-        ).toString()
-    )
+    new DynamicSOQL('Contact')
+    .withField('Id')
+    .withConditions(
+        new DynamicSOQLConditionBlock('AND')
+        .addCondition(new DynamicSOQLCondition('LastName', '=', (String)null))
+    ).toString()
 );
 
 System.debug(

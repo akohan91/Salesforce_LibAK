@@ -117,7 +117,19 @@ public with sharing class TestDynamicSOQLCondition {
 		);
 		System.assertEquals(
 			'Name =: variableName', condition.toString(),
-			'The isString property is wrong.'
+			'The "toString()" method returns wrong value.'
+		);
+		Test.stopTest();
+	}
+
+
+	@IsTest
+	static void testConstructorValueAsNull(){
+		Test.startTest();
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', (String)null);
+		System.assertEquals(
+			'Name = null', condition.toString(),
+			'The "toString()" method returns wrong value.'
 		);
 		Test.stopTest();
 	}
