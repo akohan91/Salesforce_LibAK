@@ -128,12 +128,5 @@ public with sharing class DynamicSOQL {
 		return result;
 	}
 
-	// STATIC METHODS
-
-	public static DynamicSOQL parseJSON(String jsonString) {
-		DynamicSOQL soql = (DynamicSOQL)JSON.deserialize(jsonString, DynamicSOQL.class);
-		return soql;
-	}
-
 	public class DynamicSOQLException extends Exception {}
 }

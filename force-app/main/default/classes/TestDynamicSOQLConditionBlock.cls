@@ -54,26 +54,6 @@ public with sharing class TestDynamicSOQLConditionBlock {
 	}
 
 	@IsTest
-	static void testSwitchOperatorWrongOperator(){
-		Test.startTest();
-		Integer errorCount = 0;
-		try {
-			DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
-			.addCondition(new DynamicSOQLCondition('Name', '=', 'Test'))
-			.switchOperator('wrong');
-		} catch (Exception exc) {
-			errorCount++;
-		}
-
-		System.assertEquals(
-			1, errorCount,
-			'The WrongComparisonOperator error was not occured.'
-		);
-		Test.stopTest();
-	}
-
-
-	@IsTest
 	static void testToString(){
 		Test.startTest();
 		String conditionString = new DynamicSOQLConditionBlock('OR')
@@ -85,6 +65,26 @@ public with sharing class TestDynamicSOQLConditionBlock {
 		System.assertEquals(
 			'((Name = \'Test1\' OR Name = \'Test2\'))', conditionString,
 			'The operator property is wrong.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
+	static void testToStringWrongOperator(){
+		Test.startTest();
+		Integer errorCount = 0;
+		try {
+			new DynamicSOQLConditionBlock('AND')
+			.addCondition(new DynamicSOQLCondition('Name', '=', 'Test'))
+			.switchOperator('wrong')
+			.toString();
+		} catch (Exception exc) {
+			errorCount++;
+		}
+
+		System.assertEquals(
+			1, errorCount,
+			'The WrongComparisonOperator error was not occured.'
 		);
 		Test.stopTest();
 	}

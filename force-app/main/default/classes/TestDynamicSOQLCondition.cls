@@ -85,7 +85,7 @@ public with sharing class TestDynamicSOQLCondition {
 			'The operator property is wrong.'
 		);
 		System.assertEquals(
-			'It\'s a string', condition.value,
+			'It\\\'s a string', condition.value,
 			'The value property is wrong.'
 		);
 		System.assertEquals(
@@ -96,17 +96,28 @@ public with sharing class TestDynamicSOQLCondition {
 	}
 
 	@IsTest
-	static void testConstructorWrongOperator(){
+	static void testConstructorValueAsStringVariable(){
 		Test.startTest();
-		Integer errorCount = 0;
-		try {
-			DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', 'wrong', 'It\'s a string');
-		} catch (Exception exc) {
-			errorCount++;
-		}
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=:', 'variableName');
 		System.assertEquals(
-			1, errorCount,
-			'The error was not occurred.'
+			'Name', condition.fieldName,
+			'The fieldName property is wrong.'
+		);
+		System.assertEquals(
+			'=:', condition.operator,
+			'The operator property is wrong.'
+		);
+		System.assertEquals(
+			'variableName', condition.value,
+			'The value property is wrong.'
+		);
+		System.assertEquals(
+			false, condition.isString,
+			'The isString property is wrong.'
+		);
+		System.assertEquals(
+			'Name =: variableName', condition.toString(),
+			'The isString property is wrong.'
 		);
 		Test.stopTest();
 	}
@@ -118,6 +129,22 @@ public with sharing class TestDynamicSOQLCondition {
 		System.assertEquals(
 			'Name = \'It\\\'s a string\'', conditionStr,
 			'The "toString()" method returns wrong value.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
+	static void testToStringWrongOperator(){
+		Test.startTest();
+		Integer errorCount = 0;
+		try {
+			new DynamicSOQLCondition('Name', 'wrong', 'It\'s a string').toString();
+		} catch (Exception exc) {
+			errorCount++;
+		}
+		System.assertEquals(
+			1, errorCount,
+			'The error was not occurred.'
 		);
 		Test.stopTest();
 	}

@@ -43,18 +43,11 @@ public with sharing class DynamicSOQLCondition {
 
 	public DynamicSOQLCondition(String fieldName, String operator, String value) {
 		this(fieldName, operator);
-		this.value =  value;
-		this.isString = true;
+		this.value = String.escapeSingleQuotes(value);
+		this.isString = operator.contains(':') ? false : true;
 	}
 
 	private DynamicSOQLCondition(String fieldName, String operator) {
-		if (!AVAILABLE_OPERATORS.contains(operator)) {
-			throw new DynamicSOQLConditionException(
-				Label.WrongComparisonOperator
-				.replace('{operator}', operator)
-				.replace('{availableOperators}', AVAILABLE_OPERATORS.toString())
-			);
-		}
 		this.fieldName = String.escapeSingleQuotes(fieldName);
 		this.operator = String.escapeSingleQuotes(operator);
 	}
@@ -62,10 +55,11 @@ public with sharing class DynamicSOQLCondition {
 	// PUBLIC METHOD
 
 	public override String toString() {
+		this.validateCondition();
 		return '{fieldName} {operator} {value}'
 			.replace('{fieldName}', this.fieldName)
 			.replace('{operator}', this.operator)
-			.replace('{value}', this.isString == true ? this.escapeSingleQuotes(this.value) : this.value);
+			.replace('{value}', this.isString == true ? this.addQuotes(this.value) : this.value);
 	}
 
 	// PRIVATE METHOD
@@ -78,8 +72,18 @@ public with sharing class DynamicSOQLCondition {
 		return dt.formatGmt('yyyy-MM-dd');
 	}
 
-	private String escapeSingleQuotes(String value) {
-		return '\'' + String.escapeSingleQuotes(value) + '\'';
+	private String addQuotes(String value) {
+		return '\'' + value + '\'';
+	}
+
+	private void validateCondition() {
+		if (!AVAILABLE_OPERATORS.contains(this.operator.replace(':', ''))) {
+			throw new DynamicSOQLConditionException(
+				Label.WrongComparisonOperator
+				.replace('{operator}', this.operator)
+				.replace('{availableOperators}', AVAILABLE_OPERATORS.toString())
+			);
+		}
 	}
 
 	public class DynamicSOQLConditionException extends Exception{ }

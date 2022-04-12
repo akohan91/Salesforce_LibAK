@@ -47,13 +47,6 @@ public with sharing class DynamicSOQLConditionBlock {
 	 * @return          { DynamicSOQLConditionBlock }
 	 */
 	public DynamicSOQLConditionBlock switchOperator(String operator) {
-		if (!AVAILABLE_OPERATORS.contains(operator)) {
-			throw new DynamicSOQLConditionBlockException(
-				Label.WrongComparisonOperator
-				.replace('{operator}', operator)
-				.replace('{AVAILABLE_OPERATORS}', AVAILABLE_OPERATORS.toString())
-			);
-		}
 		this.operator = operator;
 		return this;
 	}
@@ -63,7 +56,9 @@ public with sharing class DynamicSOQLConditionBlock {
 	 * @return   { String }
 	 */
 	public override String toString() {
+		this.validateBlock();
 		List<String> result = new List<String>();
+
 		if (this.blocks != null && !this.blocks.isEmpty()) {
 			for (DynamicSOQLConditionBlock block : this.blocks) {
 				result.add(block.toString());
@@ -76,6 +71,16 @@ public with sharing class DynamicSOQLConditionBlock {
 			}
 		}
 		return '(' + String.join(result, ' ' + this.operator + ' ') + ')';
+	}
+
+	private void validateBlock() {
+		if (!AVAILABLE_OPERATORS.contains(this.operator)) {
+			throw new DynamicSOQLConditionBlockException(
+				Label.WrongComparisonOperator
+				.replace('{operator}', this.operator)
+				.replace('{AVAILABLE_OPERATORS}', AVAILABLE_OPERATORS.toString())
+			);
+		}
 	}
 
 	public class DynamicSOQLConditionBlockException extends Exception {
