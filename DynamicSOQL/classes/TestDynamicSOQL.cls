@@ -101,6 +101,44 @@ private class TestDynamicSOQL {
 	}
 
 	@IsTest
+	static void testInfoToFLSCheck(){
+		Test.startTest();
+		Map<String,Set<String>> infoToFLSCheck = new DynamicSOQL('Account')
+		.withField('Id')
+		.withField('Name')
+		.withSubQuery(
+			'Contact',
+			new DynamicSOQL('Contact')
+			.withField('Id')
+			.withField('FirstName')
+		)
+		.withConditions(
+			new DynamicSOQLConditionBlock('AND')
+			.addCondition(new DynamicSOQLCondition('Phone', '=', '12345'))
+		).infoToFLSCheck();
+
+		System.assert(
+			infoToFLSCheck.containsKey('Account'),
+			'The infoToFLSCheck should contain the "Account" key.'
+		);
+		System.assert(
+			infoToFLSCheck.containsKey('Contact'),
+			'The infoToFLSCheck should contain the "Contact" key.'
+		);
+		System.assert(
+			infoToFLSCheck.get('Account').containsAll(new Set<String>{'Id','Name','Phone'}),
+			'The infoToFLSCheck.Account containa wrong set of fields. Actual: ' +
+				infoToFLSCheck.get('Account') + ' Expected: ' + new Set<String>{'Id','Name','Phone'}
+		);
+		System.assert(
+			infoToFLSCheck.get('Contact').containsAll(new Set<String>{'Id','FirstName'}),
+			'The infoToFLSCheck.Contact containa wrong set of fields. Actual: ' +
+				infoToFLSCheck.get('Contact') + ' Expected: ' + new Set<String>{'Id','FirstName'}
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
 	static void testToString(){
 		Test.startTest();
 		String soql = new DynamicSOQL('Account')

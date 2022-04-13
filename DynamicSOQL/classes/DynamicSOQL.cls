@@ -39,17 +39,39 @@ public with sharing class DynamicSOQL {
 
 	/**
 	 * @description Adds a subquery
-	 * @param  subQuery { DynamicSOQL } - DynamicSOQL instance
-	 * @return          { DynamicSOQL }
+	 * @param  relationshipName { String } - relationship api name of sObject
+	 * @param  subQuery         { DynamicSOQL } - DynamicSOQL instance
+	 * @return                  { DynamicSOQL }
 	 */
 	public DynamicSOQL withSubQuery(String relationshipName, DynamicSOQL subQuery) {
 		this.subQueries.put(relationshipName, subQuery);
 		return this;
 	}
 
+	/**
+	 * @description Adds a condition block to the query
+	 * @param  conditionBlock { DynamicSOQLConditionBlock }
+	 * @return                { DynamicSOQL }
+	 */
 	public DynamicSOQL withConditions(DynamicSOQLConditionBlock conditionBlock) {
 		this.conditionBlock = conditionBlock;
 		return this;
+	}
+
+	/**
+	 * @description Returns the Map in format: sObjectApiName => Set<String>{fieldApiName}
+	 * @return   { Map<String, Set<String>> }
+	 */
+	public Map<String, Set<String>> infoToFLSCheck() {
+		Map<String, Set<String>> result = new Map<String, Set<String>>();
+		result.put(this.sObjectName, new Set<String>(this.fields));
+		if (this.conditionBlock != null) {
+			result.get(this.sObjectName).addAll(this.conditionBlock.fieldsApiNames());
+		}
+		for (DynamicSOQL subQuery : this.subQueries.values()) {
+			result.putAll(subQuery.infoToFLSCheck());
+		}
+		return result;
 	}
 
 	/**

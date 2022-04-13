@@ -53,6 +53,29 @@ public with sharing class TestDynamicSOQLConditionBlock {
 		Test.stopTest();
 	}
 
+
+	@IsTest
+	static void testFieldsApiNames(){
+		Test.startTest();
+		DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
+		.addConditionBlock(
+			new DynamicSOQLConditionBlock('OR')
+			.addCondition(new DynamicSOQLCondition('Phone', '=', '121345'))
+		)
+		.addCondition(new DynamicSOQLCondition('FirstName', '=', 'Test'))
+		.addCondition(new DynamicSOQLCondition('LastName', '=', 'Test'));
+
+		System.assertEquals(
+			3, conditionBlock.fieldsApiNames().size(),
+			'The number of fields thet the "fieldsApiNames()" method returns is wrong.'
+		);
+		System.assert(
+			conditionBlock.fieldsApiNames().containsAll(new Set<String>{'Phone', 'FirstName', 'LastName'}),
+			'The "fieldsApiNames()" method returns wrong value.'
+		);
+		Test.stopTest();
+	}
+
 	@IsTest
 	static void testToString(){
 		Test.startTest();

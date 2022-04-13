@@ -52,6 +52,21 @@ public with sharing class DynamicSOQLConditionBlock {
 	}
 
 	/**
+	 * @description Returns all field api names from DynamicSOQLCondition and DynamicSOQLConditionBlock
+	 * @return   { Set<String> }
+	 */
+	public Set<String> fieldsApiNames() {
+		Set<String> result = new Set<String>();
+		for (DynamicSOQLCondition soqlCondition : this.conditions) {
+			result.add(soqlCondition.fieldApiname());
+		}
+		for (DynamicSOQLConditionBlock conditionBlock : this.blocks) {
+			result.addAll(conditionBlock.fieldsApiNames());
+		}
+		return result;
+	}
+
+	/**
 	 * @description Builds a Dynamic SOQL Condition Block string for WHERE statement
 	 * @return   { String }
 	 */

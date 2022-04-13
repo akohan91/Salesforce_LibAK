@@ -54,6 +54,10 @@ public with sharing class DynamicSOQLCondition {
 
 	// PUBLIC METHOD
 
+	public String fieldApiname() {
+		return this.fieldName;
+	}
+
 	public override String toString() {
 		this.validateCondition();
 		return '{fieldName} {operator} {value}'

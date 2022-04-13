@@ -122,7 +122,6 @@ public with sharing class TestDynamicSOQLCondition {
 		Test.stopTest();
 	}
 
-
 	@IsTest
 	static void testConstructorValueAsNull(){
 		Test.startTest();
@@ -130,6 +129,16 @@ public with sharing class TestDynamicSOQLCondition {
 		System.assertEquals(
 			'Name = null', condition.toString(),
 			'The "toString()" method returns wrong value.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
+	static void testfieldApiname(){
+		Test.startTest();
+		System.assertEquals(
+			'Name', new DynamicSOQLCondition('Name', '=', 'Test').fieldApiname(),
+			'The "fieldApiname()" method returns wrong value.'
 		);
 		Test.stopTest();
 	}

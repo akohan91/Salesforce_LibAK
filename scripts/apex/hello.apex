@@ -11,15 +11,21 @@
 
 String name = 'LastName 1';
 System.debug(
-    Database.query(
-        new DynamicSOQL('Contact')
+    // Database.query(
+        new DynamicSOQL('Account')
         .withField('Id')
-        .withField('FirstName')
+        .withField('Name')
+        .withSubQuery(
+            'Contact',
+            new DynamicSOQL('Contact')
+            .withField('Id')
+            .withField('FirstName')
+        )
         .withConditions(
             new DynamicSOQLConditionBlock('AND')
-            .addCondition(new DynamicSOQLCondition('LastName', '=:', 'name'))
-        ).toString()
-    )
+            .addCondition(new DynamicSOQLCondition('Phone', '=', '12345'))
+        ).infoToFLSCheck()
+    // )
 );
 
 
