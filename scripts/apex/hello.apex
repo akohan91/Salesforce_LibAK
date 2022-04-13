@@ -12,6 +12,7 @@
 String name = 'LastName 1';
 System.debug(
     // Database.query(
+    JSON.serialize(
         new DynamicSOQL('Account')
         .withField('Id')
         .withField('Name')
@@ -23,10 +24,13 @@ System.debug(
         )
         .withConditions(
             new DynamicSOQLConditionBlock('AND')
-            .addCondition(new DynamicSOQLCondition('Phone', '=', '12345'))
+            .addCondition(new DynamicSOQLCondition('Name', '=', 'Sample Account for Entitlements'))
         )
-        .withOffset(100)
+        .withOffset(0)
+        .withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Name'}))
         .withLimit(10)
+        // .toString()
+    )
     // )
 );
 

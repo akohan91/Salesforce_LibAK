@@ -139,15 +139,29 @@ private class TestDynamicSOQL {
 	}
 
 	@IsTest
+	static void testWithOrderBy(){
+		Test.startTest();
+		DynamicSOQL soql = new DynamicSOQL('Account')
+		.withField('Name')
+		.withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Name'}));
+
+		System.assertEquals(
+			'SELECT Name FROM Account ORDER BY Name ASC NULLS LAST', soql.toString().trim(),
+			'The SOQL String is wrong.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
 	static void testOffsetLimit(){
 		Test.startTest();
 		String soql = new DynamicSOQL('Account')
 		.withField('Id')
-		.withOffset(10)
+		.withOffset(0)
 		.withLimit(10)
 		.toString();
 		System.assertEquals(
-			'SELECT Id FROM Account OFFSET 10 LIMIT 10', soql,
+			'SELECT Id FROM Account LIMIT 10 OFFSET 0', soql,
 			'The SOQL String is wrong.'
 		);
 		Test.stopTest();

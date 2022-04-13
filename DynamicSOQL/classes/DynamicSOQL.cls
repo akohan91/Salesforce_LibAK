@@ -6,8 +6,9 @@ public with sharing class DynamicSOQL {
 	'SELECT {fields}{subQueries} '+
 	'FROM {SObject}' +
 	'{WHERE}' +
-	'{OFFSET}' +
-	'{LIMIT}';
+	'{ORDER BY}' +
+	'{LIMIT}' +
+	'{OFFSET}';
 
 	@TestVisible
 	private String sObjectName;
@@ -16,6 +17,7 @@ public with sharing class DynamicSOQL {
 	@TestVisible
 	private Map<String, DynamicSOQL> subQueries = new Map<String, DynamicSOQL>();
 	private DynamicSOQLConditionBlock conditionBlock;
+	DynamicSOQLOrderBy orderBy;
 	private Integer offsetNumber;
 	private Integer limitNumber;
 
@@ -59,6 +61,16 @@ public with sharing class DynamicSOQL {
 	 */
 	public DynamicSOQL withConditions(DynamicSOQLConditionBlock conditionBlock) {
 		this.conditionBlock = conditionBlock;
+		return this;
+	}
+
+	/**
+	 * @description Adds a ORDER BY statement to the query
+	 * @param  orderBy orderBy description
+	 * @return         return description
+	 */
+	public DynamicSOQL withOrderBy(DynamicSOQLOrderBy orderBy) {
+		this.orderBy = orderBy;
 		return this;
 	}
 
@@ -114,8 +126,9 @@ public with sharing class DynamicSOQL {
 			.replace('{subQueries}', !subQueriesString.isEmpty() ? ',' + String.join(subQueriesString, ',') : '')
 			.replace('{SObject}',    this.sObjectName)
 			.replace('{WHERE}',      this.conditionBlock != null ? ' WHERE '  + this.conditionBlock.toString() : '')
-			.replace('{OFFSET}',     this.offsetNumber   != null ? ' OFFSET ' + this.offsetNumber : '' )
-			.replace('{LIMIT}',      this.limitNumber    != null ? ' LIMIT '  + this.limitNumber : '' );
+			.replace('{ORDER BY}',   this.orderBy        != null ? ' ' + this.orderBy.toString() + ' ' : '')
+			.replace('{LIMIT}',      this.limitNumber    != null ? ' LIMIT '  + this.limitNumber : '' )
+			.replace('{OFFSET}',     this.offsetNumber   != null ? ' OFFSET ' + this.offsetNumber : '' );
 	}
 
 	/* PRIVATE METHODS */
