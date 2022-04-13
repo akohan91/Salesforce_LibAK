@@ -139,6 +139,21 @@ private class TestDynamicSOQL {
 	}
 
 	@IsTest
+	static void testOffsetLimit(){
+		Test.startTest();
+		String soql = new DynamicSOQL('Account')
+		.withField('Id')
+		.withOffset(10)
+		.withLimit(10)
+		.toString();
+		System.assertEquals(
+			'SELECT Id FROM Account OFFSET 10 LIMIT 10', soql,
+			'The SOQL String is wrong.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
 	static void testToString(){
 		Test.startTest();
 		String soql = new DynamicSOQL('Account')

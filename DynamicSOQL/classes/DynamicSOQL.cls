@@ -5,7 +5,9 @@ public with sharing class DynamicSOQL {
 	private final static String QUERY_TEMPLATE =
 	'SELECT {fields}{subQueries} '+
 	'FROM {SObject}' +
-	'{WHERE}';
+	'{WHERE}' +
+	'{OFFSET}' +
+	'{LIMIT}';
 
 	@TestVisible
 	private String sObjectName;
@@ -14,6 +16,8 @@ public with sharing class DynamicSOQL {
 	@TestVisible
 	private Map<String, DynamicSOQL> subQueries = new Map<String, DynamicSOQL>();
 	private DynamicSOQLConditionBlock conditionBlock;
+	private Integer offsetNumber;
+	private Integer limitNumber;
 
 	// CONSTRUCTORS
 
@@ -59,6 +63,26 @@ public with sharing class DynamicSOQL {
 	}
 
 	/**
+	 * @description Adds OFFSET statement to SOQL
+	 * @param  offsetNumber { Integer }
+	 * @return              { DynamicSOQL }
+	 */
+	public DynamicSOQL withOffset(Integer offsetNumber) {
+		this.offsetNumber = offsetNumber;
+		return this;
+	}
+
+	/**
+	 * @description Adds LIMIT statement to SOQL
+	 * @param  limitNumber { Integer }
+	 * @return             { DynamicSOQL }
+	 */
+	public DynamicSOQL withLimit(Integer limitNumber) {
+		this.limitNumber = limitNumber;
+		return this;
+	}
+
+	/**
 	 * @description Returns the Map in format: sObjectApiName => Set<String>{fieldApiName}
 	 * @return   { Map<String, Set<String>> }
 	 */
@@ -86,10 +110,12 @@ public with sharing class DynamicSOQL {
 		List<String> subQueriesString = this.buidSubqueries(sObjectDescription);
 
 		return QUERY_TEMPLATE
-			.replace('{fields}', String.join(this.fields, ','))
-			.replace('{subQueries}', (!subQueriesString.isEmpty() ? ',' + String.join(subQueriesString, ',') : ''))
-			.replace('{SObject}', this.sObjectName)
-			.replace('{WHERE}', (this.conditionBlock != null ? ' WHERE ' + this.conditionBlock.toString() : ''));
+			.replace('{fields}',     String.join(this.fields, ','))
+			.replace('{subQueries}', !subQueriesString.isEmpty() ? ',' + String.join(subQueriesString, ',') : '')
+			.replace('{SObject}',    this.sObjectName)
+			.replace('{WHERE}',      this.conditionBlock != null ? ' WHERE '  + this.conditionBlock.toString() : '')
+			.replace('{OFFSET}',     this.offsetNumber   != null ? ' OFFSET ' + this.offsetNumber : '' )
+			.replace('{LIMIT}',      this.limitNumber    != null ? ' LIMIT '  + this.limitNumber : '' );
 	}
 
 	/* PRIVATE METHODS */

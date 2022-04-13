@@ -16,7 +16,7 @@ System.debug(
         .withField('Id')
         .withField('Name')
         .withSubQuery(
-            'Contact',
+            'Contacts',
             new DynamicSOQL('Contact')
             .withField('Id')
             .withField('FirstName')
@@ -24,7 +24,9 @@ System.debug(
         .withConditions(
             new DynamicSOQLConditionBlock('AND')
             .addCondition(new DynamicSOQLCondition('Phone', '=', '12345'))
-        ).infoToFLSCheck()
+        )
+        .withOffset(100)
+        .withLimit(10)
     // )
 );
 
