@@ -10,39 +10,19 @@
 // Database.insert(cons);
 
 String name = 'LastName 1';
-
 System.debug(
-    new DynamicSOQL('Contact')
-    .withField('Id')
-    .withConditions(
-        new DynamicSOQLConditionBlock('AND')
-        .addCondition(new DynamicSOQLCondition('LastName', '=', (String)null))
-    ).toString()
-);
-
-System.debug(
-    JSON.serialize(
-        new DynamicSOQL('Account')
+    Database.query(
+        new DynamicSOQL('Contact')
         .withField('Id')
-        .withField('Name')
-        .withSubQuery(
-            'Contacts',
-            new DynamicSOQL('Contact')
-            .withField('Id')
-            .withField('FirstName')
-            .withConditions(
-                new DynamicSOQLConditionBlock('AND')
-                .addCondition(new DynamicSOQLCondition('Name', '=', 'Test String'))
-            )
-        )
+        .withField('FirstName')
         .withConditions(
             new DynamicSOQLConditionBlock('AND')
             .addCondition(new DynamicSOQLCondition('LastName', '=:', 'name'))
-        )
+        ).toString()
     )
 );
 
 
-String jsonString = '{ "subQueries": { "Contacts": { "subQueries": {}, "sObjectName": "Contact", "fields": ["Id", "FirstName"], "conditionBlock": { "operator": "AND", "conditions": [ { "value": "Test String", "operator": "=", "isString": true, "fieldName": "Name" } ], "blocks": [] } } }, "sObjectName": "Account", "fields": ["Id", "Name"], "conditionBlock": { "operator": "AND", "conditions": [ { "value": "name", "operator": "=:", "isString": false, "fieldName": "LastName" } ], "blocks": [] } }';
+String jsonString = '{ "subQueries": { "Contacts": { "subQueries": {}, "sObjectName": "Contact", "fields": ["Id", "FirstName"], "conditionBlock": { "operator": "AND", "conditions": [ { "value": "name", "operator": "=", "isString": true, "fieldName": "LastName" } ], "blocks": [] } } }, "sObjectName": "Account", "fields": ["Id", "Name"], "conditionBlock": { "operator": "AND", "conditions": [ { "value": "Test String", "operator": "=", "isString": true, "fieldName": "Name" } ], "blocks": [] } }';
 DynamicSOQL soql = (DynamicSOQL)JSON.deserialize(jsonString, DynamicSOQL.class);
 System.debug(soql);

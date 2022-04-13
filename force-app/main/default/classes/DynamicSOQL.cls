@@ -58,7 +58,9 @@ public with sharing class DynamicSOQL {
 	 */
 	public override String toString() {
 		DescribeSObjectResult sObjectDescription = Schema.getGlobalDescribe().get(sObjectName)?.getDescribe();
-		this.checkAccessibility(this.fields, sObjectDescription);
+		if (sObjectDescription == null) {
+			throw new DynamicSOQLException(Label.NoSObject.replace('{sObjectName}', sObjectName));
+		}
 		List<String> subQueriesString = this.buidSubqueries(sObjectDescription);
 
 		return QUERY_TEMPLATE
@@ -69,35 +71,6 @@ public with sharing class DynamicSOQL {
 	}
 
 	/* PRIVATE METHODS */
-
-	/**
-	 * @description Checks the FLS for list of fields
-	 * @return   { String[] } - List of FLS errors
-	 */
-	private void checkAccessibility(List<String> fieldsToFlsCheck, DescribeSObjectResult sObjectDescription) {
-		if (sObjectDescription == null) {
-			throw new DynamicSOQLException(Label.NoSObject.replace('{sObjectName}', sObjectName));
-		}
-		this.sObjectName = sObjectDescription.getName();
-
-		if (!sObjectDescription.isAccessible()) {
-			throw new DynamicSOQLException(Label.sObjectAccessError.replace('{sObjectName}', this.sObjectName));
-		}
-
-		Map<String, SObjectField> fieldsDescribeMap = sObjectDescription.fields.getMap();
-		List<String> errors = new List<String>();
-		for (String fieldName : fieldsToFlsCheck) {
-			if(!fieldsDescribeMap.get(fieldName).getDescribe().isAccessible()) {
-				errors.add(Label.FieldAccessError
-					.replace('{fieldName}', fieldName)
-					.replace('{sObjectName}', this.sObjectName)
-				);
-			}
-		}
-		if (!errors.isEmpty()) {
-			throw new DynamicSOQLException(String.join(errors, ' '));
-		}
-	}
 
 	private List<String> buidSubqueries(DescribeSObjectResult sObjectDescription) {
 		if (this.subQueries == null || this.subQueries.isEmpty()) {
