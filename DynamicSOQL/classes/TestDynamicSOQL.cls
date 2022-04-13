@@ -16,17 +16,6 @@ private class TestDynamicSOQL {
 	}
 
 	@IsTest
-	static void testConstructorSObjectAccessError(){
-		Test.startTest();
-		/**
-			TODO:
-			Implement test method for some Profile
-			Could be implemented after creating TestFactory class
-		 */
-		Test.stopTest();
-	}
-
-	@IsTest
 	static void testWithField(){
 		Test.startTest();
 		DynamicSOQL soql = new DynamicSOQL('Account')
@@ -142,17 +131,6 @@ private class TestDynamicSOQL {
 			1, excCount,
 			'The NoSObject exception was not occurred.'
 		);
-		Test.stopTest();
-	}
-
-	@IsTest
-	static void testToStringFLSError(){
-		Test.startTest();
-		/**
-			TODO:
-			Implement test method for some Profile
-			Could be implemented after creating TestFactory class
-		 */
 		Test.stopTest();
 	}
 }

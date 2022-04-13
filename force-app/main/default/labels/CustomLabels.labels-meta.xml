@@ -1,30 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
-        <fullName>NoRestProcessor</fullName>
-        <categories>RestProcessor</categories>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>No Rest Processor message</shortDescription>
-        <value>No RestProcessor Type with Name: </value>
-    </labels>
-    <labels>
-        <fullName>Status_Success</fullName>
-        <categories>All</categories>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Status Success</shortDescription>
-        <value>Success</value>
-    </labels>
-    <labels>
-        <fullName>Status_Error</fullName>
-        <categories>All</categories>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Status Error</shortDescription>
-        <value>Error</value>
-    </labels>
-    <labels>
         <fullName>Cancel</fullName>
         <categories>All</categories>
         <language>en_US</language>
@@ -57,59 +33,11 @@
         <value>List Size property of lwc pagination component should be a number. Current value is "{0}".</value>
     </labels>
     <labels>
-        <fullName>ContactSystemAdministrator</fullName>
-        <categories>All</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>ContactSystemAdministrator</shortDescription>
-        <value>Please contact your System Administrator to solve this issue.'</value>
-    </labels>
-    <labels>
         <fullName>ErrorHappened</fullName>
         <categories>lwcErrorModal</categories>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>ErrorHappened</shortDescription>
         <value>An error happened in this Lightning component. Below the details of the error message are shown. These details can be helpful for your admin while trying to solve the error. So please share these details with your administrator. For more information about the error, you can open the console log of your browser.</value>
-    </labels>
-    <labels>
-        <fullName>sObjectAccessError</fullName>
-        <categories>All</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>sObjectAccessError</shortDescription>
-        <value>You do not have access to the {sObjectName} sObject.</value>
-    </labels>
-    <labels>
-        <fullName>FieldAccessError</fullName>
-        <categories>All</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>FieldAccessError</shortDescription>
-        <value>You do not have access to the {fieldName} field of {sObjectName} sObject.</value>
-    </labels>
-    <labels>
-        <fullName>NoSObject</fullName>
-        <categories>All</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>NoSObject</shortDescription>
-        <value>There is no SObject with API name "{sObjectName}".</value>
-    </labels>
-    <labels>
-        <fullName>NoChildSObject</fullName>
-        <categories>All</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>NoChildSObject</shortDescription>
-        <value>There is no child SObject with API name "{childSObjectName}" of "{sObjectName}".</value>
-    </labels>
-    <labels>
-        <fullName>WrongComparisonOperator</fullName>
-        <categories>All</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>WrongComparisonOperator</shortDescription>
-        <value>The "{operator}" operator is not available for SOQL condition. You could use one of these: {availableOperators}</value>
     </labels>
 </CustomLabels>

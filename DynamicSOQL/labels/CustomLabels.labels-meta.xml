@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>NoSObject</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NoSObject</shortDescription>
+        <value>There is no SObject with API name "{sObjectName}".</value>
+    </labels>
+    <labels>
+        <fullName>NoChildSObject</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NoChildSObject</shortDescription>
+        <value>There is no child SObject with API name "{childSObjectName}" of "{sObjectName}".</value>
+    </labels>
+    <labels>
+        <fullName>WrongComparisonOperator</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WrongComparisonOperator</shortDescription>
+        <value>The "{operator}" operator is not available for SOQL condition. You could use one of these: {availableOperators}</value>
+    </labels>
+</CustomLabels>

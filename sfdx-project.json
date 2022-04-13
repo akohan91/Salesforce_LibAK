@@ -3,9 +3,15 @@
     {
       "path": "force-app",
       "default": true
-    },
+    }
+    ,
     {
-      "path": "unpackaged",
+      "path": "DynamicSOQL",
+      "default": false
+    }
+    ,
+    {
+      "path": "WebServerRouter",
       "default": false
     }
   ],
