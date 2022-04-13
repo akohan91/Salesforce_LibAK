@@ -41,6 +41,7 @@ public with sharing class DynamicSOQL {
 	public DynamicSOQL withField(String fieldName) {
 		this.fields.add(fieldName);
 		return this;
+
 	}
 
 	/**
