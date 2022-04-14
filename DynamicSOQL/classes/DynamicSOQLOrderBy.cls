@@ -31,7 +31,7 @@ public with sharing class DynamicSOQLOrderBy {
 	 * @return   { List<String> }
 	 */
 	public List<String> fieldsList() {
-		return this.orderByFields;
+		return this.orderByFields.clone();
 	}
 
 	/**

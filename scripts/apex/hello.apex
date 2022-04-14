@@ -38,3 +38,9 @@ System.debug(
 String jsonString = '{ "subQueries": { "Contacts": { "subQueries": {}, "sObjectName": "Contact", "fields": ["Id", "FirstName"], "conditionBlock": { "operator": "AND", "conditions": [ { "value": "name", "operator": "=", "isString": true, "fieldName": "LastName" } ], "blocks": [] } } }, "sObjectName": "Account", "fields": ["Id", "Name"], "conditionBlock": { "operator": "AND", "conditions": [ { "value": "Test String", "operator": "=", "isString": true, "fieldName": "Name" } ], "blocks": [] } }';
 DynamicSOQL soql = (DynamicSOQL)JSON.deserialize(jsonString, DynamicSOQL.class);
 System.debug(soql);
+
+
+DynamicSOQLOrderBy orderBy = new DynamicSOQLOrderBy(new List<String>{'Industry'});
+orderBy.fieldsList().remove(0);
+
+System.debug(new List<String>{'test'} == new List<String>{'test '});
