@@ -27,6 +27,14 @@ public with sharing class DynamicSOQLOrderBy {
 	// PUBLIC METHODS
 
 	/**
+	 * @description Returns list of fields that are used in ORDER BY Statement
+	 * @return   { List<String> }
+	 */
+	public List<String> fieldsList() {
+		return this.orderByFields;
+	}
+
+	/**
 	 * @description Returns ORDER BY statement like: "ORDER BY Name ASC NULLS LAST"
 	 * @return   { String }
 	 */

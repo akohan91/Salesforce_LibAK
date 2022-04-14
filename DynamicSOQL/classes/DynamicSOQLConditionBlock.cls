@@ -98,7 +98,5 @@ public with sharing class DynamicSOQLConditionBlock {
 		}
 	}
 
-	public class DynamicSOQLConditionBlockException extends Exception {
-
-	}
+	public class DynamicSOQLConditionBlockException extends Exception { }
 }

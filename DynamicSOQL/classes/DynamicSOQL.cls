@@ -105,8 +105,13 @@ public with sharing class DynamicSOQL {
 		if (this.conditionBlock != null) {
 			result.get(this.sObjectName).addAll(this.conditionBlock.fieldsApiNames());
 		}
-		for (DynamicSOQL subQuery : this.subQueries.values()) {
-			result.putAll(subQuery.infoToFLSCheck());
+		if (this.subQueries != null && !this.subQueries.isEmpty()) {
+			for (DynamicSOQL subQuery : this.subQueries.values()) {
+				result.putAll(subQuery.infoToFLSCheck());
+			}
+		}
+		if (this.orderBy != null) {
+			result.get(this.sObjectName).addAll(this.orderBy.fieldsList());
 		}
 		return result;
 	}

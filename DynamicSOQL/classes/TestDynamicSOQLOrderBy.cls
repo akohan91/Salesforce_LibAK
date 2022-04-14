@@ -15,4 +15,16 @@ public with sharing class TestDynamicSOQLOrderBy {
 		);
 		Test.stopTest();
 	}
+
+	@IsTest
+	static void testFieldsList(){
+		Test.startTest();
+		List<String> fields = new List<String>{'Name', 'Id'};
+		DynamicSOQLOrderBy orderBy = new DynamicSOQLOrderBy(fields);
+		System.assertEquals(
+			fields, orderBy.fieldsList(),
+			'The "fieldsList()" method returns wrong list of fields.'
+		);
+		Test.stopTest();
+	}
 }

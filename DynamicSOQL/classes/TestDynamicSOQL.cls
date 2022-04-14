@@ -115,7 +115,9 @@ private class TestDynamicSOQL {
 		.withConditions(
 			new DynamicSOQLConditionBlock('AND')
 			.addCondition(new DynamicSOQLCondition('Phone', '=', '12345'))
-		).infoToFLSCheck();
+		)
+		.withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Industry'}))
+		.infoToFLSCheck();
 
 		System.assert(
 			infoToFLSCheck.containsKey('Account'),
@@ -126,9 +128,9 @@ private class TestDynamicSOQL {
 			'The infoToFLSCheck should contain the "Contact" key.'
 		);
 		System.assert(
-			infoToFLSCheck.get('Account').containsAll(new Set<String>{'Id','Name','Phone'}),
+			infoToFLSCheck.get('Account').containsAll(new Set<String>{'Id','Name','Phone','Industry'}),
 			'The infoToFLSCheck.Account containa wrong set of fields. Actual: ' +
-				infoToFLSCheck.get('Account') + ' Expected: ' + new Set<String>{'Id','Name','Phone'}
+				infoToFLSCheck.get('Account') + ' Expected: ' + new Set<String>{'Id','Name','Phone','Industry'}
 		);
 		System.assert(
 			infoToFLSCheck.get('Contact').containsAll(new Set<String>{'Id','FirstName'}),

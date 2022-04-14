@@ -12,7 +12,7 @@
 String name = 'LastName 1';
 System.debug(
     // Database.query(
-    JSON.serialize(
+    // JSON.serialize(
         new DynamicSOQL('Account')
         .withField('Id')
         .withField('Name')
@@ -27,10 +27,10 @@ System.debug(
             .addCondition(new DynamicSOQLCondition('Name', '=', 'Sample Account for Entitlements'))
         )
         .withOffset(0)
-        .withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Name'}))
+        .withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Industry'}))
         .withLimit(10)
-        // .toString()
-    )
+        .infoToFLSCheck()
+    // )
     // )
 );
 
