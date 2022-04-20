@@ -54,7 +54,7 @@ public with sharing class DynamicSOQLCondition {
 
 	// PUBLIC METHOD
 
-	public String fieldApiname() {
+	public String fieldApiName() {
 		return this.fieldName;
 	}
 

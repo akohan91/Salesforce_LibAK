@@ -6,6 +6,7 @@ public with sharing class DynamicSOQL {
 	'SELECT {fields}{subQueries} '+
 	'FROM {SObject}' +
 	'{WHERE}' +
+	'{GROUP BY}' +
 	'{ORDER BY}' +
 	'{LIMIT}' +
 	'{OFFSET}';
@@ -17,6 +18,7 @@ public with sharing class DynamicSOQL {
 	@TestVisible
 	private Map<String, DynamicSOQL> subQueries = new Map<String, DynamicSOQL>();
 	private DynamicSOQLConditionBlock conditionBlock;
+	DynamicSOQLGoupBy groupBy;
 	DynamicSOQLOrderBy orderBy;
 	private Integer offsetNumber;
 	private Integer limitNumber;
@@ -41,7 +43,6 @@ public with sharing class DynamicSOQL {
 	public DynamicSOQL withField(String fieldName) {
 		this.fields.add(fieldName);
 		return this;
-
 	}
 
 	/**
@@ -62,6 +63,11 @@ public with sharing class DynamicSOQL {
 	 */
 	public DynamicSOQL withConditions(DynamicSOQLConditionBlock conditionBlock) {
 		this.conditionBlock = conditionBlock;
+		return this;
+	}
+
+	public DynamicSOQL withGroupBy(DynamicSOQLGoupBy groupBy) {
+		this.groupBy = groupBy;
 		return this;
 	}
 
@@ -132,7 +138,8 @@ public with sharing class DynamicSOQL {
 			.replace('{subQueries}', !subQueriesString.isEmpty() ? ',' + String.join(subQueriesString, ',') : '')
 			.replace('{SObject}',    this.sObjectName)
 			.replace('{WHERE}',      this.conditionBlock != null ? ' WHERE '  + this.conditionBlock.toString() : '')
-			.replace('{ORDER BY}',   this.orderBy        != null ? ' ' + this.orderBy.toString() + ' ' : '')
+			.replace('{GROUP BY}',   this.groupBy        != null ? ' ' + this.groupBy.toString() : '')
+			.replace('{ORDER BY}',   this.orderBy        != null ? ' ' + this.orderBy.toString() : '')
 			.replace('{LIMIT}',      this.limitNumber    != null ? ' LIMIT '  + this.limitNumber : '' )
 			.replace('{OFFSET}',     this.offsetNumber   != null ? ' OFFSET ' + this.offsetNumber : '' );
 	}
