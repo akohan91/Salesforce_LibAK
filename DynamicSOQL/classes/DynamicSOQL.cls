@@ -66,6 +66,11 @@ public with sharing class DynamicSOQL {
 		return this;
 	}
 
+	/**
+	 * @description Adds a GROUP BY statement to the query
+	 * @param  groupBy { DynamicSOQLGoupBy }
+	 * @return         { DynamicSOQL }
+	 */
 	public DynamicSOQL withGroupBy(DynamicSOQLGoupBy groupBy) {
 		this.groupBy = groupBy;
 		return this;

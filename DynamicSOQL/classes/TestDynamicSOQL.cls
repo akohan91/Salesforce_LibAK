@@ -155,6 +155,27 @@ private class TestDynamicSOQL {
 	}
 
 	@IsTest
+	static void testWithGroupBy(){
+		Test.startTest();
+		DynamicSOQL soql = new DynamicSOQL('Account')
+		.withField('Name')
+		.withField('COUNT(Id)')
+		.withGroupBy(
+			new DynamicSOQLGoupBy(new List<String>{'Name'})
+			.withHaving(
+				new DynamicSOQLConditionBlock('AND')
+				.addCondition(new DynamicSOQLCondition('COUNT(Id)', '=', 1))
+			)
+		);
+
+		System.assertEquals(
+			'SELECT Name,COUNT(Id) FROM Account GROUP BY Name HAVING (COUNT(Id) = 1)', soql.toString().trim(),
+			'The SOQL String is wrong.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
 	static void testOffsetLimit(){
 		Test.startTest();
 		String soql = new DynamicSOQL('Account')

@@ -41,3 +41,4 @@ $RECYCLE.BIN/
 # data
 unpackaged/
 scripts/**/*
+.sf
