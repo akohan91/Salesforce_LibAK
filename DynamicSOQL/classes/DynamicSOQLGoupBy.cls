@@ -26,7 +26,7 @@ public with sharing class DynamicSOQLGoupBy {
 	 * @description Returns list of fields that are used in GROUP BY Statement
 	 * @return   { List<String> }
 	 */
-	public List<String> fieldsList() {
+	public List<String> fieldsApiNames() {
 		return this.fieldGroupByList.clone();
 	}
 

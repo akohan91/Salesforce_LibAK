@@ -23,8 +23,8 @@ private class TestDynamicSOQL {
 		.withField('Name')
 		.withField('OwnerId');
 		System.assertEquals(
-			3, soql.fields.size(),
-			'The number of fields is wrong.'
+			3, soql.selectFields.size(),
+			'The number of selectFields is wrong.'
 		);
 		Test.stopTest();
 	}

@@ -17,13 +17,13 @@ public with sharing class TestDynamicSOQLOrderBy {
 	}
 
 	@IsTest
-	static void testFieldsList(){
+	static void testFieldsApiNames(){
 		Test.startTest();
 		List<String> fields = new List<String>{'Name', 'Id'};
 		DynamicSOQLOrderBy orderBy = new DynamicSOQLOrderBy(fields);
 		System.assertEquals(
-			fields, orderBy.fieldsList(),
-			'The "fieldsList()" method returns wrong list of fields.'
+			fields, orderBy.fieldsApiNames(),
+			'The "fieldsApiNames()" method returns wrong list of fields.'
 		);
 		Test.stopTest();
 	}

@@ -30,7 +30,7 @@ public with sharing class DynamicSOQLOrderBy {
 	 * @description Returns list of fields that are used in ORDER BY Statement
 	 * @return   { List<String> }
 	 */
-	public List<String> fieldsList() {
+	public List<String> fieldsApiNames() {
 		return this.orderByFields.clone();
 	}
 

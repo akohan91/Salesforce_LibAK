@@ -14,7 +14,7 @@ public with sharing class DynamicSOQL {
 	@TestVisible
 	private String sObjectName;
 	@TestVisible
-	private List<String> fields = new List<String>();
+	private List<String> selectFields = new List<String>();
 	@TestVisible
 	private Map<String, DynamicSOQL> subQueries = new Map<String, DynamicSOQL>();
 	private DynamicSOQLConditionBlock conditionBlock;
@@ -41,7 +41,7 @@ public with sharing class DynamicSOQL {
 	 * @return           { DynamicSOQL }
 	 */
 	public DynamicSOQL withField(String fieldName) {
-		this.fields.add(fieldName);
+		this.selectFields.add(fieldName);
 		return this;
 	}
 
@@ -112,7 +112,7 @@ public with sharing class DynamicSOQL {
 	 */
 	public Map<String, Set<String>> infoToFLSCheck() {
 		Map<String, Set<String>> result = new Map<String, Set<String>>();
-		result.put(this.sObjectName, new Set<String>(this.fields));
+		result.put(this.sObjectName, new Set<String>(this.selectFields));
 		if (this.conditionBlock != null) {
 			result.get(this.sObjectName).addAll(this.conditionBlock.fieldsApiNames());
 		}
@@ -122,7 +122,7 @@ public with sharing class DynamicSOQL {
 			}
 		}
 		if (this.orderBy != null) {
-			result.get(this.sObjectName).addAll(this.orderBy.fieldsList());
+			result.get(this.sObjectName).addAll(this.orderBy.fieldsApiNames());
 		}
 		return result;
 	}
@@ -139,7 +139,7 @@ public with sharing class DynamicSOQL {
 		List<String> subQueriesString = this.buidSubqueries(sObjectDescription);
 
 		return QUERY_TEMPLATE
-			.replace('{fields}',     String.join(this.fields, ','))
+			.replace('{fields}',     String.join(this.selectFields, ','))
 			.replace('{subQueries}', !subQueriesString.isEmpty() ? ',' + String.join(subQueriesString, ',') : '')
 			.replace('{SObject}',    this.sObjectName)
 			.replace('{WHERE}',      this.conditionBlock != null ? ' WHERE '  + this.conditionBlock.toString() : '')

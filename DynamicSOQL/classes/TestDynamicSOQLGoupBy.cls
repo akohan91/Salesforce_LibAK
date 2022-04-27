@@ -13,13 +13,13 @@ public with sharing class TestDynamicSOQLGoupBy {
 	}
 
 	@IsTest
-	static void testFieldsList(){
+	static void testFieldsApiNames(){
 		Test.startTest();
 		List<String> fieldGroupByList = new List<String>{'Name'};
 		DynamicSOQLGoupBy groupBy = new DynamicSOQLGoupBy(fieldGroupByList);
 		System.assertEquals(
-			fieldGroupByList, groupBy.fieldsList(),
-			'The "fieldsList()" method returns wrong list of fields.'
+			fieldGroupByList, groupBy.fieldsApiNames(),
+			'The "fieldsApiNames()" method returns wrong list of fields.'
 		);
 		Test.stopTest();
 	}
