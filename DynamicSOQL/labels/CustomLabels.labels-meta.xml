@@ -24,4 +24,12 @@
         <shortDescription>WrongComparisonOperator</shortDescription>
         <value>The "{operator}" operator is not available for SOQL condition. You could use one of these: {availableOperators}</value>
     </labels>
+    <labels>
+        <fullName>NoFieldApiNameInSOQLCondition</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NoFieldApiNameInSOQLCondition</shortDescription>
+        <value>The DynamicSOQLCondition does not contain fieldApiName or DynamicSOQLFunction</value>
+    </labels>
 </CustomLabels>

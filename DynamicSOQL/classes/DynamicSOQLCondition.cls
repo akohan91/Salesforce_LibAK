@@ -16,6 +16,8 @@ public with sharing class DynamicSOQLCondition {
 		'EXCLUDES'
 	};
 	@TestVisible
+	private DynamicSOQLFunction function;
+	@TestVisible
 	private String fieldName;
 	@TestVisible
 	private String operator;
@@ -31,6 +33,12 @@ public with sharing class DynamicSOQLCondition {
 		this.value = String.valueOf(value);
 	}
 
+	public DynamicSOQLCondition(DynamicSOQLFunction function, String operator, Object value) {
+		this(null, operator);
+		this.function = function;
+		this.value = String.valueOf(value);
+	}
+
 	public DynamicSOQLCondition(String fieldName, String operator, Datetime value) {
 		this(fieldName, operator);
 		this.value = this.fmtDatetime(value);
@@ -43,27 +51,38 @@ public with sharing class DynamicSOQLCondition {
 
 	public DynamicSOQLCondition(String fieldName, String operator, String value) {
 		this(fieldName, operator);
-		this.value = value == null ? 'null' : String.escapeSingleQuotes(value);
+		this.value = value == null ? 'null' : value;
 		this.isString = operator.contains(':') || this.value == 'null' ? false : true;
 	}
 
 	private DynamicSOQLCondition(String fieldName, String operator) {
-		this.fieldName = String.escapeSingleQuotes(fieldName);
-		this.operator = String.escapeSingleQuotes(operator);
+		this.fieldName = fieldName;
+		this.operator = operator;
 	}
 
 	// PUBLIC METHOD
 
 	public String fieldApiName() {
-		return this.fieldName;
+		if (this.fieldName != null) {
+			return this.fieldName;
+		} else if (this.function != null) {
+			return this.function.fieldApiName();
+		} else {
+			throw new DynamicSOQLConditionException(Label.NoFieldApiNameInSOQLCondition);
+		}
 	}
 
 	public override String toString() {
 		this.validateCondition();
+		String leftPart = this.fieldName != null ? this.fieldName : this.function.toString();
 		return '{fieldName} {operator} {value}'
-			.replace('{fieldName}', this.fieldName)
-			.replace('{operator}', this.operator)
-			.replace('{value}', this.isString == true ? this.addQuotes(this.value) : this.value);
+			.replace('{fieldName}', String.escapeSingleQuotes(leftPart))
+			.replace('{operator}', String.escapeSingleQuotes(this.operator))
+			.replace(
+				'{value}', this.isString == true ?
+				this.addQuotes(String.escapeSingleQuotes(this.value)) :
+				String.escapeSingleQuotes(this.value)
+			);
 	}
 
 	// PRIVATE METHOD

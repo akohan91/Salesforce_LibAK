@@ -27,6 +27,29 @@ public with sharing class TestDynamicSOQLCondition {
 	}
 
 	@IsTest
+	static void testConstructorWithFunction(){
+		Test.startTest();
+		DynamicSOQLCondition condition = new DynamicSOQLCondition(new DynamicSOQLFunction('COUNT', 'Id'), '>', 10);
+		System.assertEquals(
+			null, condition.fieldName,
+			'The fieldName property is wrong.'
+		);
+		System.assertEquals(
+			'>', condition.operator,
+			'The operator property is wrong.'
+		);
+		System.assertEquals(
+			'10', condition.value,
+			'The value property is wrong.'
+		);
+		System.assertEquals(
+			null, condition.isString,
+			'The isString property is wrong.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
 	static void testConstructorValueAsDateTime(){
 		Test.startTest();
 		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', Datetime.newInstance(2022, 01, 01, 01, 01, 01));
@@ -85,7 +108,7 @@ public with sharing class TestDynamicSOQLCondition {
 			'The operator property is wrong.'
 		);
 		System.assertEquals(
-			'It\\\'s a string', condition.value,
+			'It\'s a string', condition.value,
 			'The value property is wrong.'
 		);
 		System.assertEquals(
@@ -139,6 +162,33 @@ public with sharing class TestDynamicSOQLCondition {
 		System.assertEquals(
 			'Name', new DynamicSOQLCondition('Name', '=', 'Test').fieldApiname(),
 			'The "fieldApiname()" method returns wrong value.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
+	static void testfieldApiNameWithFunction(){
+		Test.startTest();
+		System.assertEquals(
+			'Id', new DynamicSOQLCondition(new DynamicSOQLFunction('COUNT', 'Id'), '>', 10).fieldApiname(),
+			'The "fieldApiname()" method returns wrong value.'
+		);
+		Test.stopTest();
+	}
+
+	@IsTest
+	static void testfieldApiNameError(){
+		Test.startTest();
+		DynamicSOQLCondition condition = (DynamicSOQLCondition)JSON.deserialize('{"function": null, "fieldName": null, "operator": "=", "value": "test", "isString": false }', DynamicSOQLCondition.class);
+		Integer errorCount = 0;
+		try {
+			condition.fieldApiname();
+		} catch (Exception exc) {
+			errorCount++;
+		}
+		System.assertEquals(
+			1, errorCount,
+			'The error was not occurred.'
 		);
 		Test.stopTest();
 	}
