@@ -104,7 +104,7 @@ private class TestDynamicSOQL {
 	static void testInfoToFLSCheck(){
 		Test.startTest();
 		Map<String,Set<String>> infoToFLSCheck = new DynamicSOQL('Account')
-		.withField('Id')
+		.withFunction(new DynamicSOQLFunction('COUNT', 'Id'))
 		.withField('Name')
 		.withSubQuery(
 			'Contact',
@@ -159,7 +159,7 @@ private class TestDynamicSOQL {
 		Test.startTest();
 		DynamicSOQL soql = new DynamicSOQL('Account')
 		.withField('Name')
-		.withField('COUNT(Id)')
+		.withFunction(new DynamicSOQLFunction('COUNT', 'Id'))
 		.withGroupBy(
 			new DynamicSOQLGoupBy(new List<String>{'Name'})
 			.withHaving(

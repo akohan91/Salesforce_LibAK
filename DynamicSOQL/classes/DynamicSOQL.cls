@@ -3,7 +3,7 @@
  */
 public with sharing class DynamicSOQL {
 	private final static String QUERY_TEMPLATE =
-	'SELECT {fields}{subQueries} '+
+	'SELECT {selectItems} '+
 	'FROM {SObject}' +
 	'{WHERE}' +
 	'{GROUP BY}' +
@@ -13,6 +13,8 @@ public with sharing class DynamicSOQL {
 
 	@TestVisible
 	private String sObjectName;
+	@TestVisible
+	private List<DynamicSOQLFunction> selectFunctions = new List<DynamicSOQLFunction>();
 	@TestVisible
 	private List<String> selectFields = new List<String>();
 	@TestVisible
@@ -42,6 +44,16 @@ public with sharing class DynamicSOQL {
 	 */
 	public DynamicSOQL withField(String fieldName) {
 		this.selectFields.add(fieldName);
+		return this;
+	}
+
+	/**
+	 * @description Adds a function to SELECT statement like "COUNT(Id) recordsCount"
+	 * @param  function { DynamicSOQLFunction }
+	 * @return          { DynamicSOQL }
+	 */
+	public DynamicSOQL withFunction(DynamicSOQLFunction function) {
+		this.selectFunctions.add(function);
 		return this;
 	}
 
@@ -113,6 +125,11 @@ public with sharing class DynamicSOQL {
 	public Map<String, Set<String>> infoToFLSCheck() {
 		Map<String, Set<String>> result = new Map<String, Set<String>>();
 		result.put(this.sObjectName, new Set<String>(this.selectFields));
+		if (this.selectFunctions != null && !this.selectFunctions.isEmpty()) {
+			for (DynamicSOQLFunction function : this.selectFunctions) {
+				result.get(this.sObjectName).add(function.fieldApiName());
+			}
+		}
 		if (this.conditionBlock != null) {
 			result.get(this.sObjectName).addAll(this.conditionBlock.fieldsApiNames());
 		}
@@ -136,20 +153,35 @@ public with sharing class DynamicSOQL {
 		if (sObjectDescription == null) {
 			throw new DynamicSOQLException(Label.NoSObject.replace('{sObjectName}', sObjectName));
 		}
-		List<String> subQueriesString = this.buidSubqueries(sObjectDescription);
+		List<String> selectItems = new List<String>();
+		if (this.selectFields != null && !this.selectFields.isEmpty()) {
+			selectItems.addAll(this.selectFields);
+		}
+		selectItems.addAll(buildFunctions());
+		selectItems.addAll(buidSubqueries(sObjectDescription));
 
 		return QUERY_TEMPLATE
-			.replace('{fields}',     String.join(this.selectFields, ','))
-			.replace('{subQueries}', !subQueriesString.isEmpty() ? ',' + String.join(subQueriesString, ',') : '')
-			.replace('{SObject}',    this.sObjectName)
-			.replace('{WHERE}',      this.conditionBlock != null ? ' WHERE '  + this.conditionBlock.toString() : '')
-			.replace('{GROUP BY}',   this.groupBy        != null ? ' ' + this.groupBy.toString() : '')
-			.replace('{ORDER BY}',   this.orderBy        != null ? ' ' + this.orderBy.toString() : '')
-			.replace('{LIMIT}',      this.limitNumber    != null ? ' LIMIT '  + this.limitNumber : '' )
-			.replace('{OFFSET}',     this.offsetNumber   != null ? ' OFFSET ' + this.offsetNumber : '' );
+			.replace('{selectItems}', String.join(selectItems, ','))
+			.replace('{SObject}',     this.sObjectName)
+			.replace('{WHERE}',       this.conditionBlock != null ? ' WHERE '  + this.conditionBlock.toString() : '')
+			.replace('{GROUP BY}',    this.groupBy        != null ? ' ' + this.groupBy.toString() : '')
+			.replace('{ORDER BY}',    this.orderBy        != null ? ' ' + this.orderBy.toString() : '')
+			.replace('{LIMIT}',       this.limitNumber    != null ? ' LIMIT '  + this.limitNumber : '' )
+			.replace('{OFFSET}',      this.offsetNumber   != null ? ' OFFSET ' + this.offsetNumber : '' );
 	}
 
 	/* PRIVATE METHODS */
+
+	private List<String> buildFunctions() {
+		if (this.selectFunctions == null || this.selectFunctions.isEmpty()) {
+			return new List<String>();
+		}
+		List<String> result = new List<String>();
+		for (DynamicSOQLFunction function : this.selectFunctions) {
+			result.add(function.toString());
+		}
+		return result;
+	}
 
 	private List<String> buidSubqueries(DescribeSObjectResult sObjectDescription) {
 		if (this.subQueries == null || this.subQueries.isEmpty()) {

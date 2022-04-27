@@ -1,0 +1,44 @@
+/**
+ * @author Andrew Kohanovskij <akohan91@gmail.com>
+ */
+public with sharing class DynamicSOQLFunction {
+	private final String FUNCTION_TEMPLATE = '{functionName}({fieldName}) {alias}';
+
+	private String functionName;
+	private String fieldName;
+	private String alias;
+
+	// CONSTRUCTORS
+
+	public DynamicSOQLFunction(String functionName) {
+		this(functionName, null, null);
+	}
+
+	public DynamicSOQLFunction(String functionName, String fieldName) {
+		this(functionName, fieldName, null);
+	}
+
+	public DynamicSOQLFunction(String functionName, String fieldName, String alias) {
+		this.functionName = functionName;
+		this.fieldName = fieldName;
+		this.alias = alias;
+	}
+
+	/* PUBLIC METHODS */
+
+	public String fieldApiName() {
+		return this.fieldName;
+	}
+
+	/**
+	 * @description Builds a SOQL function string like "COUNT(Id) recordsCount"
+	 * @return   { String }
+	 */
+	public override String toString() {
+		return FUNCTION_TEMPLATE
+		.replace('{functionName}', String.escapeSingleQuotes(this.functionName))
+		.replace('{fieldName}', this.fieldName != null ? String.escapeSingleQuotes(this.fieldName) : '')
+		.replace('{alias}',     this.alias != null     ? String.escapeSingleQuotes(this.alias) : '')
+		.trim();
+	}
+}

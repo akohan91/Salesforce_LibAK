@@ -134,7 +134,7 @@ public with sharing class TestDynamicSOQLCondition {
 	}
 
 	@IsTest
-	static void testfieldApiname(){
+	static void testfieldApiName(){
 		Test.startTest();
 		System.assertEquals(
 			'Name', new DynamicSOQLCondition('Name', '=', 'Test').fieldApiname(),
