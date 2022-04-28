@@ -135,7 +135,14 @@ public with sharing class DynamicSOQL {
 		}
 		if (this.subQueries != null && !this.subQueries.isEmpty()) {
 			for (DynamicSOQL subQuery : this.subQueries.values()) {
-				result.putAll(subQuery.infoToFLSCheck());
+				Map<String, Set<String>> subQueryResult = subQuery.infoToFLSCheck();
+				for (String subQuerySObjectName : subQueryResult.keySet()) {
+					if (result.containsKey(subQuerySObjectName)) {
+						result.get(subQuerySObjectName).addAll(subQueryResult.get(subQuerySObjectName));
+					} else {
+						result.put(subQuerySObjectName, subQueryResult.get(subQuerySObjectName));
+					}
+				}
 			}
 		}
 		if (this.orderBy != null) {
