@@ -10,6 +10,7 @@
         - [Methods](DynamicSOQL_Methods)
 
 # Intro
+<a name="Intro">
 
 The DynamicSOQL library helps to build SOQL strings with more declarative style than via native apex code.
 
@@ -23,8 +24,10 @@ The library is built in Object Oriented style and contains the next classes:
 - **DynamicSOQLOrderBy** - represent `ORDER BY` clause.
 
 # Quick Start
+<a name="Quick_Start">
 
 ## Build a regular query
+<a name="Build_a_regular_query">
 
 ```java
 DynamicSOQL soql = new DynamicSOQL('Account')
@@ -60,6 +63,7 @@ System.debug(soql.toString());
 ```
 
 ## Build an aggregated query
+<a name="Build_an_aggregated_query">
 
 ```java
 DynamicSOQL soql = new DynamicSOQL('Opportunity')
@@ -90,12 +94,15 @@ System.debug(soql.toString());
 */
 ```
 
+<a name="Reference_Guide">
 
 # Reference Guide
 
 ## DynamicSOQL
+<a name="DynamicSOQL">
 
-### Constructors
+### DynamicSOQL Constructors
+<a name="DynamicSOQL_Constructors">
 
 The following are constructors for DynamicSOQL.
 - `DynamicSOQL(String sObjectName)`
@@ -103,7 +110,8 @@ The following are constructors for DynamicSOQL.
     DynamicSOQL soql = new DynamicSOQL('Account');
 ```
 
-### Methods
+### DynamicSOQL Methods
+<a name="DynamicSOQL_Methods">
 
 The following are methods for Map. All are instance methods.
 
