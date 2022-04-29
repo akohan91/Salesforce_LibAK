@@ -20,31 +20,31 @@ DynamicSOQL soql = new DynamicSOQL('Account')
 .withField('Id')
 .withField('Name')
 .withConditions(
-	new DynamicSOQLConditionBlock('AND')
-	.addCondition(new DynamicSOQLCondition('Name', '=', 'Some Account Name'))
+    new DynamicSOQLConditionBlock('AND')
+    .addCondition(new DynamicSOQLCondition('Name', '=', 'Some Account Name'))
 )
 .withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Name', 'Id'}))
 .withSubQuery(
-	'Contacts',
-	new DynamicSOQL('Contact')
-	.withField('FirstName')
-	.withField('Email')
-	.withConditions(
-		new DynamicSOQLConditionBlock('AND')
-		.addCondition(new DynamicSOQLCondition('Email', '!=', (String)null))
-	)
+    'Contacts',
+    new DynamicSOQL('Contact')
+    .withField('FirstName')
+    .withField('Email')
+    .withConditions(
+        new DynamicSOQLConditionBlock('AND')
+        .addCondition(new DynamicSOQLCondition('Email', '!=', (String)null))
+    )
 );
 
 System.debug(soql.toString());
-/* The output (add line breaks manually):
-	SELECT Id,Name,(
-		SELECT FirstName,Email
-		FROM Contacts
-		WHERE (Email != null)
-	)
-	FROM Account
-	WHERE (Name = 'Some Account Name')
-	ORDER BY Name,Id ASC NULLS LAST
+/* The output (line breaks was added manually):
+    SELECT Id,Name,(
+        SELECT FirstName,Email
+        FROM Contacts
+        WHERE (Email != null)
+    )
+    FROM Account
+    WHERE (Name = 'Some Account Name')
+    ORDER BY Name,Id ASC NULLS LAST
 */
 ```
 
@@ -57,24 +57,24 @@ DynamicSOQL soql = new DynamicSOQL('Opportunity')
 .withFunction(new DynamicSOQLFunction('COUNT', 'Id', 'oppCount'))
 .withFunction(new DynamicSOQLFunction('AVG', 'Amount', 'avgAmount'))
 .withGroupBy(
-	new DynamicSOQLGoupBy(new List<String>{'StageName'})
-	.withHaving(
-		new DynamicSOQLConditionBlock('AND')
-		.addCondition(new DynamicSOQLCondition(
-			new DynamicSOQLFunction('SUM','Amount'), '>', 190)
-		)
-	)
+    new DynamicSOQLGoupBy(new List<String>{'StageName'})
+    .withHaving(
+        new DynamicSOQLConditionBlock('AND')
+        .addCondition(new DynamicSOQLCondition(
+            new DynamicSOQLFunction('SUM','Amount'), '>', 190)
+        )
+    )
 );
 
 System.debug(soql.toString());
 
-/* The output (add line breaks manually):
-	SELECT StageName,
-		SUM(Amount) amount,
-		COUNT(Id) oppCount,
-		AVG(Amount) avgAmount
-	FROM Opportunity
-	GROUP BY StageName
-		HAVING (SUM(Amount) > 190)
+/* The output (line breaks was added manually):
+    SELECT StageName,
+        SUM(Amount) amount,
+        COUNT(Id) oppCount,
+        AVG(Amount) avgAmount
+    FROM Opportunity
+    GROUP BY StageName
+        HAVING (SUM(Amount) > 190)
 */
 ```
