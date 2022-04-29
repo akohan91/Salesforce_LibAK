@@ -101,7 +101,7 @@ System.debug(soql.toString());
 ## DynamicSOQL
 <a name="DynamicSOQL">
 
-### DynamicSOQL Constructors
+### Constructors
 <a name="DynamicSOQL_Constructors">
 
 The following are constructors for DynamicSOQL.
@@ -110,7 +110,7 @@ The following are constructors for DynamicSOQL.
     DynamicSOQL soql = new DynamicSOQL('Account');
 ```
 
-### DynamicSOQL Methods
+### Methods
 <a name="DynamicSOQL_Methods">
 
 The following are methods for Map. All are instance methods.
