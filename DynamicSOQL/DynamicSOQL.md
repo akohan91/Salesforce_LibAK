@@ -1,3 +1,11 @@
+# Table of content
+
+1. [Intro](#Intro)
+2. [Quick Start](#Quick_Start)
+3. [Reference Guide](#Reference_Guide)
+
+<a name="Intro">
+
 # Intro
 
 The DynamicSOQL library helps to build SOQL strings with more declarative style than via native apex code.
@@ -10,6 +18,8 @@ The library is built in Object Oriented style and contains the next classes:
 - **DynamicSOQLFunction** - represent SOQL Functions, for example: `COUNT(Id) alias`.
 - **DynamicSOQLGoupBy** - represent `GROUP BY` clause and allows to build Aggregated Query.
 - **DynamicSOQLOrderBy** - represent `ORDER BY` clause.
+
+<a name="Quick_Start">
 
 # Quick Start
 
@@ -78,6 +88,8 @@ System.debug(soql.toString());
         HAVING (SUM(Amount) > 190)
 */
 ```
+
+<a name="Reference_Guide">
 
 # Reference Guide
 
