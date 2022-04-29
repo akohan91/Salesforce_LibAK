@@ -48,7 +48,7 @@ System.debug(soql.toString());
 */
 ```
 
-## Build a Aggregated query
+## Build an Aggregated query
 
 ```java
 DynamicSOQL soql = new DynamicSOQL('Opportunity')
@@ -78,3 +78,59 @@ System.debug(soql.toString());
         HAVING (SUM(Amount) > 190)
 */
 ```
+
+# Reference Guide
+
+## DynamicSOQL
+
+### Constructors
+
+The following are constructors for DynamicSOQL.
+- `DynamicSOQL(String sObjectName)`
+```java
+    DynamicSOQL soql = new DynamicSOQL('Account');
+```
+
+### DynamicSOQL Methods
+
+The following are methods for Map. All are instance methods.
+
+- **withField** <br>
+`withField(String fieldName): DynamicSOQL` <br>
+Adds a field to SELECT statement
+
+- **withFunction** <br>
+`withFunction(DynamicSOQLFunction function): DynamicSOQL` <br>
+Adds a function to SELECT statement like "COUNT(Id) recordsCount"
+
+- **withSubQuery** <br>
+`withSubQuery(String relationshipName, DynamicSOQL subQuery): DynamicSOQL` <br>
+Adds a subquery
+
+- **withConditions** <br>
+`withConditions(DynamicSOQLConditionBlock conditionBlock): DynamicSOQL` <br>
+Adds a condition block to the query
+
+- **withGroupBy** <br>
+`withGroupBy(DynamicSOQLGoupBy groupBy): DynamicSOQL` <br>
+Adds a GROUP BY statement to the query
+
+- **withOrderBy** <br>
+`withOrderBy(DynamicSOQLOrderBy orderBy): DynamicSOQL` <br>
+Adds a ORDER BY statement to the query
+
+- **withOffset** <br>
+`withOffset(Integer offsetNumber): DynamicSOQL` <br>
+Adds OFFSET statement to SOQL
+
+- **withLimit** <br>
+`withLimit(Integer limitNumber): DynamicSOQL` <br>
+Adds LIMIT statement to SOQL
+
+- **infoToFLSCheck** <br>
+`infoToFLSCheck(): Map<String, Set<String>>` <br>
+Returns the Map in format: `sObjectApiName => Set<String>{fieldApiName}`
+
+- **toString** <br>
+`toString(): Map<String, Set<String>>` <br>
+Builds a SOQL string
