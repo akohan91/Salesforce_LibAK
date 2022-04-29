@@ -6,8 +6,8 @@
     - [Build an aggregated query](#Build_an_aggregated_query)
 3. [Reference Guide](#Reference_Guide)
     - [DynamicSOQL](#DynamicSOQL)
-        - [Constructors](DynamicSOQL_Constructors)
-        - [Methods](DynamicSOQL_Methods)
+        - [Constructors](#DynamicSOQL_Constructors)
+        - [Methods](#DynamicSOQL_Methods)
 
 # Intro
 <a name="Intro">
