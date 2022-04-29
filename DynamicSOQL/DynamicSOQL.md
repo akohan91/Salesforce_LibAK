@@ -113,7 +113,7 @@ The following are constructors for DynamicSOQL.
 ### Methods
 <a name="DynamicSOQL_Methods">
 
-The following are methods for Map. All are instance methods.
+The following are methods for DynamicSOQL. All are instance methods.
 
 - **withField** <br>
 `withField(String fieldName): DynamicSOQL` <br>
