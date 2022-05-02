@@ -133,42 +133,157 @@ The following are methods for DynamicSOQL. All are instance methods.
 - **withField** <br>
 `withField(String fieldName): DynamicSOQL` <br>
 Adds a field to SELECT statement
+```java
+System.debug(
+    new DynamicSOQL('Account')
+    .withField('Id')
+    .withField('Name')
+    .withField('OwnerId')
+); // SELECT Id,Name,OwnerId FROM Account
+```
 
 - **withFunction** <br>
 `withFunction(DynamicSOQLFunction function): DynamicSOQL` <br>
 Adds a function to SELECT statement like "COUNT(Id) recordsCount"
+```java
+System.debug(
+    new DynamicSOQL('Account')
+    .withFunction(new DynamicSOQLFunction('COUNT', ''))
+); // SELECT COUNT() FROM Account
+```
 
 - **withSubQuery** <br>
 `withSubQuery(String relationshipName, DynamicSOQL subQuery): DynamicSOQL` <br>
 Adds a subquery
 
+```java
+System.debug(
+    new DynamicSOQL('Account')
+    .withField('Name')
+    .withSubQuery(
+        'Contacts',
+        new DynamicSOQL('Contact')
+        .withField('Id')
+    )
+); // SELECT Name,(SELECT Id FROM Contacts) FROM Account
+```
+
 - **withConditions** <br>
 `withConditions(DynamicSOQLConditionBlock conditionBlock): DynamicSOQL` <br>
 Adds a condition block to the query
+
+```java
+System.debug(
+    new DynamicSOQL('Account')
+    .withField('Id')
+    .withConditions(
+        new DynamicSOQLConditionBlock('AND')
+        .addCondition(new DynamicSOQLCondition('Name', '=', 'Test'))
+        .addCondition(new DynamicSOQLCondition('CreatedDate', '>', Date.newInstance(2022, 01, 01)))
+    )
+); // SELECT Id FROM Account WHERE (Name = 'Test' AND CreatedDate > 2022-01-01)
+```
 
 - **withGroupBy** <br>
 `withGroupBy(DynamicSOQLGoupBy groupBy): DynamicSOQL` <br>
 Adds a GROUP BY statement to the query
 
+```java
+System.debug(
+    new DynamicSOQL('Opportunity')
+    .withField('StageName')
+    .withFunction(new DynamicSOQLFunction('SUM', 'Amount', 'amount'))
+    .withGroupBy(
+        new DynamicSOQLGoupBy(new List<String>{'StageName'})
+        .withHaving(
+            new DynamicSOQLConditionBlock('AND')
+            .addCondition(new DynamicSOQLCondition(
+                new DynamicSOQLFunction('SUM','Amount'), '>', 190)
+            )
+        )
+    )
+); // SELECT StageName,SUM(Amount) amount FROM Opportunity GROUP BY StageName HAVING (SUM(Amount) > 190)
+```
+
 - **withOrderBy** <br>
 `withOrderBy(DynamicSOQLOrderBy orderBy): DynamicSOQL` <br>
 Adds a ORDER BY statement to the query
+
+```java
+System.debug(
+    new DynamicSOQL('Account')
+    .withField('Name')
+    .withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Name'}))
+); // SELECT Name FROM Account ORDER BY Name ASC NULLS LAST
+```
 
 - **withOffset** <br>
 `withOffset(Integer offsetNumber): DynamicSOQL` <br>
 Adds OFFSET statement to SOQL
 
+```java
+System.debug(
+    new DynamicSOQL('Account')
+    .withField('Id')
+    .withOffset(0)
+    .withLimit(10)
+); // SELECT Id FROM Account LIMIT 10 OFFSET 0
+```
+
 - **withLimit** <br>
 `withLimit(Integer limitNumber): DynamicSOQL` <br>
 Adds LIMIT statement to SOQL
+
+```java
+System.debug(
+    new DynamicSOQL('Account')
+    .withField('Id')
+    .withOffset(0)
+    .withLimit(10)
+); // SELECT Id FROM Account LIMIT 10 OFFSET 0
+```
 
 - **infoToFLSCheck** <br>
 `infoToFLSCheck(): Map<String, Set<String>>` <br>
 Returns the Map in format: `sObjectApiName => Set<String>{fieldApiName}`
 
+```java
+System.debug(
+    new DynamicSOQL('Account')
+    .withFunction(new DynamicSOQLFunction('COUNT', 'Id'))
+    .withField('Name')
+    .withSubQuery(
+        'Contact',
+        new DynamicSOQL('Contact')
+        .withField('Id')
+        .withField('FirstName')
+    )
+    .withConditions(
+        new DynamicSOQLConditionBlock('AND')
+        .addCondition(new DynamicSOQLCondition('Phone', '=', '12345'))
+    )
+    .withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Industry'}))
+    .infoToFLSCheck()
+);
+
+/*
+{
+    Account={Id, Industry, Name, Phone},
+    Contact={FirstName, Id}
+}
+*/
+```
+
 - **toString** <br>
 `toString(): String` <br>
 Builds a SOQL string
+
+```java
+new DynamicSOQL('Account')
+.withField('Id')
+.withSubQuery('Contacts', new DynamicSOQL('Contact').withField('Id'))
+.toString(); // SELECT Id,(SELECT Id FROM Contacts) FROM Account
+```
 
 ## DynamicSOQLFunction
 <a name="DynamicSOQLFunction">
