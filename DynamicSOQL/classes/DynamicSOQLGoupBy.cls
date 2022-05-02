@@ -31,7 +31,7 @@ public with sharing class DynamicSOQLGoupBy {
 	}
 
 	/**
-	 * @description Builds a SOQL string
+	 * @description Builds a GROUP BY part of SOQL string
 	 * @return   { String }
 	 */
 	public override String toString() {

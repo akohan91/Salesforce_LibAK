@@ -17,6 +17,12 @@
     - [DynamicSOQLCondition](#DynamicSOQLCondition)
         - [Constructors](#DynamicSOQLCondition_Constructors)
         - [Methods](#DynamicSOQLCondition_Methods)
+    - [DynamicSOQLOrderBy](#DynamicSOQLOrderBy)
+        - [Constructors](#DynamicSOQLOrderBy_Constructors)
+        - [Methods](#DynamicSOQLOrderBy_Methods)
+    - [DynamicSOQLGroupBy](#DynamicSOQLGroupBy)
+        - [Constructors](#DynamicSOQLGroupBy_Constructors)
+        - [Methods](#DynamicSOQLGroupBy_Methods)
 
 # Intro
 <a name="Intro">
@@ -161,7 +167,7 @@ Adds LIMIT statement to SOQL
 Returns the Map in format: `sObjectApiName => Set<String>{fieldApiName}`
 
 - **toString** <br>
-`toString(): Map<String, Set<String>>` <br>
+`toString(): String` <br>
 Builds a SOQL string
 
 ## DynamicSOQLFunction
@@ -294,3 +300,69 @@ Returns the field api name that is used in a condition.
 - **toString** <br>
 `toString(): String` <br>
 Builds a SOQL condition string like `Name = 'Andrew'`
+
+## DynamicSOQLOrderBy
+<a name="DynamicSOQLOrderBy">
+
+### Constructors
+<a name="DynamicSOQLOrderBy_Constructors">
+
+The following are constructors for DynamicSOQL.
+
+- `DynamicSOQLOrderBy(List<String> orderByFields)`
+```java
+DynamicSOQLOrderBy orderBy = new DynamicSOQLOrderBy(new List<String>{'Name', 'Id'});
+```
+
+- `DynamicSOQLOrderBy(List<String> orderByFields, Boolean isDESC)`
+```java
+DynamicSOQLOrderBy orderBy = new DynamicSOQLOrderBy(new List<String>{'Name', 'Id'}, true);
+```
+
+- `DynamicSOQLOrderBy(List<String> orderByFields, Boolean isDESC, Boolean isNullsFirst)`
+```java
+DynamicSOQLOrderBy orderBy = new DynamicSOQLOrderBy(new List<String>{'Name', 'Id'}, true, true);
+```
+
+### Methods
+<a name="DynamicSOQLOrderBy_Methods">
+
+The following are methods for DynamicSOQL. All are instance methods.
+
+- **fieldsApiNames** <br>
+`fieldsApiNames(): Set<String>` <br>
+Returns list of fields that are used in ORDER BY Statement
+
+- **toString** <br>
+`toString(): String` <br>
+Returns ORDER BY statement like: "ORDER BY Name ASC NULLS LAST"
+
+## DynamicSOQLGroupBy
+<a name="DynamicSOQLGroupBy">
+
+### Constructors
+<a name="DynamicSOQLGroupBy_Constructors">
+
+The following are constructors for DynamicSOQL.
+
+- `DynamicSOQLGoupBy(List<String> fieldGroupByList)`
+```java
+DynamicSOQLGoupBy groupBy = new DynamicSOQLGoupBy(new List<String>{'StageName'});
+```
+
+### Methods
+<a name="DynamicSOQLGroupBy_Methods">
+
+The following are methods for DynamicSOQL. All are instance methods.
+
+- **fieldsApiNames** <br>
+`fieldsApiNames(): Set<String>` <br>
+Returns list of fields that are used in GROUP BY Statement
+
+- **withHaving** <br>
+`withHaving(DynamicSOQLConditionBlock conditionBlock): DynamicSOQLGoupBy` <br>
+Adds HAVING clause to the GROUP BY clause
+
+- **toString** <br>
+`toString(): String` <br>
+Builds a GROUP BY part of SOQL string
