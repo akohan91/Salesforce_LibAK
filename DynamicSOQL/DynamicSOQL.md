@@ -292,17 +292,20 @@ new DynamicSOQL('Account')
 <a name="DynamicSOQLFunction_Constructors">
 
 The following are constructors for DynamicSOQL.
-- `DynamicSOQL(String sObjectName)`
+- `DynamicSOQLFunction(String functionName)`
 ```java
-DynamicSOQLFunction soql = new DynamicSOQLFunction('COUNT');
+DynamicSOQLFunction function = new DynamicSOQLFunction('COUNT');
+System.debug(function.toString()); // COUNT()
 ```
-- `DynamicSOQL(String functionName, String fieldName)`
+- `DynamicSOQLFunction(String functionName, String fieldName)`
 ```java
-DynamicSOQLFunction soql = new DynamicSOQLFunction('COUNT', 'Id);
+DynamicSOQLFunction function = new DynamicSOQLFunction('COUNT', 'Id');
+System.debug(function.toString()); // COUNT(Id)
 ```
-- `DynamicSOQL(String functionName, String fieldName, String alias)`
+- `DynamicSOQLFunction(String functionName, String fieldName, String alias)`
 ```java
-DynamicSOQLFunction soql = new DynamicSOQLFunction('COUNT', 'Id', 'recordsCount');
+DynamicSOQLFunction function = new DynamicSOQLFunction('COUNT', 'Id', 'recordsCount');
+System.debug(function.toString()); // COUNT(Id) recordsCount
 ```
 
 ### Methods
@@ -310,15 +313,23 @@ DynamicSOQLFunction soql = new DynamicSOQLFunction('COUNT', 'Id', 'recordsCount'
 
 The following are methods for DynamicSOQL. All are instance methods.
 
-
-
 - **fieldApiName** <br>
 `fieldApiName(): String` <br>
 Returns the field api name that is used in a formula.
 
+```java
+new DynamicSOQLFunction('COUNT', 'Id', 'alias')
+.fieldApiname() // Id
+```
+
 - **toString** <br>
 `toString(): String` <br>
 Builds a SOQL function string like `COUNT(Id) recordsCount`
+
+```java
+new DynamicSOQLFunction('COUNT', 'Id', 'alias')
+.toString() // COUNT(Id) alias
+```
 
 ## DynamicSOQLConditionBlock
 <a name="DynamicSOQLConditionBlock">
@@ -339,22 +350,64 @@ DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
 
 The following are methods for DynamicSOQL. All are instance methods.
 
+- **addCondition** <br>
+`addCondition(DynamicSOQLCondition condition): DynamicSOQLConditionBlock` <br>
+Adds a condition to the current block
+
+```java
+DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('OR')
+.addCondition(new DynamicSOQLCondition('Name', '=', 'Test_1'));
+
+System.debug(conditionBlock); // (Name = 'Test_1')
+
+conditionBlock
+.addCondition(new DynamicSOQLCondition('Name', '=', 'Test_2'));
+System.debug(conditionBlock); // (Name = 'Test_1' OR Name = 'Test_2')
+```
+
 - **addConditionBlock** <br>
 `addConditionBlock(DynamicSOQLConditionBlock conditionBlock): DynamicSOQLConditionBlock` <br>
 Adds new condition block that will be added to the current one. It allow to build complex conditions like
 `(condition OR condition) AND condition`
 
-- **addCondition** <br>
-`addCondition(DynamicSOQLCondition condition): DynamicSOQLConditionBlock` <br>
-Adds a condition to the current block
+```java
+DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
+.addCondition(new DynamicSOQLCondition('Name', '=', 'Test1'))
+.addConditionBlock(
+    new DynamicSOQLConditionBlock('OR')
+    .addCondition(new DynamicSOQLCondition('Phone', '=', '12345'))
+    .addCondition(new DynamicSOQLCondition('Phone', '=', '123456'))
+);
+
+System.debug(conditionBlock); // ((Phone = '12345' OR Phone = '123456') AND Name = 'Test1')
+```
 
 - **switchOperator** <br>
 `switchOperator(String operator): DynamicSOQLConditionBlock`
 Changes the operator. Could be either `OR | AND`
 
+```java
+DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
+.addCondition(new DynamicSOQLCondition('Phone', '=', '12345'))
+.addCondition(new DynamicSOQLCondition('Phone', '=', '123456'));
+
+System.debug(conditionBlock); // (Phone = '12345' AND Phone = '123456')
+conditionBlock.switchOperator('OR');
+System.debug(conditionBlock); // (Phone = '12345' OR Phone = '123456')
+```
+
 - **fieldsApiNames** <br>
 `fieldsApiNames(): Set<String>` <br>
 Returns all field api names from DynamicSOQLCondition and DynamicSOQLConditionBlock
+
+```java
+DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
+.addCondition(new DynamicSOQLCondition('Phone', '=', '121345'))
+.addCondition(new DynamicSOQLCondition('FirstName', '=', 'Test'))
+.addCondition(new DynamicSOQLCondition('LastName', '=', 'Test'));
+
+conditionBlock.fieldsApiNames(); // {'Phone', 'FirstName', 'LastName'}
+```
 
 - **toString** <br>
 `toString(): String` <br>
