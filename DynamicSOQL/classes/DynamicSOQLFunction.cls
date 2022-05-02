@@ -26,6 +26,10 @@ public with sharing class DynamicSOQLFunction {
 
 	/* PUBLIC METHODS */
 
+	/**
+	 * @description Returns the field api name that is used in a formula.
+	 * @return   { String }
+	 */
 	public String fieldApiName() {
 		return this.fieldName;
 	}

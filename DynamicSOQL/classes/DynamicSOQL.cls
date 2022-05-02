@@ -127,7 +127,9 @@ public with sharing class DynamicSOQL {
 		result.put(this.sObjectName, new Set<String>(this.selectFields));
 		if (this.selectFunctions != null && !this.selectFunctions.isEmpty()) {
 			for (DynamicSOQLFunction function : this.selectFunctions) {
-				result.get(this.sObjectName).add(function.fieldApiName());
+				if (String.isNotEmpty(function.fieldApiName())) {
+					result.get(this.sObjectName).add(function.fieldApiName());
+				}
 			}
 		}
 		if (this.conditionBlock != null) {

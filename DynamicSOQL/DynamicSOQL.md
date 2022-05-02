@@ -8,6 +8,15 @@
     - [DynamicSOQL](#DynamicSOQL)
         - [Constructors](#DynamicSOQL_Constructors)
         - [Methods](#DynamicSOQL_Methods)
+    - [DynamicSOQLFunction](#DynamicSOQLFunction)
+        - [Constructors](#DynamicSOQLFunction_Constructors)
+        - [Methods](#DynamicSOQLFunction_Methods)
+    - [DynamicSOQLConditionBlock](#DynamicSOQLConditionBlock)
+        - [Constructors](#DynamicSOQLConditionBlock_Constructors)
+        - [Methods](#DynamicSOQLConditionBlock_Methods)
+    - [DynamicSOQLCondition](#DynamicSOQLCondition)
+        - [Constructors](#DynamicSOQLCondition_Constructors)
+        - [Methods](#DynamicSOQLCondition_Methods)
 
 # Intro
 <a name="Intro">
@@ -107,7 +116,7 @@ System.debug(soql.toString());
 The following are constructors for DynamicSOQL.
 - `DynamicSOQL(String sObjectName)`
 ```java
-    DynamicSOQL soql = new DynamicSOQL('Account');
+DynamicSOQL soql = new DynamicSOQL('Account');
 ```
 
 ### Methods
@@ -154,3 +163,134 @@ Returns the Map in format: `sObjectApiName => Set<String>{fieldApiName}`
 - **toString** <br>
 `toString(): Map<String, Set<String>>` <br>
 Builds a SOQL string
+
+## DynamicSOQLFunction
+<a name="DynamicSOQLFunction">
+
+### Constructors
+<a name="DynamicSOQLFunction_Constructors">
+
+The following are constructors for DynamicSOQL.
+- `DynamicSOQL(String sObjectName)`
+```java
+DynamicSOQLFunction soql = new DynamicSOQLFunction('COUNT');
+```
+- `DynamicSOQL(String functionName, String fieldName)`
+```java
+DynamicSOQLFunction soql = new DynamicSOQLFunction('COUNT', 'Id);
+```
+- `DynamicSOQL(String functionName, String fieldName, String alias)`
+```java
+DynamicSOQLFunction soql = new DynamicSOQLFunction('COUNT', 'Id', 'recordsCount');
+```
+
+### Methods
+<a name="DynamicSOQLFunction_Methods">
+
+The following are methods for DynamicSOQL. All are instance methods.
+
+
+
+- **fieldApiName** <br>
+`fieldApiName(): String` <br>
+Returns the field api name that is used in a formula.
+
+- **toString** <br>
+`toString(): String` <br>
+Builds a SOQL function string like `COUNT(Id) recordsCount`
+
+## DynamicSOQLConditionBlock
+<a name="DynamicSOQLConditionBlock">
+
+### Constructors
+<a name="DynamicSOQLConditionBlock_Constructors">
+
+The following are constructors for DynamicSOQL.
+
+- `DynamicSOQLConditionBlock(String operator)`
+
+```java
+DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
+```
+
+### Methods
+<a name="DynamicSOQLConditionBlock_Methods">
+
+The following are methods for DynamicSOQL. All are instance methods.
+
+- **addConditionBlock** <br>
+`addConditionBlock(DynamicSOQLConditionBlock conditionBlock): DynamicSOQLConditionBlock` <br>
+Adds new condition block that will be added to the current one. It allow to build complex conditions like
+`(condition OR condition) AND condition`
+
+- **addCondition** <br>
+`addCondition(DynamicSOQLCondition condition): DynamicSOQLConditionBlock` <br>
+Adds a condition to the current block
+
+- **switchOperator** <br>
+`switchOperator(String operator): DynamicSOQLConditionBlock`
+Changes the operator. Could be either `OR | AND`
+
+- **fieldsApiNames** <br>
+`fieldsApiNames(): Set<String>` <br>
+Returns all field api names from DynamicSOQLCondition and DynamicSOQLConditionBlock
+
+- **toString** <br>
+`toString(): String` <br>
+Builds a Dynamic SOQL Condition Block string for WHERE statement
+
+## DynamicSOQLCondition
+<a name="DynamicSOQLCondition">
+
+### Constructors
+<a name="DynamicSOQLCondition_Constructors">
+
+The following are constructors for DynamicSOQL.
+
+- `DynamicSOQLCondition(String fieldName, String operator, Object value)`
+
+```java
+DynamicSOQLCondition condition = new DynamicSOQLCondition('isActive', '=', true);
+```
+
+- `DynamicSOQLCondition(DynamicSOQLFunction function, String operator, Object value)`
+
+```java
+DynamicSOQLCondition condition = new DynamicSOQLCondition(
+    new DynamicSOQLFunction('COUNT', 'Amount'),
+    '>',
+    100
+);
+```
+
+- `DynamicSOQLCondition(String fieldName, String operator, Datetime value)`
+
+```java
+DynamicSOQLCondition condition = new DynamicSOQLCondition('CreatedDate', '>', Datetime.newInstance(2022, 01, 01, 01, 01, 01));
+```
+
+- `DynamicSOQLCondition(String fieldName, String operator, Date value)`
+
+```java
+DynamicSOQLCondition condition = new DynamicSOQLCondition('CreatedDate', '>', Date.newInstance(2022, 01, 01));
+```
+
+- `DynamicSOQLCondition(String fieldName, String operator, String value)`
+
+```java
+DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', 'It\'s a string');
+```
+
+
+### Methods
+<a name="DynamicSOQLCondition_Methods">
+
+The following are methods for DynamicSOQL. All are instance methods.
+
+- **fieldApiName** <br>
+`fieldApiName(): String` <br>
+Returns the field api name that is used in a condition.
+
+- **toString** <br>
+`toString(): String` <br>
+Builds a SOQL condition string like `Name = 'Andrew'`

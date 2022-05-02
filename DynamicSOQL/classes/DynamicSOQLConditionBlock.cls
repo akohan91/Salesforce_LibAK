@@ -11,7 +11,7 @@ public with sharing class DynamicSOQLConditionBlock {
 	@TestVisible
 	private String operator;
 
-	//CONSTRUCTORS
+	// CONSTRUCTORS
 
 	public DynamicSOQLConditionBlock(String operator) {
 		this.blocks = new List<DynamicSOQLConditionBlock>();
@@ -19,10 +19,11 @@ public with sharing class DynamicSOQLConditionBlock {
 		this.switchOperator(operator);
 	}
 
-	//PUBLIC METHODS
+	// PUBLIC METHODS
 
 	/**
-	 * @description Adds condition block
+	 * @description Adds new condition block that will be added to the current one.
+	 *              It allow to build complex conditions like `(condition OR condition) AND condition`
 	 * @param  conditionBlock { DynamicSOQLConditionBlock } - new condition block that will be added to the current one.
 	 * @return                { DynamicSOQLConditionBlock } - current codition block
 	 */
@@ -32,7 +33,7 @@ public with sharing class DynamicSOQLConditionBlock {
 	}
 
 	/**
-	 * @description Adds condition block
+	 * @description Adds a condition to the current block
 	 * @param  condition { DynamicSOQLCondition } - new condition that will be added to the current condition block.
 	 * @return           { DynamicSOQLConditionBlock } - current codition block
 	 */
@@ -87,6 +88,8 @@ public with sharing class DynamicSOQLConditionBlock {
 		}
 		return '(' + String.join(result, ' ' + this.operator + ' ') + ')';
 	}
+
+	// PRIVATE METHODS
 
 	private void validateBlock() {
 		if (!AVAILABLE_OPERATORS.contains(this.operator)) {
