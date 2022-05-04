@@ -424,7 +424,8 @@ The following are constructors for DynamicSOQL.
 - `DynamicSOQLCondition(String fieldName, String operator, Object value)`
 
 ```java
-DynamicSOQLCondition condition = new DynamicSOQLCondition('isActive', '=', true);
+DynamicSOQLCondition booleanCondition = new DynamicSOQLCondition('isActive', '=', true);
+DynamicSOQLCondition numberCondition = new DynamicSOQLCondition('Amount', '>=', 100);
 ```
 
 - `DynamicSOQLCondition(DynamicSOQLFunction function, String operator, Object value)`
@@ -452,7 +453,10 @@ DynamicSOQLCondition condition = new DynamicSOQLCondition('CreatedDate', '>', Da
 - `DynamicSOQLCondition(String fieldName, String operator, String value)`
 
 ```java
-DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', 'It\'s a string');
+DynamicSOQLCondition stringCondition = new DynamicSOQLCondition('Name', '=', 'It\'s a string');
+
+Set<Id> someVariable = new Set<Id>{'id_1','id_2','id_3'}
+DynamicSOQLCondition variableCondition = new DynamicSOQLCondition('Id', 'IN:', 'someVariable');
 ```
 
 
