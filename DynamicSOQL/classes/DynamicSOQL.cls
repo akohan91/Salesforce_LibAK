@@ -125,27 +125,10 @@ public with sharing class DynamicSOQL {
 	public Map<String, Set<String>> infoToFLSCheck() {
 		Map<String, Set<String>> result = new Map<String, Set<String>>();
 		result.put(this.sObjectName, new Set<String>(this.selectFields));
-		if (this.selectFunctions != null && !this.selectFunctions.isEmpty()) {
-			for (DynamicSOQLFunction function : this.selectFunctions) {
-				if (String.isNotEmpty(function.fieldApiName())) {
-					result.get(this.sObjectName).add(function.fieldApiName());
-				}
-			}
-		}
+		result = this.addFunctionFieldsToFlsMap(result);
+		result = this.addSubQueryFieldsToFlsMap(result);
 		if (this.conditionBlock != null) {
 			result.get(this.sObjectName).addAll(this.conditionBlock.fieldsApiNames());
-		}
-		if (this.subQueries != null && !this.subQueries.isEmpty()) {
-			for (DynamicSOQL subQuery : this.subQueries.values()) {
-				Map<String, Set<String>> subQueryResult = subQuery.infoToFLSCheck();
-				for (String subQuerySObjectName : subQueryResult.keySet()) {
-					if (result.containsKey(subQuerySObjectName)) {
-						result.get(subQuerySObjectName).addAll(subQueryResult.get(subQuerySObjectName));
-					} else {
-						result.put(subQuerySObjectName, subQueryResult.get(subQuerySObjectName));
-					}
-				}
-			}
 		}
 		if (this.orderBy != null) {
 			result.get(this.sObjectName).addAll(this.orderBy.fieldsApiNames());
@@ -219,6 +202,33 @@ public with sharing class DynamicSOQL {
 			) + ')');
 		}
 		return result;
+	}
+
+	private Map<String, Set<String>> addFunctionFieldsToFlsMap(Map<String, Set<String>> flsMap) {
+		if (this.selectFunctions != null && !this.selectFunctions.isEmpty()) {
+			for (DynamicSOQLFunction function : this.selectFunctions) {
+				if (String.isNotEmpty(function.fieldApiName())) {
+					flsMap.get(this.sObjectName).add(function.fieldApiName());
+				}
+			}
+		}
+		return flsMap;
+	}
+
+	private Map<String, Set<String>> addSubQueryFieldsToFlsMap(Map<String, Set<String>> flsMap) {
+		if (this.subQueries != null && !this.subQueries.isEmpty()) {
+			for (DynamicSOQL subQuery : this.subQueries.values()) {
+				Map<String, Set<String>> subQueryResult = subQuery.infoToFLSCheck();
+				for (String subQuerySObjectName : subQueryResult.keySet()) {
+					if (flsMap.containsKey(subQuerySObjectName)) {
+						flsMap.get(subQuerySObjectName).addAll(subQueryResult.get(subQuerySObjectName));
+					} else {
+						flsMap.put(subQuerySObjectName, subQueryResult.get(subQuerySObjectName));
+					}
+				}
+			}
+		}
+		return flsMap;
 	}
 
 	public class DynamicSOQLException extends Exception {}
