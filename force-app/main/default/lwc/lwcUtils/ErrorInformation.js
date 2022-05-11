@@ -2,6 +2,9 @@ export class ErrorInformation {
 	message = '';
 	stackTrace = '';
 
+	/**
+	 * @param { Error } error - JavaScript Error
+	 */
 	constructor(error) {
 		try {
 			console.error(error);
@@ -16,6 +19,9 @@ export class ErrorInformation {
 		}
 	}
 
+	/**
+	 * @param { Error } error - JavaScript Error
+	 */
 	addPageErrors(error) {
 		if (
 			error.body &&
@@ -28,6 +34,9 @@ export class ErrorInformation {
 		}
 	}
 
+	/**
+	 * @param { Error } error - JavaScript Error
+	 */
 	addFieldErrors(error) {
 		if (
 			error.body &&
@@ -40,6 +49,9 @@ export class ErrorInformation {
 		}
 	}
 
+	/**
+	 * @param { Error } error - JavaScript Error
+	 */
 	addOtherErrors(error) {
 		if (error.message) {
 			this.message += error.message;

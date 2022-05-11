@@ -20,18 +20,21 @@ export default class LwcErrorModal extends LightningElement {
 
 	/**
 	 * Opens the LWC Modal component with the error information
-	 * @param {Error} error
+	 * @param { ErrorInformation } errorInformation
 	 */
-	@api showErrorModal(error) {
+	@api showErrorModal(errorInformation) {
 		try {
-			this.message = error.message;
-			this.stackTrace = error.stackTrace;
+			this.message = errorInformation.message;
+			this.stackTrace = errorInformation.stackTrace;
 			this.template.querySelector('c-lwc-modal')?.openModal();
 		} catch (error) {
 			console.error(error);
 		}
 	}
 
+	/**
+	 * Closes the error modal component
+	 */
 	handleCloseModal() {
 		this.message = null;
 		this.stackTrace = null;

@@ -2,7 +2,7 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQLFunction {
-	private final String FUNCTION_TEMPLATE = '{functionName}({fieldName}) {alias}';
+	private final static String FUNCTION_TEMPLATE = '{functionName}({fieldName}) {alias}';
 
 	private String functionName;
 	private String fieldName;
