@@ -2,7 +2,7 @@ import { ErrorInformation } from "./ErrorInformation";
 
 /**
  *
- * @param { Error } - JavaScript Error
+ * @param { Error } error - JavaScript Error
  * @param { LightningElement } that - the component instance where the error should be shown
  */
 const showErrorModal = (error, that) => {
