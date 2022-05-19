@@ -1,10 +1,11 @@
+/* @author Andrew Kohanovskij <akohan91@gmail.com> */
 .pagination{
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: center;
 	align-items: center;
-	margin: 10px;
+	padding: var(--lwc-spacingSmall);
 }
 .pagination_text{
-	margin: 0 10px;
+	margin: 0 var(--lwc-spacingSmall);
 }

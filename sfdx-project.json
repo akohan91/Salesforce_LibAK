@@ -11,6 +11,16 @@
     }
     ,
     {
+      "path": "DatabaseUtils",
+      "default": false
+    }
+    ,
+    {
+      "path": "SobjectTable",
+      "default": false
+    }
+    ,
+    {
       "path": "WebServerRouter",
       "default": false
     }

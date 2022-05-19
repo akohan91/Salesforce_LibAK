@@ -1,0 +1,4 @@
+/** @author Andrew Kohanovskij <akohan91@gmail.com> */
+.sobject-table {
+	background-color: var(--lwc-colorBackgroundAlt,rgb(255, 255, 255));
+}

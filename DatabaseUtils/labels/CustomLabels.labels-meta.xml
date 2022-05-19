@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>NoSobjectFieldTemplate</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NoSobjectFieldTemplate</shortDescription>
+        <value>'The "{pathItem}" field of "{sobject}" Sobject does not exist.'</value>
+    </labels>
+</CustomLabels>
