@@ -6,6 +6,11 @@
     }
     ,
     {
+      "path": "LWCFramework",
+      "default": false
+    }
+    ,
+    {
       "path": "DynamicSOQL",
       "default": false
     }
