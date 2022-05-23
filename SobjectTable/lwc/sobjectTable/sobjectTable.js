@@ -26,11 +26,11 @@ export default class SobjectTable extends LightningElement {
 	@api sortedDirection;
 	@api columnsToOverride;
 
-	records;
 	_selectFields;
-	dataTableColumns;
 	recordsCount = 0;
 	offsetRecords = 0;
+	records;
+	dataTableColumns;
 	isBusy = true;
 
 	get show() {

@@ -1,30 +1,58 @@
 /**
  * @author Andrew Kohanovskij <akohan91@gmail.com>
+ * Represent field path of sobject.
+ * Example: For Contact sobject: Account.Name
  */
 public with sharing class SobjectFieldPath implements SobjectFieldPathInterface {
+	@TestVisible
 	private SObjectType sObjectType;
 	private String path;
+	@TestVisible
 	private DescribeSObjectResult targetSobjectDescribe;
 	private DescribeFieldResult targetFieldDescribe;
 
 	/* CONSTRUCTORS */
 
+	/**
+	 * @param  sobjectApi { String } - Sobject API Name
+	 * @param  path       { String } - field path. Example: Account.Name
+	 * @return            { SobjectFieldPath }
+	 */
 	public SobjectFieldPath(String sobjectApi, String path) {
-		this(Schema.getGlobalDescribe().get(sobjectApi), path);
+		Map<String,Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
+		if (globalDescribe.get(sobjectApi) == null) {
+			this.throwNoSobjectError(sobjectApi);
+		} else {
+			this(globalDescribe.get(sobjectApi), path);
+		}
 	}
 
+	/**
+	 * @param  sobjectApi { SObjectType }
+	 * @param  path       { String }      - field path. Example: Account.Name
+	 * @return            { SobjectFieldPath }
+	 */
 	public SobjectFieldPath(SObjectType sObjectType, String path) {
 		this.sObjectType = sObjectType;
 		this.targetSobjectDescribe = sObjectType.getDescribe();
-		this.path = path;
+		this.path = path.toLowerCase();
 	}
 
 	/* PUBLIC METHODS */
 
+	/**
+	 * @description Returns field path. Example: Account.Name
+	 * @return   { String }
+	 */
 	public String path() {
 		return this.path;
 	}
 
+	/**
+	 * @description Returns reference path for target sobject
+	 * if sobject is 'Contact' and path is 'account.name' it returns 'account.id'
+	 * @return   { String }
+	 */
 	public String targetReferencePath() {
 		if (this.targetFieldDescribe == null) {
 			this.parseFieldPath();
@@ -42,6 +70,10 @@ public with sharing class SobjectFieldPath implements SobjectFieldPathInterface 
 		}
 	}
 
+	/**
+	 * @description Returns DescribeFieldResult for a target field.
+	 * @return   { DescribeFieldResult }
+	 */
 	public Schema.DescribeFieldResult targetFieldDescribe() {
 		if (this.targetFieldDescribe == null) {
 			this.parseFieldPath();
@@ -75,6 +107,13 @@ public with sharing class SobjectFieldPath implements SobjectFieldPathInterface 
 				this.targetSobjectDescribe = referenceToList[0].getDescribe();
 			}
 		}
+	}
+
+	private void throwNoSobjectError(String sobjectName) {
+		throw new SobjectFieldPathException(
+			Label.NoSobjectTemplate
+			.replace('{sobject}', sobjectName)
+		);
 	}
 
 	private void throwNoFieldError(String fieldName, String sobjectName) {
