@@ -1,7 +1,7 @@
 /**
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
-import { LightningElement, api, track } from 'lwc'
+import { LightningElement, api } from 'lwc'
 import { showErrorModal } from 'c/lwcUtils'
 import { DynamicSOQLOrderBy } from 'c/soql'
 import { flattenForDataTable, overrideDataTableColumns } from './sobjectTableUtils'
@@ -10,10 +10,7 @@ import init from '@salesforce/apex/SobjectTableCtrl.init'
 export default class SobjectTable extends LightningElement {
 	@api controllerName = 'default'
 	@api sobjectName;
-	_selectFields;
-	@api get selectFields() {
-		return this._selectFields;
-	}
+	@api get selectFields() { return this._selectFields; }
 	set selectFields(value) {
 		try {
 			if (value) {
@@ -30,6 +27,7 @@ export default class SobjectTable extends LightningElement {
 	@api columnsToOverride;
 
 	records;
+	_selectFields;
 	dataTableColumns;
 	recordsCount = 0;
 	offsetRecords = 0;
@@ -47,9 +45,13 @@ export default class SobjectTable extends LightningElement {
 	}
 
 	get orderBy() {
-		return this.sortedBy &&
-			new DynamicSOQLOrderBy([this.sortedBy], this.sortedDirection === 'desc') ||
-			null;
+		try {
+			return this.sortedBy &&
+				new DynamicSOQLOrderBy([this.sortedBy], this.sortedDirection === 'desc') ||
+				null;
+		} catch (error) {
+			showErrorModal(error, this);
+		}
 	}
 
 	@api refresh() {
@@ -81,18 +83,9 @@ export default class SobjectTable extends LightningElement {
 				})
 			});
 
-			this.records = records.map(record => {
-				return flattenForDataTable(record, addressFieldPaths, referenceFieldPaths)
-			});
+			this.records = records.map(record => flattenForDataTable(record, addressFieldPaths, referenceFieldPaths));
 			this.recordsCount = recordsCount;
 			this.dataTableColumns = overrideDataTableColumns(dataTableColumns, this.columnsToOverride);
-
-			console.log('Records ');
-			console.log(this.records);
-			console.log('dataTableColumns ');
-			console.log(this.dataTableColumns);
-			console.log('referenceFieldPaths ');
-			console.log(referenceFieldPaths);
 		} catch (error) {
 			showErrorModal(error, this);
 		} finally {
