@@ -4,7 +4,7 @@
 import { LightningElement, api, track } from 'lwc'
 import { showErrorModal } from 'c/lwcUtils'
 import { DynamicSOQLOrderBy } from 'c/soql'
-import { flattenForDataTable } from './sobjectTableUtils'
+import { flattenForDataTable, overrideDataTableColumns } from './sobjectTableUtils'
 import init from '@salesforce/apex/SobjectTableCtrl.init'
 
 export default class SobjectTable extends LightningElement {
@@ -25,8 +25,21 @@ export default class SobjectTable extends LightningElement {
 	}
 	@api conditionBlock = null;
 	@api limitRecords = 10;
-	@api sortedBy;
+	_sortedBy;
+	@api get sortedBy() {
+		return this._sortedBy;
+	};
+	set sortedBy(value) {
+		try {
+			if (value) {
+				this._sortedBy = Array.isArray(value) ? value : value.replace(/[\s]/g, '').split(',');
+			}
+		} catch (error) {
+			showErrorModal(error, this);
+		}
+	}
 	@api sortedDirection;
+	@api columnsToOverride;
 
 	records;
 	dataTableColumns;
@@ -47,8 +60,12 @@ export default class SobjectTable extends LightningElement {
 
 	get orderBy() {
 		return this.sortedBy &&
-			new DynamicSOQLOrderBy([this.sortedBy], this.sortedDirection !== 'asc') ||
+			new DynamicSOQLOrderBy(this.sortedBy, this.sortedDirection === 'desc') ||
 			null;
+	}
+
+	@api refresh() {
+		this.initSobjectTable();
 	}
 
 	connectedCallback() {
@@ -80,7 +97,7 @@ export default class SobjectTable extends LightningElement {
 				return flattenForDataTable(record, addressFieldPaths, referenceFieldPaths)
 			});
 			this.recordsCount = recordsCount;
-			this.dataTableColumns = dataTableColumns;
+			this.dataTableColumns = overrideDataTableColumns(dataTableColumns, this.columnsToOverride);
 
 			console.log('Records ');
 			console.log(this.records);
@@ -99,14 +116,29 @@ export default class SobjectTable extends LightningElement {
 	ready = () => (this.isBusy = false);
 
 	handlePagination(event) {
-		this.offsetRecords = event.detail.offset;
-		this.initSobjectTable();
+		try {
+			this.offsetRecords = event.detail.offset;
+			this.initSobjectTable();
+		} catch (error) {
+			showErrorModal(error, this);
+		}
 	}
 
 	handleSort(event) {
-		const { columnKey, sortDirection } = event.detail;
-		this.sortedBy = columnKey;
-		this.sortedDirection = sortDirection;
-		this.initSobjectTable();
+		try {
+			this.sortedBy = event.detail.columnKey;
+			this.sortedDirection = event.detail.sortDirection;
+			this.initSobjectTable();
+		} catch (error) {
+			showErrorModal(error, this);
+		}
+	}
+
+	handleRowAction(event) {
+		try {
+			this.dispatchEvent(new CustomEvent('rowaction', { detail: {...event.detail} }))
+		} catch (error) {
+			showErrorModal(error, this);
+		}
 	}
 }
