@@ -1,0 +1,29 @@
+<template>
+	<div if:true={show.errorMessage} class="slds-notify_alert slds-alert_error error-container">
+		<lightning-icon class="slds-var-m-right_xx-small" icon-name="utility:error" variant="inverse"></lightning-icon>
+		<h2>
+			<template for:each={errorMessages} for:item="errorMessage">
+				<div key={errorMessage} class="slds-var-m-right_small slds-text-align_left">{errorMessage}</div>
+			</template>
+		</h2>
+	</div>
+	<div if:true={show.pagination} class="pagination">
+		<lightning-button-icon
+			icon-name="utility:chevronleft"
+			variant="neutral"
+			onclick={handlePrev}
+			disabled={disabled.prev}
+		></lightning-button-icon>
+		<div class="pagination_text">
+			<slot name="title">
+				<div>{paginationMsg}</div>
+			</slot>
+		</div>
+		<lightning-button-icon
+			icon-name="utility:chevronright"
+			variant="neutral"
+			onclick={handleNext}
+			disabled={disabled.next}
+		></lightning-button-icon>
+	</div>
+</template>
