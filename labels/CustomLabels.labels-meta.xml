@@ -8,4 +8,12 @@
         <shortDescription>NoSobjectFieldTemplate</shortDescription>
         <value>'The "{pathItem}" field of "{sobject}" Sobject does not exist.'</value>
     </labels>
+    <labels>
+        <fullName>NoSobjectTemplate</fullName>
+        <categories>All</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NoSobjectTemplate</shortDescription>
+        <value>'The "{sobject}" Sobject does not exist.'</value>
+    </labels>
 </CustomLabels>
