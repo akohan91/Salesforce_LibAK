@@ -25,19 +25,7 @@ export default class SobjectTable extends LightningElement {
 	}
 	@api conditionBlock = null;
 	@api limitRecords = 10;
-	_sortedBy;
-	@api get sortedBy() {
-		return this._sortedBy;
-	};
-	set sortedBy(value) {
-		try {
-			if (value) {
-				this._sortedBy = Array.isArray(value) ? value : value.replace(/[\s]/g, '').split(',');
-			}
-		} catch (error) {
-			showErrorModal(error, this);
-		}
-	}
+	@api sortedBy;
 	@api sortedDirection;
 	@api columnsToOverride;
 
@@ -60,7 +48,7 @@ export default class SobjectTable extends LightningElement {
 
 	get orderBy() {
 		return this.sortedBy &&
-			new DynamicSOQLOrderBy(this.sortedBy, this.sortedDirection === 'desc') ||
+			new DynamicSOQLOrderBy([this.sortedBy], this.sortedDirection === 'desc') ||
 			null;
 	}
 
