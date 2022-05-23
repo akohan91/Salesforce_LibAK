@@ -59,11 +59,17 @@ public with sharing class SobjectFieldPath implements SobjectFieldPathInterface 
 		String fieldApi = path.remove(0);
 		if (path.size() > 0) {
 			fieldApi = fieldApi.removeEnd('__r') + (fieldApi.endsWithIgnoreCase('__r') ? '__c' : 'id');
-			this.targetFieldDescribe = this.targetSobjectDescribe.fields.getMap().get(fieldApi).getDescribe();
+			this.targetFieldDescribe = this.targetSobjectDescribe.fields.getMap().get(fieldApi)?.getDescribe();
+			if (this.targetFieldDescribe == null) {
+				this.throwNoFieldError(fieldApi, this.targetSobjectDescribe.getName());
+			}
 			this.targetSobjectDescribe = this.targetFieldDescribe.getReferenceTo().get(0).getDescribe();
 			this.parseFieldPath(this.targetSobjectDescribe.getSObjectType(), path);
 		} else {
-			this.targetFieldDescribe = this.targetSobjectDescribe.fields.getMap().get(fieldApi).getDescribe();
+			this.targetFieldDescribe = this.targetSobjectDescribe.fields.getMap().get(fieldApi)?.getDescribe();
+			if (this.targetFieldDescribe == null) {
+				this.throwNoFieldError(fieldApi, this.targetSobjectDescribe.getName());
+			}
 			List<Schema.SObjectType> referenceToList = this.targetFieldDescribe.getReferenceTo();
 			if (referenceToList.size() > 0) {
 				this.targetSobjectDescribe = referenceToList[0].getDescribe();
