@@ -10,9 +10,37 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage,lightning__AppPage,lightning__HomePage">
-            <property name="sobjectName" type="String" label="Sobject Name"/>
-            <property name="selectFields" type="String" label="Select Fieds"/>
-            <property name="limitRecords" type="Integer" default="10" label="Page Size"/>
+            <property
+                name="sobjectName"
+                type="String"
+                label="Sobject Name"
+                description="Enter the Sobject API name, Example: 'Contact'"
+            />
+            <property
+                name="selectFields"
+                type="String"
+                label="Select Fieds"
+                description="Enter the Sobject Field API names separated by comma. Example: 'Name, Account.Name, Account.BillingAddress'"
+            />
+            <property
+                name="limitRecords"
+                type="Integer"
+                default="10"
+                label="Page Size"
+                description="Enter the number of records for one page. Example: '10'"
+            />
+            <property
+                name="sortedBy"
+                type="String"
+                label="Sort By Fields"
+                description="Enter the Sobject Field API names separated by comma to sort records. Example: 'Name, Id'"
+            />
+            <property
+                name="sortedDirection"
+                type="String"
+                label="Sort Direction"
+                description="Enter the sort direction. ( asc | desc )"
+            />
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

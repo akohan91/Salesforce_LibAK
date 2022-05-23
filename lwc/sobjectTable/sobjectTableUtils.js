@@ -45,7 +45,7 @@ const flattenForDataTable = (record, addressFieldsList = [], referenceFieldPathL
  * }
  * @returns {Object[]} - new version of columns list
  */
- const overrideDataTableColumns = (currentColumns, columnsToOverride) => {
+ const overrideDataTableColumns = (currentColumns = [], columnsToOverride = []) => {
 	columnsToOverride.forEach(item => {
 		switch (item.action) {
 			case 'ADD':
