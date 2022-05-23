@@ -1,8 +1,9 @@
 /**
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
-import { LightningElement, api } from 'lwc'
+import { LightningElement, api, track } from 'lwc'
 import { showErrorModal } from 'c/lwcUtils'
+import { DynamicSOQLOrderBy } from 'c/soql'
 import { flattenForDataTable } from './sobjectTableUtils'
 import init from '@salesforce/apex/SobjectTableCtrl.init'
 
@@ -16,11 +17,7 @@ export default class SobjectTable extends LightningElement {
 	set selectFields(value) {
 		try {
 			if (value) {
-				if (Array.isArray(value)) {
-					this._selectFields = value
-				} else {
-					this._selectFields = value.replace(/[\s]/g, '').split(',');
-				}
+				this._selectFields = Array.isArray(value) ? value : value.replace(/[\s]/g, '').split(',');
 			}
 		} catch (error) {
 			showErrorModal(error, this);
@@ -28,6 +25,8 @@ export default class SobjectTable extends LightningElement {
 	}
 	@api conditionBlock = null;
 	@api limitRecords = 10;
+	@api sortedBy;
+	@api sortedDirection;
 
 	records;
 	dataTableColumns;
@@ -36,10 +35,20 @@ export default class SobjectTable extends LightningElement {
 	isBusy = true;
 
 	get show() {
-		return {
-			content: this.records && this.dataTableColumns,
-			spinner: !this.records || !this.dataTableColumns || this.isBusy,
+		try {
+			return {
+				content: this.records && this.dataTableColumns,
+				spinner: !this.records || !this.dataTableColumns || this.isBusy,
+			}
+		} catch (error) {
+			showErrorModal(error, this);
 		}
+	}
+
+	get orderBy() {
+		return this.sortedBy &&
+			new DynamicSOQLOrderBy([this.sortedBy], this.sortedDirection !== 'asc') ||
+			null;
 	}
 
 	connectedCallback() {
@@ -61,6 +70,7 @@ export default class SobjectTable extends LightningElement {
 					sobjectName:    this.sobjectName,
 					selectFields:   this.selectFields,
 					conditionBlock: this.conditionBlock,
+					orderBy:        this.orderBy,
 					offsetRecords:  this.offsetRecords,
 					limitRecords:   this.limitRecords,
 				})
@@ -71,6 +81,13 @@ export default class SobjectTable extends LightningElement {
 			});
 			this.recordsCount = recordsCount;
 			this.dataTableColumns = dataTableColumns;
+
+			console.log('Records ');
+			console.log(this.records);
+			console.log('dataTableColumns ');
+			console.log(this.dataTableColumns);
+			console.log('referenceFieldPaths ');
+			console.log(referenceFieldPaths);
 		} catch (error) {
 			showErrorModal(error, this);
 		} finally {
@@ -83,6 +100,13 @@ export default class SobjectTable extends LightningElement {
 
 	handlePagination(event) {
 		this.offsetRecords = event.detail.offset;
+		this.initSobjectTable();
+	}
+
+	handleSort(event) {
+		const { columnKey, sortDirection } = event.detail;
+		this.sortedBy = columnKey;
+		this.sortedDirection = sortDirection;
 		this.initSobjectTable();
 	}
 }

@@ -1,9 +1,13 @@
 /**
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
-public with sharing class SobjectFieldPath implements SobjectFieldPathInterface{
+public with sharing class SobjectFieldPath implements SobjectFieldPathInterface {
 	private SObjectType sObjectType;
 	private String path;
+	private DescribeSObjectResult targetSobjectDescribe;
+	private DescribeFieldResult targetFieldDescribe;
+
+	/* CONSTRUCTORS */
 
 	public SobjectFieldPath(String sobjectApi, String path) {
 		this(Schema.getGlobalDescribe().get(sobjectApi), path);
@@ -11,36 +15,60 @@ public with sharing class SobjectFieldPath implements SobjectFieldPathInterface{
 
 	public SobjectFieldPath(SObjectType sObjectType, String path) {
 		this.sObjectType = sObjectType;
+		this.targetSobjectDescribe = sObjectType.getDescribe();
 		this.path = path;
 	}
 
-	public Schema.DescribeFieldResult targetFieldDescribe() {
-		SObjectType tempSobjectType = this.sObjectType;
-		List<String> pathItems = path.replaceAll('toLabel\\(', '').replaceAll('\\)', '').split('\\.');
+	/* PUBLIC METHODS */
 
-		SObjectField sobjectPathFieldItem;
-		while (pathItems.size() > 1) {
-			String pathItem = pathItems.remove(0);
-			if (pathItem.endsWith('__r')) {
-				pathItem = pathItem.removeEnd('__r') + '__c';
+	public String path() {
+		return this.path;
+	}
+
+	public String targetReferencePath() {
+		if (this.targetFieldDescribe == null) {
+			this.parseFieldPath();
+		}
+		if (this.targetFieldDescribe.getType() == Schema.DisplayType.ID) {
+			return this.path;
+		} else if (this.targetFieldDescribe.getType() == Schema.DisplayType.REFERENCE) {
+			if (this.path.endsWithIgnoreCase('id')) {
+				return this.path.removeEndIgnoreCase('id') + '.id';
 			} else {
-				pathItem += 'id';
+				return this.path.removeEndIgnoreCase('__c') + '__r.id';
 			}
+		} else {
+			return this.path.removeEndIgnoreCase(targetFieldDescribe.getName()) + 'id';
+		}
+	}
 
-			sobjectPathFieldItem = tempSobjectType.getDescribe().fields.getMap().get(pathItem);
-			if (sobjectPathFieldItem == null) {
-				this.throwNoFieldError(pathItem, String.valueOf(tempSobjectType));
+	public Schema.DescribeFieldResult targetFieldDescribe() {
+		if (this.targetFieldDescribe == null) {
+			this.parseFieldPath();
+		}
+		return this.targetFieldDescribe;
+	}
+
+	/* PRIVATE METHODS */
+
+	private void parseFieldPath() {
+		this.parseFieldPath(this.sObjectType, this.path.split('\\.'));
+	}
+
+	private void parseFieldPath(Schema.SObjectType currentType, List<String> path) {
+		String fieldApi = path.remove(0);
+		if (path.size() > 0) {
+			fieldApi = fieldApi.removeEnd('__r') + (fieldApi.endsWithIgnoreCase('__r') ? '__c' : 'id');
+			this.targetFieldDescribe = this.targetSobjectDescribe.fields.getMap().get(fieldApi).getDescribe();
+			this.targetSobjectDescribe = this.targetFieldDescribe.getReferenceTo().get(0).getDescribe();
+			this.parseFieldPath(this.targetSobjectDescribe.getSObjectType(), path);
+		} else {
+			this.targetFieldDescribe = this.targetSobjectDescribe.fields.getMap().get(fieldApi).getDescribe();
+			List<Schema.SObjectType> referenceToList = this.targetFieldDescribe.getReferenceTo();
+			if (referenceToList.size() > 0) {
+				this.targetSobjectDescribe = referenceToList[0].getDescribe();
 			}
-			tempSobjectType = sobjectPathFieldItem?.getDescribe().getReferenceTo().get(0);
 		}
-
-		String pathItem = pathItems.remove(0);
-		sobjectPathFieldItem = tempSobjectType.getDescribe().fields.getMap().get(pathItem);
-		if (sobjectPathFieldItem == null) {
-			this.throwNoFieldError(pathItem, String.valueOf(tempSobjectType));
-		}
-
-		return sobjectPathFieldItem.getDescribe();
 	}
 
 	private void throwNoFieldError(String fieldName, String sobjectName) {

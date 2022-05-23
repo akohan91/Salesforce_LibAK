@@ -14,7 +14,8 @@ const flattenForDataTable = (record, addressFieldsList = [], referenceFieldPathL
 	const recurse = (recordValue, fieldPath) => {
 		fieldPath = fieldPath.toLowerCase();
 		if (Object(recordValue) !== recordValue) { // Check is the record value not Object
-			result[fieldPath] = referenceFieldPathList.includes(fieldPath) ? '/' + recordValue : recordValue;
+			result[fieldPath] = recordValue;
+			referenceFieldPathList.includes(fieldPath) && (result[fieldPath + '_link'] = '/' + recordValue);
 		} else if (addressFieldsList.includes(fieldPath)) {
 			result[fieldPath] = Object.values(recordValue).join('; ');
 		} else {

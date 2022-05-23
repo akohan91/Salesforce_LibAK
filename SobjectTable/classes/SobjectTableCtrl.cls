@@ -6,12 +6,11 @@ public with sharing class SobjectTableCtrl {
 		'default' => SobjectTableServiceDefault.class
 	};
 
+	/* PUBLIC METHODS */
+
 	@AuraEnabled
 	public static Map<String, Object> init(String controllerName, String inputDataJSON){
-		SobjectTableServiceAbstract sobjectTableService =(SobjectTableServiceAbstract)JSON.deserialize(
-			inputDataJSON,
-			sobjectTableServiceImpl.get(controllerName)
-		);
+		SobjectTableServiceAbstract sobjectTableService = controllerInstance(controllerName, inputDataJSON);
 
 		return new Map<String, Object>{
 			'records'             => sobjectTableService.sobjectRecords(),
@@ -20,6 +19,12 @@ public with sharing class SobjectTableCtrl {
 			'addressFieldPaths'   => sobjectTableService.addressFieldPaths(),
 			'dataTableColumns'    => sobjectTableService.dataTableColumns()
 		};
+	}
+
+	/* PRIVATE METHODS */
+
+	private static SobjectTableServiceAbstract controllerInstance(String controllerName, String inputDataJSON) {
+		return (SobjectTableServiceAbstract)JSON.deserialize(inputDataJSON, sobjectTableServiceImpl.get(controllerName));
 	}
 
 	public class SobjectTableException extends Exception {}
