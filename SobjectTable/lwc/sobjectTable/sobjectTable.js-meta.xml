@@ -32,8 +32,8 @@
             <property
                 name="sortedBy"
                 type="String"
-                label="Sort By Fields"
-                description="Enter the Sobject Field API names separated by comma to sort records. Example: 'Name, Id'"
+                label="Sort By Field"
+                description="Enter the Sobject Field API to sort records. Example: 'Name'"
             />
             <property
                 name="sortedDirection"
