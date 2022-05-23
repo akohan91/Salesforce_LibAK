@@ -5,8 +5,11 @@ public abstract class SobjectTableServiceAbstract {
 	protected String sobjectName;
 	protected List<String> selectFields;
 	protected DynamicSOQLConditionBlock conditionBlock;
+	protected DynamicSOQLOrderBy orderBy;
 	protected Integer limitRecords;
 	protected Integer offsetRecords;
+
+	/* ABSTRACT METHODS */
 
 	abstract public List<SObject> sobjectRecords();
 	abstract public Integer recordsCount();

@@ -10,6 +10,9 @@
 				data={records}
 				columns={dataTableColumns}
 				hide-checkbox-column
+				sorted-by={sortedBy}
+				sorted-direction={sortedDirection}
+				onsort={handleSort}
 			></lightning-datatable>
 			<c-lwc-pagination
 				page-size={limitRecords}
