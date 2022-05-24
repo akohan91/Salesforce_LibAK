@@ -1,5 +1,14 @@
 /**
  * @author Andrew Kohanovskij <akohan91@gmail.com>
+ * The class is used as a service for the SobjectTableCtrl class.
+ *
+ * Properties of SobjectTableServiceAbstract class:
+ * sobjectName    { String }
+ * selectFields   { List<String> }
+ * conditionBlock { DynamicSOQLConditionBlock }
+ * orderBy        { DynamicSOQLOrderBy }
+ * limitRecords   { Integer }
+ * offsetRecord   { Integer }
  */
 public with sharing class SobjectTableServiceDefault extends SobjectTableServiceAbstract {
 	private static final Map<Schema.DisplayType, String> DISPLAY_TYPE_TO_DATATABLE_TYPE_MAP = new Map<Schema.DisplayType, String>{
@@ -34,6 +43,10 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 
 	/* PUBLIC METHODS */
 
+	/**
+	 * @description Returns the list of Sobject records
+	 * @return   { List<SObject> }
+	 */
 	public override List<SObject> sobjectRecords() {
 		if (this.targetFieldPathItemByPath == null) {
 			this.processFieldPaths();
@@ -52,6 +65,10 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 		return Database.query(soql.toString());
 	}
 
+	/**
+	 * @description Returns the number of Sobject records.
+	 * @return   { Integer }
+	 */
 	public override Integer recordsCount() {
 		return Database.countQuery(
 			new DynamicSOQL(this.sobjectName)
@@ -61,6 +78,10 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 		);
 	}
 
+	/**
+	 * @description Returns the list of field paths that have ADDRESS display type
+	 * @return   { List<String> }
+	 */
 	public override List<String> addressFieldPaths() {
 		if (this.targetFieldPathItemByPath == null) {
 			this.processFieldPaths();
@@ -68,6 +89,10 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 		return this.addressFieldPaths;
 	}
 
+	/**
+	 * @description Returns the list of field paths that have ID or REFERENCE display type
+	 * @return   { List<String> }
+	 */
 	public override List<String> referenceFieldPaths() {
 		if (this.targetFieldPathItemByPath == null) {
 			this.processFieldPaths();
@@ -75,6 +100,10 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 		return this.referenceFieldPaths;
 	}
 
+	/**
+	 * @description Returns the list of LWC dataTable columns
+	 * @return   { List<Object> }
+	 */
 	public override List<Object> dataTableColumns() {
 		if (this.targetFieldPathItemByPath == null) {
 			this.processFieldPaths();
