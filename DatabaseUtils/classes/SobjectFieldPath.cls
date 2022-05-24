@@ -4,6 +4,7 @@
  * Example: For Contact sobject: Account.Name
  */
 public with sharing class SobjectFieldPath implements SobjectFieldPathInterface {
+	public static Map<String,Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
 	@TestVisible
 	private SObjectType sObjectType;
 	private String path;
@@ -19,7 +20,6 @@ public with sharing class SobjectFieldPath implements SobjectFieldPathInterface 
 	 * @return            { SobjectFieldPath }
 	 */
 	public SobjectFieldPath(String sobjectApi, String path) {
-		Map<String,Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
 		if (globalDescribe.get(sobjectApi) == null) {
 			this.throwNoSobjectError(sobjectApi);
 		} else {

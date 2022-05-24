@@ -2,6 +2,7 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQL {
+	public static Map<String,Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
 	private final static String QUERY_TEMPLATE =
 	'SELECT {selectItems} '+
 	'FROM {SObject}' +
@@ -141,7 +142,7 @@ public with sharing class DynamicSOQL {
 	 * @return   { String }
 	 */
 	public override String toString() {
-		DescribeSObjectResult sObjectDescription = Schema.getGlobalDescribe().get(sObjectName)?.getDescribe();
+		DescribeSObjectResult sObjectDescription = globalDescribe.get(sObjectName)?.getDescribe();
 		if (sObjectDescription == null) {
 			throw new DynamicSOQLException(Label.NoSObject.replace('{sObjectName}', sObjectName));
 		}
