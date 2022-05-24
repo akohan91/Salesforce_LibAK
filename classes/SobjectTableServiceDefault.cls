@@ -3,12 +3,13 @@
  * The class is used as a service for the SobjectTableCtrl class.
  *
  * Properties of SobjectTableServiceAbstract class:
- * sobjectName    { String }
- * selectFields   { List<String> }
- * conditionBlock { DynamicSOQLConditionBlock }
- * orderBy        { DynamicSOQLOrderBy }
- * limitRecords   { Integer }
- * offsetRecord   { Integer }
+ * @property sobjectName    { String }
+ * @property selectFields   { List<String> }
+ * @property conditionBlock { DynamicSOQLConditionBlock }
+ * @property orderBy        { DynamicSOQLOrderBy }
+ * @property limitRecords   { Integer }
+ * @property offsetRecords  { Integer }
+ *
  */
 public with sharing class SobjectTableServiceDefault extends SobjectTableServiceAbstract {
 	private static final Map<Schema.DisplayType, String> DISPLAY_TYPE_TO_DATATABLE_TYPE_MAP = new Map<Schema.DisplayType, String>{
