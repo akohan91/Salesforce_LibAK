@@ -1,0 +1,5 @@
+.flex-box-wrap {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+}
