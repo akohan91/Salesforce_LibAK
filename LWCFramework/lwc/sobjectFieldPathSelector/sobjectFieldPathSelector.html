@@ -1,0 +1,40 @@
+<template>
+	<c-lwc-error-modal></c-lwc-error-modal>
+	<div class="slds-is-relative">
+		<lightning-spinner if:true={show.spinner} variant="brand"></lightning-spinner>
+
+		<div if:true={show.content} class="flex-box-wrap">
+			<span>
+				<span>{sobjectLabel}</span>
+			</span>
+			<template for:each={fieldPath} for:item="field">
+				<span key={field.id} class="flex-box-wrap">
+					<lightning-icon
+						icon-name="utility:chevronright"
+						size="xx-small"
+					></lightning-icon>
+					<lightning-button
+						variant="base"
+						label={field.label}
+						title={field.label}
+						data-id={field.id}
+						onclick={handlePathItemClick}
+					></lightning-button>
+				</span>
+			</template>
+			<span if:true={comboboxFieldOptions.length} class="flex-box-wrap">
+				<lightning-icon
+					icon-name="utility:chevronright"
+					size="xx-small"
+				></lightning-icon>
+				<lightning-combobox
+					variant="label-hidden"
+					placeholder="Select field"
+					options={comboboxFieldOptions}
+					onchange={handleSelectField}
+				></lightning-combobox>
+			</span>
+		</div>
+	</div>
+
+</template>
