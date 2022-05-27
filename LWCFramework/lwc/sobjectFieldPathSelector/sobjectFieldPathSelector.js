@@ -6,6 +6,17 @@ const SOQL_LEVELS_LIMIT = 5;
 
 export default class SobjectFieldPathSelector extends LightningElement {
 	@api sobjectName;
+	_incomingFieldPath = [];
+	@api get incomingFieldPath() { return this._incomingFieldPath; }
+	set incomingFieldPath(value) {
+		try {
+			if (value) {
+				this._incomingFieldPath = Array.isArray(value) ? value : value.replace(/[\s]/g, '').split('.');
+			}
+		} catch (error) {
+			showErrorModal(error, this);
+		}
+	}
 	@api getPath() {
 		try {
 			return this.fieldPath.reduce((result, field, index) => (
@@ -73,18 +84,11 @@ export default class SobjectFieldPathSelector extends LightningElement {
 				if (this.sobjectName === apiName) {
 					this.sobjectLabel = label
 				}
-				this.availableFields = [];
-				Object.values(fields).forEach(field => {
-					if (field.referenceToInfos.length > 1) {
-						return;
-					}
-					if (field.reference && field.relationshipName) {
-						this.availableFields.push({...field, referenceToInfos: []});
-						this.availableFields.push({...field, apiName: field.relationshipName});
-						return;
-					}
-					this.availableFields.push(field);
-				});
+				if (this.incomingFieldPath.length > 0) {
+					this.parseIncomingFieldPath(Object.values(fields));
+				} else {
+					this.setAvailableFields(Object.values(fields));
+				}
 			}
 		} catch (error) {
 			showErrorModal(error, this);
@@ -111,6 +115,45 @@ export default class SobjectFieldPathSelector extends LightningElement {
 	handlePathItemClick(event) {
 		try {
 			this.fieldPath = this.fieldPath.slice(0, parseInt(event.target.dataset.id));
+		} catch (error) {
+			showErrorModal(error, this);
+		}
+	}
+
+	setAvailableFields(fieldsMetaData) {
+		try {
+			this.availableFields = [];
+			fieldsMetaData.forEach(field => {
+				if (field.referenceToInfos.length > 1) {
+					return;
+				}
+				if (field.reference && field.relationshipName) {
+					this.availableFields.push({...field, referenceToInfos: []});
+					this.availableFields.push({...field, apiName: field.relationshipName});
+					return;
+				}
+				this.availableFields.push(field);
+			});
+		} catch (error) {
+			showErrorModal(error, this);
+		}
+	}
+
+	parseIncomingFieldPath(fieldsMetaData) {
+		try {
+			const fieldApi = this.incomingFieldPath.shift();
+			let selectedField = fieldsMetaData.find(field => (
+				!!field.relationshipName &&
+				field.relationshipName.toLowerCase() === fieldApi.toLowerCase() ||
+				field.apiName.toLowerCase() === fieldApi.toLowerCase()
+			));
+			setTimeout(() => {
+				this.fieldPath = [...this.fieldPath, {
+					...selectedField,
+					id: this.fieldPath.length,
+					referenceToInfos: this.incomingFieldPath.length === 0 ? [] : selectedField.referenceToInfos
+				}];
+			}, 0);
 		} catch (error) {
 			showErrorModal(error, this);
 		}
