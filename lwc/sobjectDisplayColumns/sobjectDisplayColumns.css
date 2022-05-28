@@ -1,0 +1,14 @@
+.display-column-box {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.display-column {
+	margin-right: auto;
+}
+
+.add-path-button-box {
+	display: flex;
+	justify-content: flex-end;
+}
