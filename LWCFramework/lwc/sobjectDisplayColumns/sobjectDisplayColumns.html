@@ -1,0 +1,38 @@
+<template>
+	<template for:each={fieldPaths} for:item="fieldPath">
+		<div key={fieldPath.id}
+			data-id={fieldPath.id}
+			class="slds-box slds-box_xx-small slds-m-bottom_xx-small display-column-box"
+			draggable="true"
+			ondragstart={handleDragFieldPath}
+			ondragover={handleDragOverFieldPath}
+			ondrop={handleDropFieldPath}
+		>
+			<lightning-icon
+				class="slds-m-right_xx-small"
+				icon-name="utility:drag_and_drop"
+				size="small"
+			></lightning-icon>
+			<c-sobject-field-path-selector
+				class="display-column"
+				sobject-name={sobjectName}
+				incoming-field-path={fieldPath.value}
+			></c-sobject-field-path-selector>
+			<lightning-button-icon
+				icon-name="utility:close"
+				variant="bare"
+				class="slds-m-right_x-small"
+				data-id={fieldPath.id}
+				onclick={handleRemovePath}
+			></lightning-button-icon>
+		</div>
+	</template>
+	<div class="slds-p-vertical_x-small add-path-button-box">
+		<lightning-button-icon
+			variant="brand"
+			icon-name="utility:add"
+			class="slds-m-left_x-small add-path-button"
+			onclick={handleAddPath}
+		></lightning-button-icon>
+	</div>
+</template>
