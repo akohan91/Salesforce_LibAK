@@ -27,9 +27,11 @@ global with sharing class RestService {
 
 	private static void handleRequest() {
 		try {
-			AbstractRestProcessor.getInstance(RestContext.request).process();
+			ResponseInterface response = AbstractRestProcessor.getInstance(RestContext.request).process();
+			response.sendResponse();
 		} catch (Exception exc) {
-			new ResponseJSON(exc).sendServerErrorResponse();
+			ResponseInterface response = new ResponseJSON(exc);
+			response.sendResponse();
 		}
 	}
 }

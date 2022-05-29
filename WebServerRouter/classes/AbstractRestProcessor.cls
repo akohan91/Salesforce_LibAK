@@ -6,11 +6,11 @@ public with sharing abstract class AbstractRestProcessor {
 	private RestRequest request;
 
 	/* ABSTRACT METHODS */
-	private abstract void handleGet();
-	private abstract void handlePost();
-	private abstract void handlePut();
-	private abstract void handlePatch();
-	private abstract void handleDelete();
+	private abstract ResponseInterface handleGet();
+	private abstract ResponseInterface handlePost();
+	private abstract ResponseInterface handlePut();
+	private abstract ResponseInterface handlePatch();
+	private abstract ResponseInterface handleDelete();
 
 	/* FACTORY METHOD */
 	public static AbstractRestProcessor getInstance(RestRequest request) {
@@ -30,24 +30,26 @@ public with sharing abstract class AbstractRestProcessor {
 	}
 
 	/* PUBLIC METHODS */
-	public void process() {
+	public ResponseInterface process() {
+		ResponseInterface response;
 		switch on(String) this.request.httpMethod {
 			when 'GET' {
-				handleGet();
+				response = handleGet();
 			}
 			when 'POST' {
-				handlePost();
+				response = handlePost();
 			}
 			when 'PUT' {
-				handlePut();
+				response = handlePut();
 			}
 			when 'PATCH' {
-				handlePatch();
+				response = handlePatch();
 			}
 			when 'DELETE' {
-				handleDelete();
+				response = handleDelete();
 			}
 		}
+		return response;
 	}
 
 	public class RestProcessorException extends Exception {}

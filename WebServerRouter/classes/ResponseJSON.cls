@@ -1,7 +1,9 @@
 /**
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
-public with sharing class ResponseJSON implements Response_interface {
+public with sharing class ResponseJSON implements ResponseInterface {
+	protected Integer httpStatusCode = 200;
+	protected Map<String, String> headers = new Map<String, String>();
 	protected String status;
 	protected String message;
 	protected Object data;
@@ -33,10 +35,32 @@ public with sharing class ResponseJSON implements Response_interface {
 	 * @param  exc { Exception }
 	 */
 	public ResponseJSON(Exception exc) {
-		this(System.Label.Status_Error, exc.getTypeName() + ' : ' + exc.getMessage(), null);
+		this(System.Label.Status_Error, exc.getMessage(), null);
+		this.setHttpStatusCode(500);
 	}
 
 	/* PUBLIC METHODS */
+
+	/**
+	 * @description Set the HTTP status code
+	 * @param  statusCode { Integer } HTTP status code
+	 * @return            { ResponseInterface }
+	 */
+	public ResponseInterface setHttpStatusCode(Integer statusCode) {
+		this.httpStatusCode = statusCode;
+		return this;
+	}
+
+	/**
+	 * @description Adds header to the response
+	 * @param  key   { String } - header key
+	 * @param  value { String } - header value
+	 * @return       { ResponseInterface }
+	 */
+	public ResponseInterface addHeader (String key, String value) {
+		this.headers.put(key, value);
+		return this;
+	}
 
 	/**
 	 * @description Sends the response with the JSON body serializes from itself
@@ -44,22 +68,20 @@ public with sharing class ResponseJSON implements Response_interface {
 	 * @param  headers    { Map<String, String> } HTTP headers
 	 * @param  body       { Blob } Response body as Blob
 	 */
-	public void sendResponse(Integer statusCode, Map<String, String> headers) {
-
-		if (headers != null && !headers.isEmpty()) {
-			for (String key : headers.keySet()) {
-				RestContext.response.addHeader(key, headers.get(key));
+	public void sendResponse() {
+		if (this.headers != null && !this.headers.isEmpty()) {
+			for (String key : this.headers.keySet()) {
+				RestContext.response.addHeader(key, this.headers.get(key));
 			}
 		}
 		RestContext.response.addHeader('Content-Type', 'application/json');
-		RestContext.response.statusCode   = statusCode;
-		RestContext.response.responseBody = BLOB.valueOf(JSON.serialize(this));
-	}
-
-	/**
-	 * @description Sends the response with the status code 500 and message from Exception instance
-	 */
-	public void sendServerErrorResponse() {
-		this.sendResponse(500, new Map<String, String>());
+		RestContext.response.statusCode   = this.httpStatusCode;
+		RestContext.response.responseBody = BLOB.valueOf(JSON.serialize(
+			new Map<String, object>{
+				'status'  => this.status,
+				'message' => this.message,
+				'data'    => this.data
+			}
+		));
 	}
 }
