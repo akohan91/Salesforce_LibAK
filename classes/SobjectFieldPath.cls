@@ -60,11 +60,8 @@ public with sharing class SobjectFieldPath implements SobjectFieldPathInterface 
 		if (this.targetFieldDescribe.getType() == Schema.DisplayType.ID) {
 			return this.path;
 		} else if (this.targetFieldDescribe.getType() == Schema.DisplayType.REFERENCE) {
-			if (this.path.endsWithIgnoreCase('id')) {
-				return this.path.removeEndIgnoreCase('id') + '.id';
-			} else {
-				return this.path.removeEndIgnoreCase('__c') + '__r.id';
-			}
+			return (this.path.removeEndIgnoreCase(this.targetFieldDescribe.getName()) +
+			this.targetFieldDescribe.getRelationshipName() + '.id').toLowerCase();
 		} else {
 			return this.path.removeEndIgnoreCase(targetFieldDescribe.getName()) + 'id';
 		}
