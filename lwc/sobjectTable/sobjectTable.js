@@ -25,6 +25,8 @@ export default class SobjectTable extends LightningElement {
 	@api sortedBy;
 	@api sortedDirection;
 	@api columnsToOverride;
+	@api hideCheckboxColumn = false;
+	@api selectedRows;
 
 	_selectFields;
 	recordsCount = 0;
@@ -86,6 +88,7 @@ export default class SobjectTable extends LightningElement {
 			this.records = records.map(record => flattenForDataTable(record, addressFieldPaths, referenceFieldPaths));
 			this.recordsCount = recordsCount;
 			this.dataTableColumns = overrideDataTableColumns(dataTableColumns, this.columnsToOverride);
+			this.dispatchEvent(new CustomEvent('recordsloaded', { detail: this.records }));
 		} catch (error) {
 			showErrorModal(error, this);
 		} finally {
@@ -118,6 +121,14 @@ export default class SobjectTable extends LightningElement {
 	handleRowAction(event) {
 		try {
 			this.dispatchEvent(new CustomEvent('rowaction', { detail: {...event.detail} }))
+		} catch (error) {
+			showErrorModal(error, this);
+		}
+	}
+
+	handleRowSelection(event) {
+		try {
+			this.dispatchEvent(new CustomEvent('rowselection', { detail: {...event.detail} }))
 		} catch (error) {
 			showErrorModal(error, this);
 		}

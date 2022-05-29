@@ -41,6 +41,11 @@
                 label="Sort Direction"
                 description="Enter the sort direction. ( asc | desc )"
             />
+            <property
+                name="hideCheckboxColumn"
+                type="Boolean"
+                label="Hide Checkbox Column"
+            />
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
