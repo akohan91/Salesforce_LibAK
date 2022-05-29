@@ -1,9 +1,18 @@
 /**
  * @author Andrew Kohanovskij <akohan91@gmail.com>
+ * The class is used to manage custom APIs.
+ *
+ * To create a new endpoint you need to create new class with name in format: APIv001ClassName
+ * and extend the AbstractRestProcessor.
+ * The endpoint will look like this: https://instance.salesforce.com/services/apexrest/v001/ClassName
+ *
+ * Example:
+ * public class APIv001DemoRestRouter extends AbstractRestProcessor
+ * https://instance.salesforce.com/services/apexrest/v001/DemoRestRouter
  */
 public with sharing abstract class AbstractRestProcessor {
 
-	private RestRequest request;
+	protected RestRequest request;
 
 	/* ABSTRACT METHODS */
 	private abstract ResponseInterface handleGet();
@@ -14,8 +23,12 @@ public with sharing abstract class AbstractRestProcessor {
 
 	/* FACTORY METHOD */
 	public static AbstractRestProcessor getInstance(RestRequest request) {
-		String processorName = request.requestURI.toLowerCase().substringAfter('/').replaceAll('/', '');
-		Type processorType   = Type.forName(processorName);
+		List<String> uri = request.requestURI.removeStartIgnoreCase('/').split('/');
+		String processorName = 'API' +
+			uri.remove(0) + // API version in format v001
+			uri.remove(0);  // The rest of className
+
+		Type processorType = Type.forName(processorName);
 		if (processorType == null) {
 			throw new RestProcessorException(System.Label.NoRestProcessor + processorName);
 		}
