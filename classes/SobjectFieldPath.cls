@@ -87,7 +87,7 @@ public with sharing class SobjectFieldPath implements SobjectFieldPathInterface 
 	private void parseFieldPath(Schema.SObjectType currentType, List<String> path) {
 		String fieldApi = path.remove(0);
 		if (path.size() > 0) {
-			fieldApi = fieldApi.removeEnd('__r') + (fieldApi.endsWithIgnoreCase('__r') ? '__c' : 'id');
+			fieldApi = fieldApi.removeEndIgnoreCase('__r') + (fieldApi.endsWithIgnoreCase('__r') ? '__c' : 'id');
 			this.targetFieldDescribe = this.targetSobjectDescribe.fields.getMap().get(fieldApi)?.getDescribe();
 			if (this.targetFieldDescribe == null) {
 				this.throwNoFieldError(fieldApi, this.targetSobjectDescribe.getName());
