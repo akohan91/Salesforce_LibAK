@@ -9,11 +9,13 @@
 				key-field="id"
 				data={records}
 				columns={dataTableColumns}
-				hide-checkbox-column
+				hide-checkbox-column={hideCheckboxColumn}
+				selected-rows={selectedRows}
 				sorted-by={sortedBy}
 				sorted-direction={sortedDirection}
 				onsort={handleSort}
 				onrowaction={handleRowAction}
+				onrowselection={handleRowSelection}
 			></lightning-datatable>
 			<c-lwc-pagination
 				page-size={limitRecords}
