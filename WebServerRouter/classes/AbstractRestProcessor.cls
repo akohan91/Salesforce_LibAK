@@ -27,7 +27,7 @@ public with sharing abstract class AbstractRestProcessor {
 		String processorName = 'API' +
 			uri.remove(0) + // API version in format v001
 			uri.remove(0);  // The rest of className
-
+		request.requestURI = '/' + String.join(uri, '/');
 		Type processorType = Type.forName(processorName);
 		if (processorType == null) {
 			throw new RestProcessorException(System.Label.NoRestProcessor + processorName);
