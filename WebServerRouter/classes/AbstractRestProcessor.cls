@@ -24,19 +24,16 @@ public with sharing abstract class AbstractRestProcessor {
 	/* FACTORY METHOD */
 	public static AbstractRestProcessor getInstance(RestRequest request) {
 		List<String> uri = request.requestURI.removeStartIgnoreCase('/').split('/');
-		String processorName = 'API' +
-			uri.remove(0) + // API version in format v001
-			uri.remove(0);  // The rest of className
-		request.requestURI = '/' + String.join(uri, '/');
+		String processorName = (!Test.isRunningTest() ?
+			'API' + uri.remove(0) : '' // version with "API" prefix like: APIv001
+		) + uri.remove(0);  // The rest of className
+
 		Type processorType = Type.forName(processorName);
 		if (processorType == null) {
 			throw new RestProcessorException(System.Label.NoRestProcessor + processorName);
 		}
-
 		AbstractRestProcessor processor = (AbstractRestProcessor) processorType.newInstance();
-		if (processor == null) {
-			throw new RestProcessorException(System.Label.NoRestProcessor + processorName);
-		}
+		request.requestURI = '/' + String.join(uri, '/');
 		processor.request = request;
 
 		return processor;

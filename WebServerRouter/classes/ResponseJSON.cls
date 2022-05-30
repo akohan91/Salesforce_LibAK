@@ -44,9 +44,9 @@ public with sharing class ResponseJSON implements ResponseInterface {
 	/**
 	 * @description Set the HTTP status code
 	 * @param  statusCode { Integer } HTTP status code
-	 * @return            { ResponseInterface }
+	 * @return            { ResponseJSON }
 	 */
-	public ResponseInterface setHttpStatusCode(Integer statusCode) {
+	public ResponseJSON setHttpStatusCode(Integer statusCode) {
 		this.httpStatusCode = statusCode;
 		return this;
 	}
@@ -55,9 +55,9 @@ public with sharing class ResponseJSON implements ResponseInterface {
 	 * @description Adds header to the response
 	 * @param  key   { String } - header key
 	 * @param  value { String } - header value
-	 * @return       { ResponseInterface }
+	 * @return       { ResponseJSON }
 	 */
-	public ResponseInterface addHeader (String key, String value) {
+	public ResponseJSON addHeader (String key, String value) {
 		this.headers.put(key, value);
 		return this;
 	}
