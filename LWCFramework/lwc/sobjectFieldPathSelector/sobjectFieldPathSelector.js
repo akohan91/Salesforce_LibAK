@@ -64,8 +64,8 @@ export default class SobjectFieldPathSelector extends LightningElement {
 		try {
 			if (this.fieldPath.length === 0) {
 				return this.sobjectName;
-			} else if (this.fieldPath.at(-1).referenceToInfos.length > 0) {
-				return this.fieldPath.at(-1).referenceToInfos[0].apiName
+			} else if (this.fieldPath[this.fieldPath.length - 1].referenceToInfos.length > 0) {
+				return this.fieldPath[this.fieldPath.length - 1].referenceToInfos[0].apiName
 			} else {
 				return;
 			}
