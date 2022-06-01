@@ -1,5 +1,5 @@
 import { LightningElement, api } from 'lwc';
-import { showErrorModal } from 'c/lwcUtils';
+import { showErrorModal, generateUniqueId } from 'c/lwcUtils';
 
 export default class SobjectDisplayColumns extends LightningElement {
 	@api sobjectName;
@@ -12,7 +12,7 @@ export default class SobjectDisplayColumns extends LightningElement {
 			this._fieldPaths = value.map((fieldPath, index) => {
 				if (typeof fieldPath === 'string') {
 					return {
-						id: Math.random().toString(16).slice(2),
+						id: generateUniqueId(),
 						value: fieldPath,
 						order: index,
 					}
@@ -49,7 +49,7 @@ export default class SobjectDisplayColumns extends LightningElement {
 
 	handleAddPath() {
 		this.fieldPaths = [...this.fieldPaths, {
-			id: Math.random().toString(16).slice(2),
+			id: generateUniqueId(),
 			value: undefined,
 			order: this.fieldPaths.length,
 		}];
