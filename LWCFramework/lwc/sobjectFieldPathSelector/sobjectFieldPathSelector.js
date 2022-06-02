@@ -137,7 +137,6 @@ export default class SobjectFieldPathSelector extends LightningElement {
 				else if (a.label > b.label) return 1;
 				else return 0;
 			});
-			console.log('availableFields', this.availableFields);
 		} catch (error) {
 			showErrorModal(error, this);
 		}
