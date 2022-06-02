@@ -20,9 +20,7 @@ export default class SobjectFieldPathSelector extends LightningElement {
 	@api getPath() {
 		try {
 			return this.fieldPath.reduce((result, field, index) => (
-				this.fieldPath.length - 1 !== index ?
-				result += field.relationshipName + '.' :
-				result += field.apiName
+				result += this.fieldPath.length - 1 !== index ? field.relationshipName + '.' : field.apiName
 			),'');
 		} catch (error) {
 			showErrorModal(error, this);
@@ -49,7 +47,7 @@ export default class SobjectFieldPathSelector extends LightningElement {
 		try {
 			if (this.currentSobjectName && this.fieldPath.length <= SOQL_LEVELS_LIMIT) {
 				return this.availableFields.map(field => ({
-					label: field.label + (field.referenceToInfos.length > 0 ? ' >' : ''),
+					label: (field.referenceToInfos.length > 0 ? '> ' : '') +  field.label,
 					value: field.apiName
 				}));
 			} else {
@@ -85,9 +83,9 @@ export default class SobjectFieldPathSelector extends LightningElement {
 					this.sobjectLabel = label
 				}
 				if (this.incomingFieldPath.length > 0) {
-					this.parseIncomingFieldPath(Object.values(fields));
+					this.parseIncomingFieldPath(Object.values(fields), apiName);
 				} else {
-					this.setAvailableFields(Object.values(fields));
+					this.setAvailableFields(Object.values(fields), apiName);
 				}
 			}
 		} catch (error) {
@@ -120,7 +118,7 @@ export default class SobjectFieldPathSelector extends LightningElement {
 		}
 	}
 
-	setAvailableFields(fieldsMetaData) {
+	setAvailableFields(fieldsMetaData, sobjectName) {
 		try {
 			this.availableFields = [];
 			fieldsMetaData.forEach(field => {
@@ -128,18 +126,24 @@ export default class SobjectFieldPathSelector extends LightningElement {
 					return;
 				}
 				if (field.reference && field.relationshipName) {
-					this.availableFields.push({...field, referenceToInfos: []});
-					this.availableFields.push({...field, apiName: field.relationshipName});
+					this.availableFields.push({...field, referenceToInfos: [], sobjectName});
+					this.availableFields.push({...field, apiName: field.relationshipName, sobjectName});
 					return;
 				}
-				this.availableFields.push(field);
+				this.availableFields.push({...field, sobjectName});
 			});
+			this.availableFields.sort((a,b) => {
+				if (a.label < b.label) return -1;
+				else if (a.label > b.label) return 1;
+				else return 0;
+			});
+			console.log('availableFields', this.availableFields);
 		} catch (error) {
 			showErrorModal(error, this);
 		}
 	}
 
-	parseIncomingFieldPath(fieldsMetaData) {
+	parseIncomingFieldPath(fieldsMetaData, sobjectName) {
 		try {
 			const fieldApi = this.incomingFieldPath.shift();
 			let selectedField = fieldsMetaData.find(field => (
@@ -151,7 +155,8 @@ export default class SobjectFieldPathSelector extends LightningElement {
 				this.fieldPath = [...this.fieldPath, {
 					...selectedField,
 					id: this.fieldPath.length,
-					referenceToInfos: this.incomingFieldPath.length === 0 ? [] : selectedField.referenceToInfos
+					referenceToInfos: this.incomingFieldPath.length === 0 ? [] : selectedField.referenceToInfos,
+					sobjectName
 				}];
 			}, 0);
 		} catch (error) {
