@@ -29,6 +29,11 @@
       "path": "WebServerRouter",
       "default": false
     }
+    ,
+    {
+      "path": "SobjectLookup",
+      "default": false
+    }
   ],
   "name": "Salesforce_Libak",
   "namespace": "",
