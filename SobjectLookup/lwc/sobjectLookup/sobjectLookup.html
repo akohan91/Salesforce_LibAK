@@ -1,0 +1,50 @@
+<template>
+	<div if:true={show.searchResults} class="backdrop" onclick={hideSearchResults}></div>
+	<c-lwc-error-modal></c-lwc-error-modal>
+	<div class="slds-combobox_container">
+		<div class={comboboxCssClass}>
+			<lightning-input
+				name="enter-search"
+				type="search"
+				label={fieldConfig.label}
+				variant={fieldConfig.variant}
+				placeholder={fieldConfig.placeholder}
+				value={searchTerm}
+				is-loading={isLoading}
+				onfocus={handleInputFocus}
+				onchange={handleInputChange}
+				onkeydown={handleKeyDown}
+			></lightning-input>
+			<div if:true={show.searchResults} class="slds-dropdown slds-dropdown_fluid">
+				<ul class="slds-listbox slds-listbox_vertical">
+					<lightning-spinner if:true={isLoading}></lightning-spinner>
+					<li class="slds-listbox__item">
+						<c-lwc-pagination
+							class="list-pagination"
+							page-size={limitRecords}
+							list-size={searchResult.recordsCount}
+							onpagination={handlePagination}
+						></c-lwc-pagination>
+					</li>
+					<template for:each={searchResult.records} for:item="item" for:index="index">
+						<li key={item.id} 
+							class="slds-listbox__item"
+							data-id={item.id}
+							onclick={handleItemClick}
+						>
+							<div class={item.listBoxCssClass}>
+								<span class="slds-media__figure">
+									<lightning-icon if:true={item.record.Id} icon-name={fieldConfig.iconName} size="small"></lightning-icon>
+									<lightning-icon if:false={item.record.Id} icon-name='utility:add' size="small"></lightning-icon>
+								</span>
+								<span class="slds-media__body">
+									{item.title}
+								</span>
+							</div>
+						</li>
+					</template>
+				</ul>
+			</div>
+		</div>
+	</div>
+</template>
