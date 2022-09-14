@@ -4,7 +4,6 @@
 	flex-wrap: nowrap;
 	justify-content: center;
 	align-items: center;
-	padding: var(--lwc-spacingSmall);
 }
 .pagination_text{
 	margin: 0 var(--lwc-spacingSmall);
