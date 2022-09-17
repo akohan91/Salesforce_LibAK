@@ -9,7 +9,9 @@ The Salesforce LibAK contains the next modules:
     - [Documentation](DynamicSOQL/DynamicSOQL.md)
 3. LWCFramework
     - [Code](LWCFramework)
-4. SobjectTable
+4. SobjectLookup
+    - [Code](SobjectLookup)
+5. SobjectTable
     - [Code](SobjectTable)
-5. WebServerRouter
+6. WebServerRouter
     - [Code](WebServerRouter)
