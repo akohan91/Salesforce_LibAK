@@ -39,7 +39,7 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 	private List<DynamicSOQLFunction> retriveFunctions;
 	private List<String> addressFieldPaths;
 	private List<String> referenceFieldPaths;
-	private List<Object> dataTableColumns;
+	private List<DataTableColumn> dataTableColumns;
 	private Map<String, SobjectFieldPathInterface> targetFieldPathItemByPath;
 
 	/* PUBLIC METHODS */
@@ -104,29 +104,31 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 			return this.dataTableColumns;
 		}
 		this.processFieldPaths();
-		this.dataTableColumns = new List<Object>();
+		this.dataTableColumns = new List<DataTableColumn>();
 		for (SobjectFieldPathInterface fieldPath : this.targetFieldPathItemByPath.values()) {
-			Map<String, Object> dataTableColumn = new Map<String, Object>{
-				'sortable' => fieldPath.targetFieldDescribe().isSortable(),
-				'columnKey' => fieldPath.path()
-			};
+			DataTableColumn dataTableColumn;
 
 			if (fieldPath.targetFieldDescribe().getType() == Schema.DisplayType.ID ||
 				fieldPath.targetFieldDescribe().getType() == Schema.DisplayType.REFERENCE ||
 				fieldPath.targetFieldDescribe().isNameField()
 			) {
-				dataTableColumn.put('fieldName', fieldPath.targetReferencePath() + '_link');
-				dataTableColumn.put('label', fieldPath.targetFieldDescribe().getLabel());
-				dataTableColumn.put('type', 'url');
-				dataTableColumn.put('typeAttributes', new Map<String, Object>{
+				dataTableColumn = new DataTableColumn(
+					fieldPath.targetReferencePath() + '_link',
+					fieldPath.targetFieldDescribe().getLabel(),
+					this.dataTableTypeFromDisplayType(Schema.DisplayType.URL)
+				).withtypeAttributes(new Map<String, Object>{
 					'label' => new Map<String, Object>{'fieldName' => fieldPath.path()},
 					'tooltip' => new Map<String, Object>{'fieldName' => fieldPath.path()}
 				});
 			} else {
-				dataTableColumn.put('fieldName', fieldPath.path());
-				dataTableColumn.put('label', fieldPath.targetFieldDescribe().getLabel());
-				dataTableColumn.put('type', this.dataTableTypeFromDisplayType(fieldPath.targetFieldDescribe().getType()));
+				dataTableColumn = new DataTableColumn(
+					fieldPath.path(),
+					fieldPath.targetFieldDescribe().getLabel(),
+					this.dataTableTypeFromDisplayType(fieldPath.targetFieldDescribe().getType())
+				);
 			}
+			dataTableColumn.withColumnKey(fieldPath.path());
+			dataTableColumn.withSortable(fieldPath.targetFieldDescribe().isSortable());
 			this.dataTableColumns.add(dataTableColumn);
 		}
 		return this.dataTableColumns;
