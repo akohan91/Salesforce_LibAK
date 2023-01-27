@@ -4,6 +4,7 @@ The Salesforce LibAK contains the next modules:
 
 1. DatabaseUtils
     - [Code](DatabaseUtils)
+    - [Documentation](DatabaseUtils/DatabaseUtils.md)
 2. DynamicSOQL
     - [Code](DynamicSOQL)
     - [Documentation](DynamicSOQL/DynamicSOQL.md)
