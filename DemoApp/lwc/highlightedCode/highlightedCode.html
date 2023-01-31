@@ -1,0 +1,18 @@
+<template>
+	<c-lwc-error-modal></c-lwc-error-modal>
+	<div class="slds-border_top slds-border_bottom slds-border_left slds-border_right">
+		<lightning-card title={title} variant="narrow">
+			<lightning-button
+				slot="actions"
+				label={copyBtnState.label}
+				icon-name={copyBtnState.icon}
+				onclick={handleCopy}
+			></lightning-button>
+			<pre class="slds-border_top pre-block">
+				<code class={languageCssClass}>
+					{code}
+				</code>
+			</pre>
+		</lightning-card>
+	</div>
+</template>
