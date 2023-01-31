@@ -34,6 +34,11 @@
       "path": "SobjectLookup",
       "default": false
     }
+    ,
+    {
+      "path": "DemoApp",
+      "default": false
+    }
   ],
   "name": "Salesforce_Libak",
   "namespace": "",
