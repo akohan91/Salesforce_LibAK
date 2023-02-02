@@ -1,4 +1,4 @@
-export class DynamicSOQLGoupBy {
+export class DynamicSOQLGroupBy {
 	// String[]
 	fieldGroupByList = [];
 	// DynamicSOQLConditionBlock
