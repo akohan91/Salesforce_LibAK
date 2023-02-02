@@ -15,6 +15,20 @@ public with sharing class DynamicSOQLCondition {
 		'INCLUDES',
 		'EXCLUDES'
 	};
+	private final static Set<Schema.DisplayType> TEXT_DISPLAY_TYPES = new Set<Schema.DisplayType> {
+		Schema.DisplayType.id,
+		Schema.DisplayType.address,
+		Schema.DisplayType.anytype,
+		Schema.DisplayType.base64,
+		Schema.DisplayType.Combobox,
+		Schema.DisplayType.Email,
+		Schema.DisplayType.MultiPicklist,
+		Schema.DisplayType.Phone,
+		Schema.DisplayType.Picklist,
+		Schema.DisplayType.String,
+		Schema.DisplayType.TextArea,
+		Schema.DisplayType.URL
+	};
 	@TestVisible
 	private DynamicSOQLFunction function;
 	@TestVisible
@@ -24,7 +38,7 @@ public with sharing class DynamicSOQLCondition {
 	@TestVisible
 	private String value;
 	@TestVisible
-	private Boolean isString;
+	private List<String> values;
 
 	// CONSTRUCTORS
 
@@ -52,7 +66,6 @@ public with sharing class DynamicSOQLCondition {
 	public DynamicSOQLCondition(String fieldName, String operator, String value) {
 		this(fieldName, operator);
 		this.value = value == null ? 'null' : value;
-		this.isString = operator.contains(':') || this.value == 'null' ? false : true;
 	}
 
 	private DynamicSOQLCondition(String fieldName, String operator) {
@@ -72,17 +85,28 @@ public with sharing class DynamicSOQLCondition {
 		}
 	}
 
-	public override String toString() {
-		this.validateCondition();
-		String leftPart = this.fieldName != null ? this.fieldName : this.function.toString();
-		return '{fieldName} {operator} {value}'
-			.replace('{fieldName}', String.escapeSingleQuotes(leftPart))
-			.replace('{operator}', String.escapeSingleQuotes(this.operator))
-			.replace(
-				'{value}', this.isString == true ?
-				this.addQuotes(String.escapeSingleQuotes(this.value)) :
-				String.escapeSingleQuotes(this.value)
-			);
+	public String stringify(String sobjectApiName) {
+		String resultTemplate = '{fieldName} {operator} {value}';
+		DescribeFieldResult fieldDescribe = new SobjectFieldPath(sobjectApiName, this.fieldApiName()).targetFieldDescribe();
+		this.validateOperator();
+		if (this.function != null) {
+			return resultTemplate
+				.replace('{fieldName}', this.function.stringify())
+				.replace('{operator}', String.escapeSingleQuotes(this.operator))
+				.replace('{value}', String.escapeSingleQuotes(this.value));
+		} else if (this.value == null && this.values != null) {
+			return resultTemplate
+				.replace('{fieldName}', String.escapeSingleQuotes(this.fieldName))
+				.replace('{operator}', String.escapeSingleQuotes(this.operator))
+				.replace('{value}', this.stringifyValues(fieldDescribe));
+		} else {
+			return resultTemplate
+				.replace('{fieldName}', String.escapeSingleQuotes(this.fieldName))
+				.replace('{operator}', String.escapeSingleQuotes(this.operator))
+				.replace('{value}', TEXT_DISPLAY_TYPES.contains(fieldDescribe.getType()) && !operator.contains(':') && this.value != 'null' ?
+					this.addQuotes(String.escapeSingleQuotes(this.value)) :
+					String.escapeSingleQuotes(this.value));
+		}
 	}
 
 	// PRIVATE METHOD
@@ -99,7 +123,7 @@ public with sharing class DynamicSOQLCondition {
 		return '\'' + value + '\'';
 	}
 
-	private void validateCondition() {
+	private void validateOperator() {
 		if (!AVAILABLE_OPERATORS.contains(this.operator.replace(':', ''))) {
 			throw new DynamicSOQLConditionException(
 				Label.WrongComparisonOperator
@@ -107,6 +131,25 @@ public with sharing class DynamicSOQLCondition {
 				.replace('{availableOperators}', AVAILABLE_OPERATORS.toString())
 			);
 		}
+	}
+
+	private String stringifyValues(DescribeFieldResult fieldDescribe) {
+		String resultTemplate = '({value})';
+		if (this.operator.replace(':', '') == 'INCLUDES') {
+			return resultTemplate.replace(
+				'{value}',
+				String.escapeSingleQuotes(String.join(this.values, ';'))
+			);
+		}
+		List<String> quotedValues = new List<String>();
+		for (String valueItem : this.values) {
+			quotedValues.add(
+				TEXT_DISPLAY_TYPES.contains(fieldDescribe.getType()) ?
+					this.addQuotes(String.escapeSingleQuotes(valueItem)) :
+					String.escapeSingleQuotes(valueItem)
+			);
+		}
+		return resultTemplate.replace('{value}', String.join(quotedValues, ','));
 	}
 
 	public class DynamicSOQLConditionException extends Exception{ }

@@ -61,7 +61,7 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 		soql.withOrderBy(this.orderBy);
 		soql.withLimit(this.limitRecords);
 		soql.withOffset(this.offsetRecords);
-		return Database.query(soql.toString());
+		return Database.query(soql.stringify());
 	}
 
 	/**
@@ -73,7 +73,7 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 			new DynamicSOQL(this.sobjectName)
 			.withFunction(new DynamicSOQLFunction('COUNT'))
 			.withConditions(this.conditionBlock)
-			.toString()
+			.stringify()
 		);
 	}
 
