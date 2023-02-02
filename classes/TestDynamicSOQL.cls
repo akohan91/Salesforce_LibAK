@@ -44,7 +44,7 @@ private class TestDynamicSOQL {
 			'The number of added subqueries is wrong.'
 		);
 		System.assertEquals(
-			'SELECT Name,(SELECT Id FROM Contacts) FROM Account', soql.toString(),
+			'SELECT Name,(SELECT Id FROM Contacts) FROM Account', soql.stringify(),
 			'The value of added subquery is wrong.'
 		);
 		Test.stopTest();
@@ -66,7 +66,7 @@ private class TestDynamicSOQL {
 				'Products',
 				new DynamicSOQL('Product2')
 				.withField('Id')
-			).toString();
+			).stringify();
 		} catch (Exception exc) {
 			excCount++;
 			System.assertEquals(
@@ -94,7 +94,7 @@ private class TestDynamicSOQL {
 			.addCondition( new DynamicSOQLCondition('Name', '=', 'Test'))
 		);
 		System.assertEquals(
-			'SELECT Id FROM Account WHERE (Name = \'Test\')', soql.toString(),
+			'SELECT Id FROM Account WHERE (Name = \'Test\')', soql.stringify(),
 			'The toString() method returns wrong value.'
 		);
 		Test.stopTest();
@@ -148,7 +148,7 @@ private class TestDynamicSOQL {
 		.withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Name'}));
 
 		System.assertEquals(
-			'SELECT Name FROM Account ORDER BY Name ASC NULLS LAST', soql.toString().trim(),
+			'SELECT Name FROM Account ORDER BY Name ASC NULLS LAST', soql.stringify().trim(),
 			'The SOQL String is wrong.'
 		);
 		Test.stopTest();
@@ -161,15 +161,15 @@ private class TestDynamicSOQL {
 		.withField('Name')
 		.withFunction(new DynamicSOQLFunction('COUNT', 'Id'))
 		.withGroupBy(
-			new DynamicSOQLGoupBy(new List<String>{'Name'})
+			new DynamicSOQLGroupBy(new List<String>{'Name'})
 			.withHaving(
 				new DynamicSOQLConditionBlock('AND')
-				.addCondition(new DynamicSOQLCondition('COUNT(Id)', '=', 1))
+				.addCondition(new DynamicSOQLCondition(new DynamicSOQLFunction('COUNT', 'Id'), '=', 1))
 			)
 		);
 
 		System.assertEquals(
-			'SELECT Name,COUNT(Id) FROM Account GROUP BY Name HAVING (COUNT(Id) = 1)', soql.toString().trim(),
+			'SELECT Name,COUNT(Id) FROM Account GROUP BY Name HAVING (COUNT(Id) = 1)', soql.stringify().trim(),
 			'The SOQL String is wrong.'
 		);
 		Test.stopTest();
@@ -182,7 +182,7 @@ private class TestDynamicSOQL {
 		.withField('Id')
 		.withOffset(0)
 		.withLimit(10)
-		.toString();
+		.stringify();
 		System.assertEquals(
 			'SELECT Id FROM Account LIMIT 10 OFFSET 0', soql,
 			'The SOQL String is wrong.'
@@ -196,7 +196,7 @@ private class TestDynamicSOQL {
 		String soql = new DynamicSOQL('Account')
 		.withField('Id')
 		.withSubQuery('Contacts', new DynamicSOQL('Contact').withField('Id'))
-		.toString();
+		.stringify();
 		System.assertEquals(
 			'SELECT Id,(SELECT Id FROM Contacts) FROM Account', soql,
 			'The SOQL String is wrong.'
@@ -209,7 +209,7 @@ private class TestDynamicSOQL {
 		Test.startTest();
 		Integer excCount = 0;
 		try {
-			new DynamicSOQL('FakeSobject').toString();
+			new DynamicSOQL('FakeSobject').stringify();
 		} catch (Exception exc) {
 			excCount++;
 			System.assertEquals(

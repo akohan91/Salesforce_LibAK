@@ -38,7 +38,7 @@ public with sharing class DynamicSOQLOrderBy {
 	 * @description Returns ORDER BY statement like: "ORDER BY Name ASC NULLS LAST"
 	 * @return   { String }
 	 */
-	public override String toString() {
+	public String stringify() {
 		return ORDER_BY_TEMPLATE
 			.replace('{fieldOrderByList}', String.join(this.orderByFields, ','))
 			.replace('{direction}',        this.isDESC == true ? 'DESC' : 'ASC')
