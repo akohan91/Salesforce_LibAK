@@ -21,7 +21,7 @@ public with sharing class DynamicSOQL {
 	@TestVisible
 	private Map<String, DynamicSOQL> subQueries = new Map<String, DynamicSOQL>();
 	private DynamicSOQLConditionBlock conditionBlock;
-	DynamicSOQLGoupBy groupBy;
+	DynamicSOQLGroupBy groupBy;
 	DynamicSOQLOrderBy orderBy;
 	private Integer offsetNumber;
 	private Integer limitNumber;
@@ -84,7 +84,7 @@ public with sharing class DynamicSOQL {
 	 * @param  groupBy { DynamicSOQLGoupBy }
 	 * @return         { DynamicSOQL }
 	 */
-	public DynamicSOQL withGroupBy(DynamicSOQLGoupBy groupBy) {
+	public DynamicSOQL withGroupBy(DynamicSOQLGroupBy groupBy) {
 		this.groupBy = groupBy;
 		return this;
 	}
@@ -141,7 +141,7 @@ public with sharing class DynamicSOQL {
 	 * @description Builds a SOQL string
 	 * @return   { String }
 	 */
-	public override String toString() {
+	public String stringify() {
 		DescribeSObjectResult sObjectDescription = globalDescribe.get(sObjectName)?.getDescribe();
 		if (sObjectDescription == null) {
 			throw new DynamicSOQLException(Label.NoSObject.replace('{sObjectName}', sObjectName));
@@ -156,9 +156,9 @@ public with sharing class DynamicSOQL {
 		return QUERY_TEMPLATE
 			.replace('{selectItems}', String.join(selectItems, ','))
 			.replace('{SObject}',     this.sObjectName)
-			.replace('{WHERE}',       this.conditionBlock != null ? ' WHERE '  + this.conditionBlock.toString() : '')
-			.replace('{GROUP BY}',    this.groupBy        != null ? ' ' + this.groupBy.toString() : '')
-			.replace('{ORDER BY}',    this.orderBy        != null ? ' ' + this.orderBy.toString() : '')
+			.replace('{WHERE}',       this.conditionBlock != null ? ' WHERE '  + this.conditionBlock.stringify(this.sObjectName) : '')
+			.replace('{GROUP BY}',    this.groupBy        != null ? ' ' + this.groupBy.stringify(this.sObjectName) : '')
+			.replace('{ORDER BY}',    this.orderBy        != null ? ' ' + this.orderBy.stringify() : '')
 			.replace('{LIMIT}',       this.limitNumber    != null ? ' LIMIT '  + this.limitNumber : '' )
 			.replace('{OFFSET}',      this.offsetNumber   != null ? ' OFFSET ' + this.offsetNumber : '' );
 	}
@@ -171,7 +171,7 @@ public with sharing class DynamicSOQL {
 		}
 		List<String> result = new List<String>();
 		for (DynamicSOQLFunction function : this.selectFunctions) {
-			result.add(function.toString());
+			result.add(function.stringify());
 		}
 		return result;
 	}
@@ -197,7 +197,7 @@ public with sharing class DynamicSOQL {
 						.replace('{sObjectName}', this.sObjectName)
 				);
 			}
-			result.add('(' + subQuery.toString().replace(
+			result.add('(' + subQuery.stringify().replace(
 				'FROM ' + subQuery.sObjectName,
 				'FROM ' + childRelationName
 			) + ')');

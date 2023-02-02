@@ -84,7 +84,7 @@ public with sharing class TestDynamicSOQLConditionBlock {
 			new DynamicSOQLConditionBlock('OR')
 			.addCondition(new DynamicSOQLCondition('Name', '=', 'Test1'))
 			.addCondition(new DynamicSOQLCondition('Name', '=', 'Test2'))
-		).toString();
+		).stringify('Account');
 		System.assertEquals(
 			'((Name = \'Test1\' OR Name = \'Test2\'))', conditionString,
 			'The operator property is wrong.'
@@ -100,7 +100,7 @@ public with sharing class TestDynamicSOQLConditionBlock {
 			new DynamicSOQLConditionBlock('AND')
 			.addCondition(new DynamicSOQLCondition('Name', '=', 'Test'))
 			.switchOperator('wrong')
-			.toString();
+			.stringify('Account');
 		} catch (Exception exc) {
 			errorCount++;
 		}
