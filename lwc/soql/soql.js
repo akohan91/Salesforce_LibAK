@@ -7,7 +7,7 @@ import { DynamicSOQLOrderBy } from "./DynamicSOQLOrderBy";
 import { DynamicSOQLConditionBlock } from "./DynamicSOQLConditionBlock";
 import { DynamicSOQLCondition } from "./DynamicSOQLCondition";
 import { DynamicSOQLFunction } from "./DynamicSOQLFunction";
-import { DynamicSOQLGoupBy } from "./DynamicSOQLGoupBy";
+import { DynamicSOQLGroupBy } from "./DynamicSOQLGroupBy";
 
 export {
     DynamicSOQL,
@@ -15,5 +15,5 @@ export {
     DynamicSOQLCondition,
     DynamicSOQLFunction,
     DynamicSOQLOrderBy,
-    DynamicSOQLGoupBy,
+    DynamicSOQLGroupBy,
 }
