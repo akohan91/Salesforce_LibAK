@@ -71,19 +71,19 @@ public with sharing class DynamicSOQLConditionBlock {
 	 * @description Builds a Dynamic SOQL Condition Block string for WHERE statement
 	 * @return   { String }
 	 */
-	public override String toString() {
+	public String stringify(String sobjectApiName) {
 		this.validateBlock();
 		List<String> result = new List<String>();
 
 		if (this.blocks != null && !this.blocks.isEmpty()) {
 			for (DynamicSOQLConditionBlock block : this.blocks) {
-				result.add(block.toString());
+				result.add(block.stringify(sobjectApiName));
 			}
 		}
 
 		if (this.conditions != null && !this.conditions.isEmpty()) {
 			for (DynamicSOQLCondition condition : this.conditions) {
-				result.add(condition.toString());
+				result.add(condition.stringify(sobjectApiName));
 			}
 		}
 		return '(' + String.join(result, ' ' + this.operator + ' ') + ')';

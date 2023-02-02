@@ -19,10 +19,6 @@ public with sharing class TestDynamicSOQLCondition {
 			'false', condition.value,
 			'The value property is wrong.'
 		);
-		System.assertEquals(
-			null, condition.isString,
-			'The isString property is wrong.'
-		);
 		Test.stopTest();
 	}
 
@@ -41,10 +37,6 @@ public with sharing class TestDynamicSOQLCondition {
 		System.assertEquals(
 			'10', condition.value,
 			'The value property is wrong.'
-		);
-		System.assertEquals(
-			null, condition.isString,
-			'The isString property is wrong.'
 		);
 		Test.stopTest();
 	}
@@ -65,10 +57,6 @@ public with sharing class TestDynamicSOQLCondition {
 			Datetime.newInstance(2022, 01, 01, 01, 01, 01).formatGmt('yyyy-MM-dd\'T\'HH:mm:ss\'Z\''), condition.value,
 			'The value property is wrong.'
 		);
-		System.assertEquals(
-			null, condition.isString,
-			'The isString property is wrong.'
-		);
 		Test.stopTest();
 	}
 
@@ -88,10 +76,6 @@ public with sharing class TestDynamicSOQLCondition {
 			((Datetime)Date.newInstance(2022, 01, 01)).formatGmt('yyyy-MM-dd'), condition.value,
 			'The value property is wrong.'
 		);
-		System.assertEquals(
-			null, condition.isString,
-			'The isString property is wrong.'
-		);
 		Test.stopTest();
 	}
 
@@ -110,10 +94,6 @@ public with sharing class TestDynamicSOQLCondition {
 		System.assertEquals(
 			'It\'s a string', condition.value,
 			'The value property is wrong.'
-		);
-		System.assertEquals(
-			true, condition.isString,
-			'The isString property is wrong.'
 		);
 		Test.stopTest();
 	}
@@ -135,12 +115,8 @@ public with sharing class TestDynamicSOQLCondition {
 			'The value property is wrong.'
 		);
 		System.assertEquals(
-			false, condition.isString,
-			'The isString property is wrong.'
-		);
-		System.assertEquals(
-			'Name =: variableName', condition.toString(),
-			'The "toString()" method returns wrong value.'
+			'Name =: variableName', condition.stringify('Account'),
+			'The "stringify" method returns wrong value.'
 		);
 		Test.stopTest();
 	}
@@ -150,8 +126,8 @@ public with sharing class TestDynamicSOQLCondition {
 		Test.startTest();
 		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', (String)null);
 		System.assertEquals(
-			'Name = null', condition.toString(),
-			'The "toString()" method returns wrong value.'
+			'Name = null', condition.stringify('Account'),
+			'The "stringify" method returns wrong value.'
 		);
 		Test.stopTest();
 	}
@@ -179,7 +155,7 @@ public with sharing class TestDynamicSOQLCondition {
 	@IsTest
 	static void testfieldApiNameError(){
 		Test.startTest();
-		DynamicSOQLCondition condition = (DynamicSOQLCondition)JSON.deserialize('{"function": null, "fieldName": null, "operator": "=", "value": "test", "isString": false }', DynamicSOQLCondition.class);
+		DynamicSOQLCondition condition = (DynamicSOQLCondition)JSON.deserialize('{"function": null, "fieldName": null, "operator": "=", "value": "test" }', DynamicSOQLCondition.class);
 		Integer errorCount = 0;
 		try {
 			condition.fieldApiname();
@@ -196,10 +172,10 @@ public with sharing class TestDynamicSOQLCondition {
 	@IsTest
 	static void testToString(){
 		Test.startTest();
-		String conditionStr = new DynamicSOQLCondition('Name', '=', 'It\'s a string').toString();
+		String conditionStr = new DynamicSOQLCondition('Name', '=', 'It\'s a string').stringify('Account');
 		System.assertEquals(
 			'Name = \'It\\\'s a string\'', conditionStr,
-			'The "toString()" method returns wrong value.'
+			'The "stringify" method returns wrong value.'
 		);
 		Test.stopTest();
 	}
@@ -209,7 +185,7 @@ public with sharing class TestDynamicSOQLCondition {
 		Test.startTest();
 		Integer errorCount = 0;
 		try {
-			new DynamicSOQLCondition('Name', 'wrong', 'It\'s a string').toString();
+			new DynamicSOQLCondition('Name', 'wrong', 'It\'s a string').stringify('Account');
 		} catch (Exception exc) {
 			errorCount++;
 		}

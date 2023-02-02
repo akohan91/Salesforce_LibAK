@@ -19,7 +19,7 @@ public with sharing class DynamicSOQLFunction {
 	}
 
 	public DynamicSOQLFunction(String functionName, String fieldName, String alias) {
-		this.functionName = functionName;
+		this.functionName = functionName.substringBefore('(').trim();
 		this.fieldName = fieldName;
 		this.alias = alias;
 	}
@@ -38,11 +38,11 @@ public with sharing class DynamicSOQLFunction {
 	 * @description Builds a SOQL function string like "COUNT(Id) recordsCount"
 	 * @return   { String }
 	 */
-	public override String toString() {
+	public String stringify() {
 		return FUNCTION_TEMPLATE
-		.replace('{functionName}', String.escapeSingleQuotes(this.functionName))
-		.replace('{fieldName}', this.fieldName != null ? String.escapeSingleQuotes(this.fieldName) : '')
-		.replace('{alias}',     this.alias != null     ? String.escapeSingleQuotes(this.alias) : '')
-		.trim();
+			.replace('{functionName}', String.escapeSingleQuotes(this.functionName))
+			.replace('{fieldName}', this.fieldName != null ? String.escapeSingleQuotes(this.fieldName) : '')
+			.replace('{alias}',     this.alias != null     ? String.escapeSingleQuotes(this.alias) : '')
+			.trim();
 	}
 }
