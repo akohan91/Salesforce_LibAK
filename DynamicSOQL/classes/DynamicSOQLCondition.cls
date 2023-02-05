@@ -75,6 +75,10 @@ public with sharing class DynamicSOQLCondition {
 
 	// PUBLIC METHOD
 
+	/**
+	 * @description Returns the field api name that is used in the condition.
+	 * @return   { String }
+	 */
 	public String fieldApiName() {
 		if (this.fieldName != null) {
 			return this.fieldName;
@@ -85,6 +89,11 @@ public with sharing class DynamicSOQLCondition {
 		}
 	}
 
+	/**
+	 * @description Build the SOQL condition as a string in format <fieldApiName> <operator> <value>.
+	 * @param  sobjectApiName { String } Sobject api name for what the condition is created.
+	 * @return   { String }
+	 */
 	public String stringify(String sobjectApiName) {
 		String resultTemplate = '{fieldName} {operator} {value}';
 		DescribeFieldResult fieldDescribe = new SobjectFieldPath(sobjectApiName, this.fieldApiName()).targetFieldDescribe();
