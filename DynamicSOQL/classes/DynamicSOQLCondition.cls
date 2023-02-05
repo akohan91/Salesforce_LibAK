@@ -112,9 +112,7 @@ public with sharing class DynamicSOQLCondition {
 			return resultTemplate
 				.replace('{fieldName}', String.escapeSingleQuotes(this.fieldName))
 				.replace('{operator}', String.escapeSingleQuotes(this.operator))
-				.replace('{value}', TEXT_DISPLAY_TYPES.contains(fieldDescribe.getType()) && !operator.contains(':') && this.value != 'null' ?
-					this.addQuotes(String.escapeSingleQuotes(this.value)) :
-					String.escapeSingleQuotes(this.value));
+				.replace('{value}', this.processValue(this.value, fieldDescribe));
 		}
 	}
 
@@ -126,6 +124,16 @@ public with sharing class DynamicSOQLCondition {
 
 	private String fmtDate(Datetime dt) {
 		return dt.formatGmt('yyyy-MM-dd');
+	}
+
+	private String processValue(String value, DescribeFieldResult fieldDescribe) {
+		if (TEXT_DISPLAY_TYPES.contains(fieldDescribe.getType()) && !operator.contains(':') && this.value != 'null') {
+			return this.addQuotes(String.escapeSingleQuotes(this.value));
+		} else if (fieldDescribe.getType() == Schema.DisplayType.Date) {
+			return String.escapeSingleQuotes(this.value).substringBefore('T');
+		} else {
+			return String.escapeSingleQuotes(this.value);
+		}
 	}
 
 	private String addQuotes(String value) {
@@ -152,11 +160,7 @@ public with sharing class DynamicSOQLCondition {
 		}
 		List<String> quotedValues = new List<String>();
 		for (String valueItem : this.values) {
-			quotedValues.add(
-				TEXT_DISPLAY_TYPES.contains(fieldDescribe.getType()) ?
-					this.addQuotes(String.escapeSingleQuotes(valueItem)) :
-					String.escapeSingleQuotes(valueItem)
-			);
+			quotedValues.add(this.processValue(valueItem, fieldDescribe));
 		}
 		return resultTemplate.replace('{value}', String.join(quotedValues, ','));
 	}
