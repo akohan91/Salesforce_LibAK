@@ -52,11 +52,6 @@ private class TestDynamicSOQL {
 
 	@IsTest
 	static void testWithSubQueryNoChildSObject(){
-		/**
-			TODO:
-			Potentially should be rewrited with more flexible way
-			to prevent hardcoded child sObject api name
-		 */
 		Test.startTest();
 		Integer excCount = 0;
 		try {
