@@ -32,6 +32,7 @@ public with sharing class DynamicSOQLGroupBy {
 
 	/**
 	 * @description Builds a GROUP BY part of SOQL string
+	 * @param  sobjectApiName { String } Sobject api name for what the group by is created.
 	 * @return   { String }
 	 */
 	public String stringify(String sobjectApiName) {

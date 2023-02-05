@@ -40,11 +40,8 @@ export class DynamicSOQLCondition {
 	}
 
 	_setFieldNameOrFunction(fieldName) {
-		console.log('fieldName',fieldName);
-		console.log("typeof fieldName === 'object'",typeof fieldName === 'object');
 		if (typeof fieldName === 'object' && fieldName !== null) {
 			this.function = fieldName;
-			return;
 		} else {
 			this.fieldName = fieldName;
 		}
@@ -53,13 +50,10 @@ export class DynamicSOQLCondition {
 	_setValue(value) {
 		if (value === null) {
 			this.value = 'null';
-			return;
 		} else if (Array.isArray(value)) {
 			this.values = value;
-			return;
 		} else {
 			this.value = value;
-			return;
 		}
 	}
 }
