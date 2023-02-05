@@ -69,6 +69,7 @@ public with sharing class DynamicSOQLConditionBlock {
 
 	/**
 	 * @description Builds a Dynamic SOQL Condition Block string for WHERE statement
+	 * @param sobjectApiName { String } Sobject api name for what the condition block is created.
 	 * @return   { String }
 	 */
 	public String stringify(String sobjectApiName) {
