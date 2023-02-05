@@ -140,6 +140,7 @@ System.debug(
     .withField('Id')
     .withField('Name')
     .withField('OwnerId')
+    .stringify()
 ); // SELECT Id,Name,OwnerId FROM Account
 ```
 
@@ -150,6 +151,7 @@ Adds a function to SELECT statement like "COUNT(Id) recordsCount"
 System.debug(
     new DynamicSOQL('Account')
     .withFunction(new DynamicSOQLFunction('COUNT', ''))
+    .stringify()
 ); // SELECT COUNT() FROM Account
 ```
 
@@ -165,7 +167,7 @@ System.debug(
         'Contacts',
         new DynamicSOQL('Contact')
         .withField('Id')
-    )
+    ).stringify()
 ); // SELECT Name,(SELECT Id FROM Contacts) FROM Account
 ```
 
@@ -181,7 +183,7 @@ System.debug(
         new DynamicSOQLConditionBlock('AND')
         .addCondition(new DynamicSOQLCondition('Name', '=', 'Test'))
         .addCondition(new DynamicSOQLCondition('CreatedDate', '>', Date.newInstance(2022, 01, 01)))
-    )
+    ).stringify()
 ); // SELECT Id FROM Account WHERE (Name = 'Test' AND CreatedDate > 2022-01-01)
 ```
 
@@ -202,7 +204,7 @@ System.debug(
                 new DynamicSOQLFunction('SUM','Amount'), '>', 190)
             )
         )
-    )
+    ).stringify()
 ); // SELECT StageName,SUM(Amount) amount FROM Opportunity GROUP BY StageName HAVING (SUM(Amount) > 190)
 ```
 
@@ -215,6 +217,7 @@ System.debug(
     new DynamicSOQL('Account')
     .withField('Name')
     .withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Name'}))
+    .stringify()
 ); // SELECT Name FROM Account ORDER BY Name ASC NULLS LAST
 ```
 
@@ -228,6 +231,7 @@ System.debug(
     .withField('Id')
     .withOffset(0)
     .withLimit(10)
+    .stringify()
 ); // SELECT Id FROM Account LIMIT 10 OFFSET 0
 ```
 
@@ -241,6 +245,7 @@ System.debug(
     .withField('Id')
     .withOffset(0)
     .withLimit(10)
+    .stringify()
 ); // SELECT Id FROM Account LIMIT 10 OFFSET 0
 ```
 
@@ -357,13 +362,15 @@ Adds a condition to the current block
 
 ```java
 DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('OR')
-.addCondition(new DynamicSOQLCondition('Name', '=', 'Test_1'));
+.addCondition(
+    new DynamicSOQLCondition('Name', '=', 'Test_1')
+);
 
-System.debug(conditionBlock); // (Name = 'Test_1')
+System.debug(conditionBlock.stringify('Account')); // (Name = 'Test_1')
 
 conditionBlock
 .addCondition(new DynamicSOQLCondition('Name', '=', 'Test_2'));
-System.debug(conditionBlock); // (Name = 'Test_1' OR Name = 'Test_2')
+System.debug(conditionBlock.stringify('Account')); // (Name = 'Test_1' OR Name = 'Test_2')
 ```
 
 - **addConditionBlock** <br>
@@ -380,7 +387,7 @@ DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
     .addCondition(new DynamicSOQLCondition('Phone', '=', '123456'))
 );
 
-System.debug(conditionBlock); // ((Phone = '12345' OR Phone = '123456') AND Name = 'Test1')
+System.debug(conditionBlock.stringify('Account')); // ((Phone = '12345' OR Phone = '123456') AND Name = 'Test1')
 ```
 
 - **switchOperator** <br>
@@ -392,9 +399,9 @@ DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
 .addCondition(new DynamicSOQLCondition('Phone', '=', '12345'))
 .addCondition(new DynamicSOQLCondition('Phone', '=', '123456'));
 
-System.debug(conditionBlock); // (Phone = '12345' AND Phone = '123456')
+System.debug(conditionBlock.stringify('Account')); // (Phone = '12345' AND Phone = '123456')
 conditionBlock.switchOperator('OR');
-System.debug(conditionBlock); // (Phone = '12345' OR Phone = '123456')
+System.debug(conditionBlock.stringify('Account')); // (Phone = '12345' OR Phone = '123456')
 ```
 
 - **fieldsApiNames** <br>
@@ -470,7 +477,7 @@ The following are methods for DynamicSOQL. All are instance methods.
 `fieldApiName(): String` <br>
 Returns the field api name that is used in a condition.
 
-- **string** <br>
+- **stringify** <br>
 `stringify(String sobjectApiName): String` <br>
 Builds a SOQL condition string like `Name = 'Andrew'`
 
