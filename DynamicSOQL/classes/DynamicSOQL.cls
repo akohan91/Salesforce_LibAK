@@ -2,16 +2,6 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQL {
-	public static Map<String,Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
-	private final static String QUERY_TEMPLATE =
-	'SELECT {selectItems} '+
-	'FROM {SObject}' +
-	'{WHERE}' +
-	'{GROUP BY}' +
-	'{ORDER BY}' +
-	'{LIMIT}' +
-	'{OFFSET}';
-
 	@TestVisible
 	private String sObjectName;
 	@TestVisible
@@ -21,8 +11,8 @@ public with sharing class DynamicSOQL {
 	@TestVisible
 	private Map<String, DynamicSOQL> subQueries = new Map<String, DynamicSOQL>();
 	private DynamicSOQLConditionBlock conditionBlock;
-	DynamicSOQLGroupBy groupBy;
-	DynamicSOQLOrderBy orderBy;
+	private DynamicSOQLGroupBy groupBy;
+	private DynamicSOQLOrderBy orderBy;
 	private Integer offsetNumber;
 	private Integer limitNumber;
 
@@ -142,7 +132,7 @@ public with sharing class DynamicSOQL {
 	 * @return   { String }
 	 */
 	public String stringify() {
-		DescribeSObjectResult sObjectDescription = globalDescribe.get(sObjectName)?.getDescribe();
+		DescribeSObjectResult sObjectDescription = DynamicSOQLConstants.GLOBAL_DESCRIBE.get(sObjectName)?.getDescribe();
 		if (sObjectDescription == null) {
 			throw new DynamicSOQLException(Label.NoSObject.replace('{sObjectName}', sObjectName));
 		}
@@ -153,14 +143,31 @@ public with sharing class DynamicSOQL {
 		selectItems.addAll(buildFunctions());
 		selectItems.addAll(buidSubqueries(sObjectDescription));
 
-		return QUERY_TEMPLATE
-			.replace('{selectItems}', String.join(selectItems, ','))
-			.replace('{SObject}',     this.sObjectName)
-			.replace('{WHERE}',       this.conditionBlock != null ? ' WHERE '  + this.conditionBlock.stringify(this.sObjectName) : '')
-			.replace('{GROUP BY}',    this.groupBy        != null ? ' ' + this.groupBy.stringify(this.sObjectName) : '')
-			.replace('{ORDER BY}',    this.orderBy        != null ? ' ' + this.orderBy.stringify() : '')
-			.replace('{LIMIT}',       this.limitNumber    != null ? ' LIMIT '  + this.limitNumber : '' )
-			.replace('{OFFSET}',      this.offsetNumber   != null ? ' OFFSET ' + this.offsetNumber : '' );
+		return DynamicSOQLConstants.TMPL_QUERY
+			.replace(
+				DynamicSOQLConstants.PH_SELECT_ITEMS,
+				String.join(selectItems, DynamicSOQLConstants.COMMA)
+			).replace(
+				DynamicSOQLConstants.PH_SOBJECT,
+				this.sObjectName
+			).replace(
+				DynamicSOQLConstants.PH_WHERE,
+				this.conditionBlock != null ? 'WHERE ' + this.conditionBlock.stringify(this.sObjectName) : DynamicSOQLConstants.EMPTY_STRING
+			).replace(
+				DynamicSOQLConstants.PH_GROUP_BY,
+				this.groupBy != null ? + this.groupBy.stringify(this.sObjectName) : DynamicSOQLConstants.EMPTY_STRING
+			).replace(
+				DynamicSOQLConstants.PH_ORDER_BY,
+				this.orderBy != null ? + this.orderBy.stringify() : DynamicSOQLConstants.EMPTY_STRING
+			).replace(
+				DynamicSOQLConstants.PH_LIMIT,
+				this.limitNumber != null ? 'LIMIT '  + this.limitNumber : DynamicSOQLConstants.EMPTY_STRING
+			).replace(
+				DynamicSOQLConstants.PH_OFFSET,
+				this.offsetNumber != null ? 'OFFSET ' + this.offsetNumber : DynamicSOQLConstants.EMPTY_STRING
+			)
+			.trim()
+			.normalizeSpace();
 	}
 
 	/* PRIVATE METHODS */
