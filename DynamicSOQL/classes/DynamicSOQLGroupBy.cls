@@ -2,8 +2,6 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQLGroupBy {
-	private static final String GROUP_BY_TEMPLATE = 'GROUP BY {fieldGroupByList}{HAVING}';
-
 	@TestVisible
 	private List<String> fieldGroupByList;
 	private DynamicSOQLConditionBlock conditionBlock;
@@ -36,9 +34,14 @@ public with sharing class DynamicSOQLGroupBy {
 	 * @return   { String }
 	 */
 	public String stringify(String sobjectApiName) {
-		return GROUP_BY_TEMPLATE
-			.replace('{fieldGroupByList}', String.join(this.fieldGroupByList, ','))
-			.replace('{HAVING}', this.conditionBlock != null ? ' HAVING ' + this.conditionBlock.stringify(sobjectApiName) : '')
+		return DynamicSOQLConstants.TMPL_GROUP_BY
+			.replace(
+				DynamicSOQLConstants.PH_FIELD_GROUP_BY_LIST,
+				String.join(this.fieldGroupByList, DynamicSOQLConstants.COMMA)
+			).replace(
+				DynamicSOQLConstants.PH_HAVING,
+				this.conditionBlock != null ? ' HAVING ' + this.conditionBlock.stringify(sobjectApiName) : DynamicSOQLConstants.EMPTY_STRING
+			)
 		;
 	}
 }
