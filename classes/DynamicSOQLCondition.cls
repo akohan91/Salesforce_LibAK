@@ -2,15 +2,10 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQLCondition {
-	@TestVisible
 	private DynamicSOQLFunction function;
-	@TestVisible
 	private String fieldName;
-	@TestVisible
 	private String operator;
-	@TestVisible
 	private String value;
-	@TestVisible
 	private List<String> values;
 
 	// CONSTRUCTORS
@@ -39,6 +34,11 @@ public with sharing class DynamicSOQLCondition {
 	public DynamicSOQLCondition(String fieldName, String operator, String value) {
 		this(fieldName, operator);
 		this.value = value == null ? DynamicSOQLConstants.NULL_STRING : value;
+	}
+
+	public DynamicSOQLCondition(String fieldName, String operator, List<String> values) {
+		this(fieldName, operator);
+		this.values = values;
 	}
 
 	private DynamicSOQLCondition(String fieldName, String operator) {
@@ -101,13 +101,13 @@ public with sharing class DynamicSOQLCondition {
 	private String processValue(String value, DescribeFieldResult fieldDescribe) {
 		if (DynamicSOQLConstants.TEXT_DISPLAY_TYPES.contains(fieldDescribe.getType())
 			&& !operator.contains(DynamicSOQLConstants.COLON)
-			&& this.value != DynamicSOQLConstants.NULL_STRING
+			&& value != DynamicSOQLConstants.NULL_STRING
 		) {
-			return this.addQuotes(String.escapeSingleQuotes(this.value));
+			return this.addQuotes(String.escapeSingleQuotes(value));
 		} else if (fieldDescribe.getType() == Schema.DisplayType.Date) {
-			return String.escapeSingleQuotes(this.value).substringBefore(DynamicSOQLConstants.FORMAT_TIME_SEPARATOR);
+			return String.escapeSingleQuotes(value).substringBefore(DynamicSOQLConstants.FORMAT_TIME_SEPARATOR);
 		} else {
-			return String.escapeSingleQuotes(this.value);
+			return String.escapeSingleQuotes(value);
 		}
 	}
 
@@ -130,7 +130,8 @@ public with sharing class DynamicSOQLCondition {
 	}
 
 	private String stringifyValues(DescribeFieldResult fieldDescribe) {
-		if (this.operator.replace(DynamicSOQLConstants.COLON, DynamicSOQLConstants.EMPTY_STRING) == DynamicSOQLConstants.OPERATOR_INCLUDES) {
+		String operator = this.operator.replace(DynamicSOQLConstants.COLON, DynamicSOQLConstants.EMPTY_STRING);
+		if (operator == DynamicSOQLConstants.OPERATOR_INCLUDES || operator == DynamicSOQLConstants.OPERATOR_EXCLUDES) {
 			return DynamicSOQLConstants.TMPL_BULK_VALUES.replace(
 				DynamicSOQLConstants.PH_BULK_VALUES,
 				String.escapeSingleQuotes(String.join(this.values, DynamicSOQLConstants.SEMICOLON))

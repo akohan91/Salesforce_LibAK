@@ -61,7 +61,7 @@ export class DynamicSOQL {
 	 * @param { DynamicSOQLConditionBlock } conditionBlock
 	 * @returns
 	 */
-	withCondition(conditionBlock) {
+	withConditions(conditionBlock) {
 		this.conditionBlock = conditionBlock;
 		return this;
 	}

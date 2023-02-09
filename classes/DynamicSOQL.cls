@@ -2,13 +2,9 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQL {
-	@TestVisible
 	private String sObjectName;
-	@TestVisible
 	private List<DynamicSOQLFunction> selectFunctions = new List<DynamicSOQLFunction>();
-	@TestVisible
 	private List<String> selectFields = new List<String>();
-	@TestVisible
 	private Map<String, DynamicSOQL> subQueries = new Map<String, DynamicSOQL>();
 	private DynamicSOQLConditionBlock conditionBlock;
 	private DynamicSOQLGroupBy groupBy;
