@@ -33,7 +33,7 @@ export class DynamicSOQLCondition {
 	 * @param { String } operator
 	 * @param { Any } value
 	 */
-	constructor(fieldName, operator, value) {
+	constructor(fieldName, operator, value = 'null') {
 		this._setFieldNameOrFunction(fieldName);
 		this.operator = operator;
 		this._setValue(value);
