@@ -5,194 +5,218 @@
 public with sharing class TestDynamicSOQLCondition {
 	@IsTest
 	static void testConstructorValueAsObject(){
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('IsDeleted', '=', false);
+
 		Test.startTest();
-		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', false);
-		System.assertEquals(
-			'Name', condition.fieldName,
-			'The fieldName property is wrong.'
-		);
-		System.assertEquals(
-			'=', condition.operator,
-			'The operator property is wrong.'
-		);
-		System.assertEquals(
-			'false', condition.value,
-			'The value property is wrong.'
-		);
+
+		String result = condition.stringify('Account');
+
 		Test.stopTest();
+
+		System.assertEquals('IsDeleted = false', result, 'The "stringify" method returns wrong value.');
 	}
 
 	@IsTest
 	static void testConstructorWithFunction(){
-		Test.startTest();
 		DynamicSOQLCondition condition = new DynamicSOQLCondition(new DynamicSOQLFunction('COUNT', 'Id'), '>', 10);
-		System.assertEquals(
-			null, condition.fieldName,
-			'The fieldName property is wrong.'
-		);
-		System.assertEquals(
-			'>', condition.operator,
-			'The operator property is wrong.'
-		);
-		System.assertEquals(
-			'10', condition.value,
-			'The value property is wrong.'
-		);
+
+		Test.startTest();
+
+		String result = condition.stringify('Account');
+
 		Test.stopTest();
+
+		System.assertEquals('COUNT(Id) > 10', result, 'The "stringify" method returns wrong value.');
 	}
 
 	@IsTest
 	static void testConstructorValueAsDateTime(){
+		Datetime value = Datetime.newInstance(2022, 01, 01, 01, 01, 01);
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('CreatedDate', '=', value);
+
 		Test.startTest();
-		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', Datetime.newInstance(2022, 01, 01, 01, 01, 01));
-		System.assertEquals(
-			'Name', condition.fieldName,
-			'The fieldName property is wrong.'
-		);
-		System.assertEquals(
-			'=', condition.operator,
-			'The operator property is wrong.'
-		);
-		System.assertEquals(
-			Datetime.newInstance(2022, 01, 01, 01, 01, 01).formatGmt('yyyy-MM-dd\'T\'HH:mm:ss\'Z\''), condition.value,
-			'The value property is wrong.'
-		);
+
+		String result = condition.stringify('Account');
+
 		Test.stopTest();
+
+		System.assertEquals(
+			'CreatedDate = ' + value.formatGmt(DynamicSOQLConstants.FORMAT_DATE_TIME),
+			result,
+			'The "stringify" method returns wrong value.'
+		);
 	}
 
 	@IsTest
 	static void testConstructorValueAsDate(){
+		Date value = Date.newInstance(2022, 01, 01);
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('Birthdate', '=', value);
+
 		Test.startTest();
-		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', Date.newInstance(2022, 01, 01));
-		System.assertEquals(
-			'Name', condition.fieldName,
-			'The fieldName property is wrong.'
-		);
-		System.assertEquals(
-			'=', condition.operator,
-			'The operator property is wrong.'
-		);
-		System.assertEquals(
-			((Datetime)Date.newInstance(2022, 01, 01)).formatGmt('yyyy-MM-dd'), condition.value,
-			'The value property is wrong.'
-		);
+
+		String result = condition.stringify('Contact');
+
 		Test.stopTest();
+
+		System.assertEquals(
+			'Birthdate = ' + ((Datetime)value).formatGmt(DynamicSOQLConstants.FORMAT_DATE),
+			result,
+			'The "stringify" method returns wrong value.'
+		);
 	}
 
 	@IsTest
 	static void testConstructorValueAsString(){
-		Test.startTest();
 		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', 'It\'s a string');
-		System.assertEquals(
-			'Name', condition.fieldName,
-			'The fieldName property is wrong.'
-		);
-		System.assertEquals(
-			'=', condition.operator,
-			'The operator property is wrong.'
-		);
-		System.assertEquals(
-			'It\'s a string', condition.value,
-			'The value property is wrong.'
-		);
+
+		Test.startTest();
+
+		String result = condition.stringify('Account');
+
 		Test.stopTest();
+
+		System.assertEquals('Name = \'It\\\'s a string\'', result, 'The "stringify" method returns wrong value.');
+	}
+
+	@IsTest
+	static void testConstructorValuesList(){
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', 'IN', new List<String>{'It\'s a string', 'It\'s another string'});
+
+		Test.startTest();
+
+		String result = condition.stringify('Account');
+
+		Test.stopTest();
+
+		System.assertEquals(
+			'Name IN (\'It\\\'s a string\',\'It\\\'s another string\')',
+			result,
+			'The "stringify" method returns wrong value.'
+		);
+	}
+
+	@IsTest
+	static void testConstructorValuesListINCLUDES(){
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', 'INCLUDES', new List<String>{'value1', 'value2', 'value3'});
+
+		Test.startTest();
+
+		String result = condition.stringify('Account');
+
+		Test.stopTest();
+
+		System.assertEquals(
+			'Name INCLUDES (value1;value2;value3)',
+			result,
+			'The "stringify" method returns wrong value.'
+		);
+	}
+
+	@IsTest
+	static void testConstructorValuesListEXCLUDES(){
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', 'EXCLUDES', new List<String>{'value1', 'value2', 'value3'});
+
+		Test.startTest();
+
+		String result = condition.stringify('Account');
+
+		Test.stopTest();
+
+		System.assertEquals(
+			'Name EXCLUDES (value1;value2;value3)',
+			result,
+			'The "stringify" method returns wrong value.'
+		);
 	}
 
 	@IsTest
 	static void testConstructorValueAsStringVariable(){
-		Test.startTest();
 		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=:', 'variableName');
-		System.assertEquals(
-			'Name', condition.fieldName,
-			'The fieldName property is wrong.'
-		);
-		System.assertEquals(
-			'=:', condition.operator,
-			'The operator property is wrong.'
-		);
-		System.assertEquals(
-			'variableName', condition.value,
-			'The value property is wrong.'
-		);
-		System.assertEquals(
-			'Name =: variableName', condition.stringify('Account'),
-			'The "stringify" method returns wrong value.'
-		);
+
+		Test.startTest();
+
+		String result = condition.stringify('Account');
+
 		Test.stopTest();
+
+		System.assertEquals('Name =: variableName', result, 'The "stringify" method returns wrong value.');
 	}
 
 	@IsTest
 	static void testConstructorValueAsNull(){
-		Test.startTest();
 		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', (String)null);
+
+		Test.startTest();
+
+		String result = condition.stringify('Account');
+
+		Test.stopTest();
+
 		System.assertEquals(
-			'Name = null', condition.stringify('Account'),
+			'Name = null', result,
 			'The "stringify" method returns wrong value.'
 		);
-		Test.stopTest();
 	}
 
 	@IsTest
 	static void testfieldApiName(){
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=', 'Test');
+
 		Test.startTest();
-		System.assertEquals(
-			'Name', new DynamicSOQLCondition('Name', '=', 'Test').fieldApiname(),
-			'The "fieldApiname()" method returns wrong value.'
-		);
+
+		String result = condition.fieldApiname();
+
 		Test.stopTest();
+
+		System.assertEquals('Name', condition.fieldApiname(), 'The "fieldApiname()" method returns wrong value.');
 	}
 
 	@IsTest
 	static void testfieldApiNameWithFunction(){
+		DynamicSOQLCondition condition = new DynamicSOQLCondition(new DynamicSOQLFunction('COUNT', 'Id'), '>', 10);
+
 		Test.startTest();
-		System.assertEquals(
-			'Id', new DynamicSOQLCondition(new DynamicSOQLFunction('COUNT', 'Id'), '>', 10).fieldApiname(),
-			'The "fieldApiname()" method returns wrong value.'
-		);
+
+		String result = condition.fieldApiname();
+
 		Test.stopTest();
+
+		System.assertEquals('Id', result, 'The "fieldApiname()" method returns wrong value.');
 	}
 
 	@IsTest
-	static void testfieldApiNameError(){
-		Test.startTest();
+	static void testNoFieldApiNameInSOQLConditionError(){
 		DynamicSOQLCondition condition = (DynamicSOQLCondition)JSON.deserialize('{"function": null, "fieldName": null, "operator": "=", "value": "test" }', DynamicSOQLCondition.class);
 		Integer errorCount = 0;
+
+		Test.startTest();
+
 		try {
 			condition.fieldApiname();
 		} catch (Exception exc) {
 			errorCount++;
 		}
-		System.assertEquals(
-			1, errorCount,
-			'The error was not occurred.'
-		);
-		Test.stopTest();
-	}
 
-	@IsTest
-	static void testToString(){
-		Test.startTest();
-		String conditionStr = new DynamicSOQLCondition('Name', '=', 'It\'s a string').stringify('Account');
-		System.assertEquals(
-			'Name = \'It\\\'s a string\'', conditionStr,
-			'The "stringify" method returns wrong value.'
-		);
 		Test.stopTest();
+
+		System.assertEquals(1, errorCount, 'The error was not occurred.');
 	}
 
 	@IsTest
 	static void testToStringWrongOperator(){
-		Test.startTest();
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', 'wrongOperator', 'It\'s a string');
 		Integer errorCount = 0;
+
+		Test.startTest();
+
 		try {
-			new DynamicSOQLCondition('Name', 'wrong', 'It\'s a string').stringify('Account');
+			condition.stringify('Account');
 		} catch (Exception exc) {
 			errorCount++;
 		}
-		System.assertEquals(
-			1, errorCount,
-			'The error was not occurred.'
-		);
+
 		Test.stopTest();
+
+		System.assertEquals(1, errorCount, 'The error was not occurred.');
 	}
 }
