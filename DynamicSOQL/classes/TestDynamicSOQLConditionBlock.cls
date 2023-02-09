@@ -4,55 +4,90 @@
 @IsTest
 public with sharing class TestDynamicSOQLConditionBlock {
 	@IsTest
-	static void testConstructor(){
+	static void testConditionBlockSingleCondition(){
+		DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
+			.addCondition(new DynamicSOQLCondition('Name', '=', 'Test Name'));
+
 		Test.startTest();
-		DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND');
-		System.assertEquals(
-			'AND', conditionBlock.operator,
-			'The operator property is wrong.'
-		);
+
+		String result = conditionBlock.stringify('Account');
+
 		Test.stopTest();
+
+		System.assertEquals('(Name = \'Test Name\')', result, 'The stringify() method returns wrong value');
 	}
 
 	@IsTest
-	static void testAddConditionBlock(){
-		Test.startTest();
+	static void testConditionBlockSeveralContitions(){
 		DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
-		.addConditionBlock(new DynamicSOQLConditionBlock('OR'))
-		.addConditionBlock(new DynamicSOQLConditionBlock('OR'));
-		System.assertEquals(
-			2, conditionBlock.blocks.size(),
-			'The number of DynamicSOQLConditionBlock instances of "blocks" property is wrong.'
-		);
+			.addCondition(new DynamicSOQLCondition('FirstName', '=', 'Test Name'))
+			.addCondition(new DynamicSOQLCondition('LastName', '=', 'Test Name'))
+			.addCondition(new DynamicSOQLCondition('Birthdate', '<', Date.newInstance(2022,01,01)));
+
+		Test.startTest();
+
+		String result = conditionBlock.stringify('Contact');
+
 		Test.stopTest();
+
+		System.assertEquals(
+			'(FirstName = \'Test Name\' AND LastName = \'Test Name\' AND Birthdate < 2022-01-01)',
+			result,
+			'The stringify() method returns wrong value'
+		);
 	}
 
 	@IsTest
-	static void testAddCondition(){
-		Test.startTest();
+	static void testConditionBlockSeveralContitionBlocks(){
 		DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
-		.addCondition(new DynamicSOQLCondition('Name', '=', 'Test'))
-		.addCondition(new DynamicSOQLCondition('Name', '=', 'Test'));
-		System.assertEquals(
-			2, conditionBlock.conditions.size(),
-			'The number of DynamicSOQLCondition instances of "conditions" property is wrong.'
-		);
+			.addConditionBlock(
+				new DynamicSOQLConditionBlock('OR')
+				.addCondition(new DynamicSOQLCondition('FirstName', '=', 'Test Name 1'))
+				.addCondition(new DynamicSOQLCondition('FirstName', '=', 'Test Name 2'))
+			).addConditionBlock(
+				new DynamicSOQLConditionBlock('OR')
+				.addCondition(new DynamicSOQLCondition('LastName', '=', 'Test Name 1'))
+				.addCondition(new DynamicSOQLCondition('LastName', '=', 'Test Name 2'))
+			).addCondition(new DynamicSOQLCondition('Birthdate', '<', Date.newInstance(2022,01,01)));
+
+		Test.startTest();
+
+		String result = conditionBlock.stringify('Contact');
+
 		Test.stopTest();
+
+		System.assertEquals(
+			'((FirstName = \'Test Name 1\' OR FirstName = \'Test Name 2\') AND (LastName = \'Test Name 1\' OR LastName = \'Test Name 2\') AND Birthdate < 2022-01-01)',
+			result,
+			'The stringify() method returns wrong value'
+		);
 	}
 
 	@IsTest
 	static void testSwitchOperator(){
-		Test.startTest();
 		DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
-		.addCondition(new DynamicSOQLCondition('Name', '=', 'Test'))
-		.switchOperator('OR');
-		System.assertEquals(
-			'OR', conditionBlock.operator,
-			'The operator property is wrong.'
-		);
-		Test.stopTest();
-	}
+			.addCondition(new DynamicSOQLCondition('FirstName', '=', 'Test Name'))
+			.addCondition(new DynamicSOQLCondition('LastName', '=', 'Test Name'))
+			.addCondition(new DynamicSOQLCondition('Birthdate', '<', Date.newInstance(2022,01,01)));
 
+		System.assertEquals(
+			'(FirstName = \'Test Name\' AND LastName = \'Test Name\' AND Birthdate < 2022-01-01)',
+			conditionBlock.stringify('Contact'),
+			'The stringify() method returns wrong value'
+		);
+
+		Test.startTest();
+
+		conditionBlock.switchOperator('OR');
+
+		Test.stopTest();
+
+		System.assertEquals(
+			'(FirstName = \'Test Name\' OR LastName = \'Test Name\' OR Birthdate < 2022-01-01)',
+			conditionBlock.stringify('Contact'),
+			'The stringify() method returns wrong value'
+		);
+	}
 
 	@IsTest
 	static void testFieldsApiNames(){
@@ -72,22 +107,6 @@ public with sharing class TestDynamicSOQLConditionBlock {
 		System.assert(
 			conditionBlock.fieldsApiNames().containsAll(new Set<String>{'Phone', 'FirstName', 'LastName'}),
 			'The "fieldsApiNames()" method returns wrong value.'
-		);
-		Test.stopTest();
-	}
-
-	@IsTest
-	static void testToString(){
-		Test.startTest();
-		String conditionString = new DynamicSOQLConditionBlock('OR')
-		.addConditionBlock(
-			new DynamicSOQLConditionBlock('OR')
-			.addCondition(new DynamicSOQLCondition('Name', '=', 'Test1'))
-			.addCondition(new DynamicSOQLCondition('Name', '=', 'Test2'))
-		).stringify('Account');
-		System.assertEquals(
-			'((Name = \'Test1\' OR Name = \'Test2\'))', conditionString,
-			'The operator property is wrong.'
 		);
 		Test.stopTest();
 	}

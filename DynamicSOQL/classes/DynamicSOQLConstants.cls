@@ -36,6 +36,7 @@ public with sharing class DynamicSOQLConstants {
 	public static final String SINGLE_QUOTE	= '\'';
 
 	public static final String OPERATOR_INCLUDES = 'INCLUDES';
+	public static final String OPERATOR_EXCLUDES = 'EXCLUDES';
 	public static final Set<String> CONDITION_BLOCK_AVAILABLE_OPERATORS = new Set<String>{ 'AND', 'OR' };
 	public static final Set<String> CONDITION_AVAILABLE_OPERATORS = new Set<String>{
 		'=',

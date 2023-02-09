@@ -2,11 +2,8 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQLConditionBlock {
-	@TestVisible
 	private List<DynamicSOQLConditionBlock> blocks;
-	@TestVisible
 	private List<DynamicSOQLCondition> conditions;
-	@TestVisible
 	private String operator;
 
 	// CONSTRUCTORS
