@@ -2,13 +2,8 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQLConditionBlock {
-	private final static Set<String> AVAILABLE_OPERATORS = new Set<String>{ 'AND', 'OR' };
-
-	@TestVisible
 	private List<DynamicSOQLConditionBlock> blocks;
-	@TestVisible
 	private List<DynamicSOQLCondition> conditions;
-	@TestVisible
 	private String operator;
 
 	// CONSTRUCTORS
@@ -69,21 +64,23 @@ public with sharing class DynamicSOQLConditionBlock {
 
 	/**
 	 * @description Builds a Dynamic SOQL Condition Block string for WHERE statement
+	 * @param sobjectApiName { String } Sobject api name for what the condition block is created.
 	 * @return   { String }
 	 */
-	public override String toString() {
+	public String stringify(String sobjectApiName) {
+		this.operator = String.escapeSingleQuotes(this.operator);
 		this.validateBlock();
 		List<String> result = new List<String>();
 
 		if (this.blocks != null && !this.blocks.isEmpty()) {
 			for (DynamicSOQLConditionBlock block : this.blocks) {
-				result.add(block.toString());
+				result.add(block.stringify(sobjectApiName));
 			}
 		}
 
 		if (this.conditions != null && !this.conditions.isEmpty()) {
 			for (DynamicSOQLCondition condition : this.conditions) {
-				result.add(condition.toString());
+				result.add(condition.stringify(sobjectApiName));
 			}
 		}
 		return '(' + String.join(result, ' ' + this.operator + ' ') + ')';
@@ -92,11 +89,13 @@ public with sharing class DynamicSOQLConditionBlock {
 	// PRIVATE METHODS
 
 	private void validateBlock() {
-		if (!AVAILABLE_OPERATORS.contains(this.operator)) {
+		if (!DynamicSOQLConstants.CONDITION_BLOCK_AVAILABLE_OPERATORS.contains(this.operator)) {
 			throw new DynamicSOQLConditionBlockException(
 				Label.WrongComparisonOperator
-				.replace('{operator}', this.operator)
-				.replace('{availableOperators}', AVAILABLE_OPERATORS.toString())
+				.replace(DynamicSOQLConstants.PH_OPERATOR, this.operator)
+				.replace(
+					DynamicSOQLConstants.PH_AVAILABLE_OPERATORS,
+					DynamicSOQLConstants.CONDITION_BLOCK_AVAILABLE_OPERATORS.toString())
 			);
 		}
 	}
