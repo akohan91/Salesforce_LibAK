@@ -128,14 +128,13 @@ public with sharing class DynamicSOQL {
 	 * @return   { String }
 	 */
 	public String stringify() {
-		DescribeSObjectResult sObjectDescription = DynamicSOQLConstants.GLOBAL_DESCRIBE.get(sObjectName)?.getDescribe();
+		this.sObjectName = String.escapeSingleQuotes(this.sObjectName);
+		DescribeSObjectResult sObjectDescription = DynamicSOQLConstants.GLOBAL_DESCRIBE.get(this.sObjectName)?.getDescribe();
 		if (sObjectDescription == null) {
 			throw new DynamicSOQLException(Label.NoSObject.replace('{sObjectName}', sObjectName));
 		}
 		List<String> selectItems = new List<String>();
-		if (this.selectFields != null && !this.selectFields.isEmpty()) {
-			selectItems.addAll(this.selectFields);
-		}
+		selectItems.addAll(buildSelectFields());
 		selectItems.addAll(buildFunctions());
 		selectItems.addAll(buidSubqueries(sObjectDescription));
 
@@ -167,6 +166,17 @@ public with sharing class DynamicSOQL {
 	}
 
 	/* PRIVATE METHODS */
+
+	private List<String> buildSelectFields() {
+		if (this.selectFields == null && this.selectFields.isEmpty()) {
+			return new List<String>();
+		}
+		List<String> result = new List<String>();
+		for (String fieldApiName : this.selectFields) {
+			result.add(String.escapeSingleQuotes(fieldApiName));
+		}
+		return result;
+	}
 
 	private List<String> buildFunctions() {
 		if (this.selectFunctions == null || this.selectFunctions.isEmpty()) {

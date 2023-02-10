@@ -37,7 +37,7 @@ public with sharing class DynamicSOQLGroupBy {
 		return DynamicSOQLConstants.TMPL_GROUP_BY
 			.replace(
 				DynamicSOQLConstants.PH_FIELD_GROUP_BY_LIST,
-				String.join(this.fieldGroupByList, DynamicSOQLConstants.COMMA)
+				String.escapeSingleQuotes(String.join(this.fieldGroupByList, DynamicSOQLConstants.COMMA))
 			).replace(
 				DynamicSOQLConstants.PH_HAVING,
 				this.conditionBlock != null ? ' HAVING ' + this.conditionBlock.stringify(sobjectApiName) : DynamicSOQLConstants.EMPTY_STRING
