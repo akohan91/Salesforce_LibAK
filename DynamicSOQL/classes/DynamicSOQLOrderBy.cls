@@ -40,7 +40,7 @@ public with sharing class DynamicSOQLOrderBy {
 		return DynamicSOQLConstants.TMPL_ORDER_BY
 			.replace(
 				DynamicSOQLConstants.PH_FIELD_ORDER_BY_LIST,
-				String.join(this.orderByFields, DynamicSOQLConstants.COMMA)
+				String.escapeSingleQuotes(String.join(this.orderByFields, DynamicSOQLConstants.COMMA))
 			).replace(
 				DynamicSOQLConstants.PH_DIRECTION,
 				this.isDESC == true ? DynamicSOQLConstants.SORT_DIRECTION_DESC : DynamicSOQLConstants.SORT_DIRECTION_ASC

@@ -68,6 +68,7 @@ public with sharing class DynamicSOQLConditionBlock {
 	 * @return   { String }
 	 */
 	public String stringify(String sobjectApiName) {
+		this.operator = String.escapeSingleQuotes(this.operator);
 		this.validateBlock();
 		List<String> result = new List<String>();
 
