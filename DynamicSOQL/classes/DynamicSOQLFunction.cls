@@ -2,8 +2,6 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQLFunction {
-	private final static String FUNCTION_TEMPLATE = '{functionName}({fieldName}) {alias}';
-
 	private String functionName;
 	private String fieldName;
 	private String alias;
@@ -19,7 +17,7 @@ public with sharing class DynamicSOQLFunction {
 	}
 
 	public DynamicSOQLFunction(String functionName, String fieldName, String alias) {
-		this.functionName = functionName;
+		this.functionName = functionName.substringBefore('(').trim();
 		this.fieldName = fieldName;
 		this.alias = alias;
 	}
@@ -38,11 +36,18 @@ public with sharing class DynamicSOQLFunction {
 	 * @description Builds a SOQL function string like "COUNT(Id) recordsCount"
 	 * @return   { String }
 	 */
-	public override String toString() {
-		return FUNCTION_TEMPLATE
-		.replace('{functionName}', String.escapeSingleQuotes(this.functionName))
-		.replace('{fieldName}', this.fieldName != null ? String.escapeSingleQuotes(this.fieldName) : '')
-		.replace('{alias}',     this.alias != null     ? String.escapeSingleQuotes(this.alias) : '')
-		.trim();
+	public String stringify() {
+		return DynamicSOQLConstants.TMPL_FUNCTION
+			.replace(
+				DynamicSOQLConstants.PH_FUNCTION_NAME,
+				String.escapeSingleQuotes(this.functionName)
+			).replace(
+				DynamicSOQLConstants.PH_FIELD_NAME,
+				this.fieldName != null ? String.escapeSingleQuotes(this.fieldName) : DynamicSOQLConstants.EMPTY_STRING
+			).replace(
+				DynamicSOQLConstants.PH_ALIAS,
+				this.alias != null ? String.escapeSingleQuotes(this.alias) : DynamicSOQLConstants.EMPTY_STRING
+			)
+			.trim();
 	}
 }

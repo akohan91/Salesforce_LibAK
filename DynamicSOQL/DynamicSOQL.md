@@ -1,28 +1,29 @@
 # Table of content
 
-1. [Intro](#Intro)
-2. [Quick Start](#Quick_Start)
-    - [Build a regular query](#Build_a_regular_query)
-    - [Build an aggregated query](#Build_an_aggregated_query)
-3. [Reference Guide](#Reference_Guide)
-    - [DynamicSOQL](#DynamicSOQL)
-        - [Constructors](#DynamicSOQL_Constructors)
-        - [Methods](#DynamicSOQL_Methods)
-    - [DynamicSOQLFunction](#DynamicSOQLFunction)
-        - [Constructors](#DynamicSOQLFunction_Constructors)
-        - [Methods](#DynamicSOQLFunction_Methods)
-    - [DynamicSOQLConditionBlock](#DynamicSOQLConditionBlock)
-        - [Constructors](#DynamicSOQLConditionBlock_Constructors)
-        - [Methods](#DynamicSOQLConditionBlock_Methods)
-    - [DynamicSOQLCondition](#DynamicSOQLCondition)
-        - [Constructors](#DynamicSOQLCondition_Constructors)
-        - [Methods](#DynamicSOQLCondition_Methods)
-    - [DynamicSOQLOrderBy](#DynamicSOQLOrderBy)
-        - [Constructors](#DynamicSOQLOrderBy_Constructors)
-        - [Methods](#DynamicSOQLOrderBy_Methods)
-    - [DynamicSOQLGroupBy](#DynamicSOQLGroupBy)
-        - [Constructors](#DynamicSOQLGroupBy_Constructors)
-        - [Methods](#DynamicSOQLGroupBy_Methods)
+- [Table of content](#table-of-content)
+- [Intro](#intro)
+- [Quick Start](#quick-start)
+  - [Build a regular query](#build-a-regular-query)
+  - [Build an aggregated query](#build-an-aggregated-query)
+- [Reference Guide](#reference-guide)
+  - [DynamicSOQL](#dynamicsoql)
+    - [Constructors](#constructors)
+    - [Methods](#methods)
+  - [DynamicSOQLFunction](#dynamicsoqlfunction)
+    - [Constructors](#constructors-1)
+    - [Methods](#methods-1)
+  - [DynamicSOQLConditionBlock](#dynamicsoqlconditionblock)
+    - [Constructors](#constructors-2)
+    - [Methods](#methods-2)
+  - [DynamicSOQLCondition](#dynamicsoqlcondition)
+    - [Constructors](#constructors-3)
+    - [Methods](#methods-3)
+  - [DynamicSOQLOrderBy](#dynamicsoqlorderby)
+    - [Constructors](#constructors-4)
+    - [Methods](#methods-4)
+  - [DynamicSOQLGroupBy](#dynamicsoqlgroupby)
+    - [Constructors](#constructors-5)
+    - [Methods](#methods-5)
 
 # Intro
 <a name="Intro">
@@ -35,7 +36,7 @@ The library is built in Object Oriented style and contains the next classes:
 - **DynamicSOQLCondition** - represents the part of 'WHERE' clause in a base format like `<FieldName> <operator> <value>'`.
 - **DynamicSOQLConditionBlock** - used to combine **DynamicSOQLCondition** or nested **DynamicSOQLConditionBlock** and allows to build logical bloks with `OR | AND` keywords.
 - **DynamicSOQLFunction** - represent SOQL Functions, for example: `COUNT(Id) alias`.
-- **DynamicSOQLGoupBy** - represent `GROUP BY` clause and allows to build Aggregated Query.
+- **DynamicSOQLGroupBy** - represent `GROUP BY` clause and allows to build Aggregated Query.
 - **DynamicSOQLOrderBy** - represent `ORDER BY` clause.
 
 # Quick Start
@@ -64,7 +65,7 @@ DynamicSOQL soql = new DynamicSOQL('Account')
     )
 );
 
-System.debug(soql.toString());
+System.debug(soql.stringify());
 /* The output (line breaks was added manually):
     SELECT Id,Name,(
         SELECT FirstName,Email
@@ -87,7 +88,7 @@ DynamicSOQL soql = new DynamicSOQL('Opportunity')
 .withFunction(new DynamicSOQLFunction('COUNT', 'Id', 'oppCount'))
 .withFunction(new DynamicSOQLFunction('AVG', 'Amount', 'avgAmount'))
 .withGroupBy(
-    new DynamicSOQLGoupBy(new List<String>{'StageName'})
+    new DynamicSOQLGroupBy(new List<String>{'StageName'})
     .withHaving(
         new DynamicSOQLConditionBlock('AND')
         .addCondition(new DynamicSOQLCondition(
@@ -96,7 +97,7 @@ DynamicSOQL soql = new DynamicSOQL('Opportunity')
     )
 );
 
-System.debug(soql.toString());
+System.debug(soql.stringify());
 
 /* The output (line breaks was added manually):
     SELECT StageName,
@@ -139,6 +140,7 @@ System.debug(
     .withField('Id')
     .withField('Name')
     .withField('OwnerId')
+    .stringify()
 ); // SELECT Id,Name,OwnerId FROM Account
 ```
 
@@ -149,6 +151,7 @@ Adds a function to SELECT statement like "COUNT(Id) recordsCount"
 System.debug(
     new DynamicSOQL('Account')
     .withFunction(new DynamicSOQLFunction('COUNT', ''))
+    .stringify()
 ); // SELECT COUNT() FROM Account
 ```
 
@@ -164,7 +167,7 @@ System.debug(
         'Contacts',
         new DynamicSOQL('Contact')
         .withField('Id')
-    )
+    ).stringify()
 ); // SELECT Name,(SELECT Id FROM Contacts) FROM Account
 ```
 
@@ -180,12 +183,12 @@ System.debug(
         new DynamicSOQLConditionBlock('AND')
         .addCondition(new DynamicSOQLCondition('Name', '=', 'Test'))
         .addCondition(new DynamicSOQLCondition('CreatedDate', '>', Date.newInstance(2022, 01, 01)))
-    )
+    ).stringify()
 ); // SELECT Id FROM Account WHERE (Name = 'Test' AND CreatedDate > 2022-01-01)
 ```
 
 - **withGroupBy** <br>
-`withGroupBy(DynamicSOQLGoupBy groupBy): DynamicSOQL` <br>
+`withGroupBy(DynamicSOQLGroupBy groupBy): DynamicSOQL` <br>
 Adds a GROUP BY statement to the query
 
 ```java
@@ -194,14 +197,14 @@ System.debug(
     .withField('StageName')
     .withFunction(new DynamicSOQLFunction('SUM', 'Amount', 'amount'))
     .withGroupBy(
-        new DynamicSOQLGoupBy(new List<String>{'StageName'})
+        new DynamicSOQLGroupBy(new List<String>{'StageName'})
         .withHaving(
             new DynamicSOQLConditionBlock('AND')
             .addCondition(new DynamicSOQLCondition(
                 new DynamicSOQLFunction('SUM','Amount'), '>', 190)
             )
         )
-    )
+    ).stringify()
 ); // SELECT StageName,SUM(Amount) amount FROM Opportunity GROUP BY StageName HAVING (SUM(Amount) > 190)
 ```
 
@@ -214,6 +217,7 @@ System.debug(
     new DynamicSOQL('Account')
     .withField('Name')
     .withOrderBy(new DynamicSOQLOrderBy(new List<String>{'Name'}))
+    .stringify()
 ); // SELECT Name FROM Account ORDER BY Name ASC NULLS LAST
 ```
 
@@ -227,6 +231,7 @@ System.debug(
     .withField('Id')
     .withOffset(0)
     .withLimit(10)
+    .stringify()
 ); // SELECT Id FROM Account LIMIT 10 OFFSET 0
 ```
 
@@ -240,6 +245,7 @@ System.debug(
     .withField('Id')
     .withOffset(0)
     .withLimit(10)
+    .stringify()
 ); // SELECT Id FROM Account LIMIT 10 OFFSET 0
 ```
 
@@ -274,15 +280,15 @@ System.debug(
 */
 ```
 
-- **toString** <br>
-`toString(): String` <br>
+- **stringify** <br>
+`stringify(): String` <br>
 Builds a SOQL string
 
 ```java
 new DynamicSOQL('Account')
 .withField('Id')
 .withSubQuery('Contacts', new DynamicSOQL('Contact').withField('Id'))
-.toString(); // SELECT Id,(SELECT Id FROM Contacts) FROM Account
+.stringify(); // SELECT Id,(SELECT Id FROM Contacts) FROM Account
 ```
 
 ## DynamicSOQLFunction
@@ -295,17 +301,17 @@ The following are constructors for DynamicSOQL.
 - `DynamicSOQLFunction(String functionName)`
 ```java
 DynamicSOQLFunction function = new DynamicSOQLFunction('COUNT');
-System.debug(function.toString()); // COUNT()
+System.debug(function.stringify()); // COUNT()
 ```
 - `DynamicSOQLFunction(String functionName, String fieldName)`
 ```java
 DynamicSOQLFunction function = new DynamicSOQLFunction('COUNT', 'Id');
-System.debug(function.toString()); // COUNT(Id)
+System.debug(function.stringify()); // COUNT(Id)
 ```
 - `DynamicSOQLFunction(String functionName, String fieldName, String alias)`
 ```java
 DynamicSOQLFunction function = new DynamicSOQLFunction('COUNT', 'Id', 'recordsCount');
-System.debug(function.toString()); // COUNT(Id) recordsCount
+System.debug(function.stringify()); // COUNT(Id) recordsCount
 ```
 
 ### Methods
@@ -322,13 +328,13 @@ new DynamicSOQLFunction('COUNT', 'Id', 'alias')
 .fieldApiname() // Id
 ```
 
-- **toString** <br>
-`toString(): String` <br>
+- **stringify** <br>
+`stringify(): String` <br>
 Builds a SOQL function string like `COUNT(Id) recordsCount`
 
 ```java
 new DynamicSOQLFunction('COUNT', 'Id', 'alias')
-.toString() // COUNT(Id) alias
+.stringify() // COUNT(Id) alias
 ```
 
 ## DynamicSOQLConditionBlock
@@ -356,13 +362,15 @@ Adds a condition to the current block
 
 ```java
 DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('OR')
-.addCondition(new DynamicSOQLCondition('Name', '=', 'Test_1'));
+.addCondition(
+    new DynamicSOQLCondition('Name', '=', 'Test_1')
+);
 
-System.debug(conditionBlock); // (Name = 'Test_1')
+System.debug(conditionBlock.stringify('Account')); // (Name = 'Test_1')
 
 conditionBlock
 .addCondition(new DynamicSOQLCondition('Name', '=', 'Test_2'));
-System.debug(conditionBlock); // (Name = 'Test_1' OR Name = 'Test_2')
+System.debug(conditionBlock.stringify('Account')); // (Name = 'Test_1' OR Name = 'Test_2')
 ```
 
 - **addConditionBlock** <br>
@@ -379,7 +387,7 @@ DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
     .addCondition(new DynamicSOQLCondition('Phone', '=', '123456'))
 );
 
-System.debug(conditionBlock); // ((Phone = '12345' OR Phone = '123456') AND Name = 'Test1')
+System.debug(conditionBlock.stringify('Account')); // ((Phone = '12345' OR Phone = '123456') AND Name = 'Test1')
 ```
 
 - **switchOperator** <br>
@@ -391,9 +399,9 @@ DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
 .addCondition(new DynamicSOQLCondition('Phone', '=', '12345'))
 .addCondition(new DynamicSOQLCondition('Phone', '=', '123456'));
 
-System.debug(conditionBlock); // (Phone = '12345' AND Phone = '123456')
+System.debug(conditionBlock.stringify('Account')); // (Phone = '12345' AND Phone = '123456')
 conditionBlock.switchOperator('OR');
-System.debug(conditionBlock); // (Phone = '12345' OR Phone = '123456')
+System.debug(conditionBlock.stringify('Account')); // (Phone = '12345' OR Phone = '123456')
 ```
 
 - **fieldsApiNames** <br>
@@ -409,8 +417,8 @@ DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
 conditionBlock.fieldsApiNames(); // {'Phone', 'FirstName', 'LastName'}
 ```
 
-- **toString** <br>
-`toString(): String` <br>
+- **stringify** <br>
+`stringify(String sobjectApiName): String` <br>
 Builds a Dynamic SOQL Condition Block string for WHERE statement
 
 ## DynamicSOQLCondition
@@ -469,8 +477,8 @@ The following are methods for DynamicSOQL. All are instance methods.
 `fieldApiName(): String` <br>
 Returns the field api name that is used in a condition.
 
-- **toString** <br>
-`toString(): String` <br>
+- **stringify** <br>
+`stringify(String sobjectApiName): String` <br>
 Builds a SOQL condition string like `Name = 'Andrew'`
 
 ## DynamicSOQLOrderBy
@@ -505,8 +513,8 @@ The following are methods for DynamicSOQL. All are instance methods.
 `fieldsApiNames(): Set<String>` <br>
 Returns list of fields that are used in ORDER BY Statement
 
-- **toString** <br>
-`toString(): String` <br>
+- **stringify** <br>
+`stringify(): String` <br>
 Returns ORDER BY statement like: "ORDER BY Name ASC NULLS LAST"
 
 ## DynamicSOQLGroupBy
@@ -517,9 +525,9 @@ Returns ORDER BY statement like: "ORDER BY Name ASC NULLS LAST"
 
 The following are constructors for DynamicSOQL.
 
-- `DynamicSOQLGoupBy(List<String> fieldGroupByList)`
+- `DynamicSOQLGroupBy(List<String> fieldGroupByList)`
 ```java
-DynamicSOQLGoupBy groupBy = new DynamicSOQLGoupBy(new List<String>{'StageName'});
+DynamicSOQLGroupBy groupBy = new DynamicSOQLGroupBy(new List<String>{'StageName'});
 ```
 
 ### Methods
@@ -532,9 +540,9 @@ The following are methods for DynamicSOQL. All are instance methods.
 Returns list of fields that are used in GROUP BY Statement
 
 - **withHaving** <br>
-`withHaving(DynamicSOQLConditionBlock conditionBlock): DynamicSOQLGoupBy` <br>
+`withHaving(DynamicSOQLConditionBlock conditionBlock): DynamicSOQLGroupBy` <br>
 Adds HAVING clause to the GROUP BY clause
 
-- **toString** <br>
-`toString(): String` <br>
+- **stringify** <br>
+`stringify(String sobjectApiName): String` <br>
 Builds a GROUP BY part of SOQL string

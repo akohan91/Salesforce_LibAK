@@ -2,8 +2,6 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQLOrderBy {
-	private static final String ORDER_BY_TEMPLATE = 'ORDER BY {fieldOrderByList} {direction} {NULLS}';
-
 	private List<String> orderByFields;
 	private Boolean isDESC;
 	private Boolean isNullsFirst;
@@ -20,7 +18,7 @@ public with sharing class DynamicSOQLOrderBy {
 
 	public DynamicSOQLOrderBy(List<String> orderByFields, Boolean isDESC, Boolean isNullsFirst) {
 		this.orderByFields = orderByFields;
-		this.isDESC         = isDESC;
+		this.isDESC        = isDESC;
 		this.isNullsFirst  = isNullsFirst;
 	}
 
@@ -38,10 +36,17 @@ public with sharing class DynamicSOQLOrderBy {
 	 * @description Returns ORDER BY statement like: "ORDER BY Name ASC NULLS LAST"
 	 * @return   { String }
 	 */
-	public override String toString() {
-		return ORDER_BY_TEMPLATE
-			.replace('{fieldOrderByList}', String.join(this.orderByFields, ','))
-			.replace('{direction}',        this.isDESC == true ? 'DESC' : 'ASC')
-			.replace('{NULLS}',            this.isNullsFirst == true ? 'NULLS FIRST' : 'NULLS LAST');
+	public String stringify() {
+		return DynamicSOQLConstants.TMPL_ORDER_BY
+			.replace(
+				DynamicSOQLConstants.PH_FIELD_ORDER_BY_LIST,
+				String.escapeSingleQuotes(String.join(this.orderByFields, DynamicSOQLConstants.COMMA))
+			).replace(
+				DynamicSOQLConstants.PH_DIRECTION,
+				this.isDESC == true ? DynamicSOQLConstants.SORT_DIRECTION_DESC : DynamicSOQLConstants.SORT_DIRECTION_ASC
+			).replace(
+				DynamicSOQLConstants.PH_NULLS,
+				this.isNullsFirst == true ? DynamicSOQLConstants.NULLS_FIRST : DynamicSOQLConstants.NULLS_LAST
+			);
 	}
 }

@@ -2,29 +2,11 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQLCondition {
-	private final static Set<String> AVAILABLE_OPERATORS = new Set<String>{
-		'=',
-		'!=',
-		'<',
-		'<=',
-		'>',
-		'>=',
-		'LIKE',
-		'IN',
-		'NOT IN',
-		'INCLUDES',
-		'EXCLUDES'
-	};
-	@TestVisible
 	private DynamicSOQLFunction function;
-	@TestVisible
 	private String fieldName;
-	@TestVisible
 	private String operator;
-	@TestVisible
 	private String value;
-	@TestVisible
-	private Boolean isString;
+	private List<String> values;
 
 	// CONSTRUCTORS
 
@@ -51,8 +33,12 @@ public with sharing class DynamicSOQLCondition {
 
 	public DynamicSOQLCondition(String fieldName, String operator, String value) {
 		this(fieldName, operator);
-		this.value = value == null ? 'null' : value;
-		this.isString = operator.contains(':') || this.value == 'null' ? false : true;
+		this.value = value == null ? DynamicSOQLConstants.NULL_STRING : value;
+	}
+
+	public DynamicSOQLCondition(String fieldName, String operator, List<String> values) {
+		this(fieldName, operator);
+		this.values = values;
 	}
 
 	private DynamicSOQLCondition(String fieldName, String operator) {
@@ -62,6 +48,10 @@ public with sharing class DynamicSOQLCondition {
 
 	// PUBLIC METHOD
 
+	/**
+	 * @description Returns the field api name that is used in the condition.
+	 * @return   { String }
+	 */
 	public String fieldApiName() {
 		if (this.fieldName != null) {
 			return this.fieldName;
@@ -72,41 +62,89 @@ public with sharing class DynamicSOQLCondition {
 		}
 	}
 
-	public override String toString() {
-		this.validateCondition();
-		String leftPart = this.fieldName != null ? this.fieldName : this.function.toString();
-		return '{fieldName} {operator} {value}'
-			.replace('{fieldName}', String.escapeSingleQuotes(leftPart))
-			.replace('{operator}', String.escapeSingleQuotes(this.operator))
-			.replace(
-				'{value}', this.isString == true ?
-				this.addQuotes(String.escapeSingleQuotes(this.value)) :
-				String.escapeSingleQuotes(this.value)
-			);
+	/**
+	 * @description Build the SOQL condition as a string in format <fieldApiName> <operator> <value>.
+	 * @param  sobjectApiName { String } Sobject api name for what the condition is created.
+	 * @return   { String }
+	 */
+	public String stringify(String sobjectApiName) {
+		DescribeFieldResult fieldDescribe = new SobjectFieldPath(sobjectApiName, this.fieldApiName()).targetFieldDescribe();
+		this.validateOperator();
+		if (this.function != null) {
+			return DynamicSOQLConstants.TMPL_CONDITION
+				.replace(DynamicSOQLConstants.PH_LEFT_PART, this.function.stringify())
+				.replace(DynamicSOQLConstants.PH_OPERATOR, String.escapeSingleQuotes(this.operator))
+				.replace(DynamicSOQLConstants.PH_RIGHT_PART, String.escapeSingleQuotes(this.value));
+		} else if (this.value == null && this.values != null) {
+			return DynamicSOQLConstants.TMPL_CONDITION
+				.replace(DynamicSOQLConstants.PH_LEFT_PART, String.escapeSingleQuotes(this.fieldName))
+				.replace(DynamicSOQLConstants.PH_OPERATOR, String.escapeSingleQuotes(this.operator))
+				.replace(DynamicSOQLConstants.PH_RIGHT_PART, this.stringifyValues(fieldDescribe));
+		} else {
+			return DynamicSOQLConstants.TMPL_CONDITION
+				.replace(DynamicSOQLConstants.PH_LEFT_PART, String.escapeSingleQuotes(this.fieldName))
+				.replace(DynamicSOQLConstants.PH_OPERATOR, String.escapeSingleQuotes(this.operator))
+				.replace(DynamicSOQLConstants.PH_RIGHT_PART, this.processValue(this.value, fieldDescribe));
+		}
 	}
 
 	// PRIVATE METHOD
 
 	private String fmtDatetime(Datetime dt) {
-		return dt.formatGmt('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
+		return dt.formatGmt(DynamicSOQLConstants.FORMAT_DATE_TIME);
 	}
 
 	private String fmtDate(Datetime dt) {
-		return dt.formatGmt('yyyy-MM-dd');
+		return dt.formatGmt(DynamicSOQLConstants.FORMAT_DATE);
+	}
+
+	private String processValue(String value, DescribeFieldResult fieldDescribe) {
+		if (DynamicSOQLConstants.TEXT_DISPLAY_TYPES.contains(fieldDescribe.getType())
+			&& !operator.contains(DynamicSOQLConstants.COLON)
+			&& value != DynamicSOQLConstants.NULL_STRING
+		) {
+			return this.addQuotes(String.escapeSingleQuotes(value));
+		} else if (fieldDescribe.getType() == Schema.DisplayType.Date) {
+			return String.escapeSingleQuotes(value).substringBefore(DynamicSOQLConstants.FORMAT_TIME_SEPARATOR);
+		} else {
+			return String.escapeSingleQuotes(value);
+		}
 	}
 
 	private String addQuotes(String value) {
-		return '\'' + value + '\'';
+		return DynamicSOQLConstants.SINGLE_QUOTE + value + DynamicSOQLConstants.SINGLE_QUOTE;
 	}
 
-	private void validateCondition() {
-		if (!AVAILABLE_OPERATORS.contains(this.operator.replace(':', ''))) {
+	private void validateOperator() {
+		String operator = this.operator.replace(DynamicSOQLConstants.COLON, DynamicSOQLConstants.EMPTY_STRING);
+		if (!DynamicSOQLConstants.CONDITION_AVAILABLE_OPERATORS.contains(operator)) {
 			throw new DynamicSOQLConditionException(
 				Label.WrongComparisonOperator
-				.replace('{operator}', this.operator)
-				.replace('{availableOperators}', AVAILABLE_OPERATORS.toString())
+				.replace(DynamicSOQLConstants.PH_OPERATOR, this.operator)
+				.replace(
+					DynamicSOQLConstants.PH_AVAILABLE_OPERATORS,
+					DynamicSOQLConstants.CONDITION_AVAILABLE_OPERATORS.toString()
+				)
 			);
 		}
+	}
+
+	private String stringifyValues(DescribeFieldResult fieldDescribe) {
+		String operator = this.operator.replace(DynamicSOQLConstants.COLON, DynamicSOQLConstants.EMPTY_STRING);
+		if (operator == DynamicSOQLConstants.OPERATOR_INCLUDES || operator == DynamicSOQLConstants.OPERATOR_EXCLUDES) {
+			return DynamicSOQLConstants.TMPL_BULK_VALUES.replace(
+				DynamicSOQLConstants.PH_BULK_VALUES,
+				String.escapeSingleQuotes(String.join(this.values, DynamicSOQLConstants.SEMICOLON))
+			);
+		}
+		List<String> quotedValues = new List<String>();
+		for (String valueItem : this.values) {
+			quotedValues.add(this.processValue(valueItem, fieldDescribe));
+		}
+		return DynamicSOQLConstants.TMPL_BULK_VALUES.replace(
+			DynamicSOQLConstants.PH_BULK_VALUES,
+			String.join(quotedValues, DynamicSOQLConstants.COMMA)
+		);
 	}
 
 	public class DynamicSOQLConditionException extends Exception{ }

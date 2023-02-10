@@ -2,27 +2,13 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class DynamicSOQL {
-	public static Map<String,Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
-	private final static String QUERY_TEMPLATE =
-	'SELECT {selectItems} '+
-	'FROM {SObject}' +
-	'{WHERE}' +
-	'{GROUP BY}' +
-	'{ORDER BY}' +
-	'{LIMIT}' +
-	'{OFFSET}';
-
-	@TestVisible
 	private String sObjectName;
-	@TestVisible
 	private List<DynamicSOQLFunction> selectFunctions = new List<DynamicSOQLFunction>();
-	@TestVisible
 	private List<String> selectFields = new List<String>();
-	@TestVisible
 	private Map<String, DynamicSOQL> subQueries = new Map<String, DynamicSOQL>();
 	private DynamicSOQLConditionBlock conditionBlock;
-	DynamicSOQLGoupBy groupBy;
-	DynamicSOQLOrderBy orderBy;
+	private DynamicSOQLGroupBy groupBy;
+	private DynamicSOQLOrderBy orderBy;
 	private Integer offsetNumber;
 	private Integer limitNumber;
 
@@ -84,7 +70,7 @@ public with sharing class DynamicSOQL {
 	 * @param  groupBy { DynamicSOQLGoupBy }
 	 * @return         { DynamicSOQL }
 	 */
-	public DynamicSOQL withGroupBy(DynamicSOQLGoupBy groupBy) {
+	public DynamicSOQL withGroupBy(DynamicSOQLGroupBy groupBy) {
 		this.groupBy = groupBy;
 		return this;
 	}
@@ -141,29 +127,56 @@ public with sharing class DynamicSOQL {
 	 * @description Builds a SOQL string
 	 * @return   { String }
 	 */
-	public override String toString() {
-		DescribeSObjectResult sObjectDescription = globalDescribe.get(sObjectName)?.getDescribe();
+	public String stringify() {
+		this.sObjectName = String.escapeSingleQuotes(this.sObjectName);
+		DescribeSObjectResult sObjectDescription = DynamicSOQLConstants.GLOBAL_DESCRIBE.get(this.sObjectName)?.getDescribe();
 		if (sObjectDescription == null) {
 			throw new DynamicSOQLException(Label.NoSObject.replace('{sObjectName}', sObjectName));
 		}
 		List<String> selectItems = new List<String>();
-		if (this.selectFields != null && !this.selectFields.isEmpty()) {
-			selectItems.addAll(this.selectFields);
-		}
+		selectItems.addAll(buildSelectFields());
 		selectItems.addAll(buildFunctions());
 		selectItems.addAll(buidSubqueries(sObjectDescription));
 
-		return QUERY_TEMPLATE
-			.replace('{selectItems}', String.join(selectItems, ','))
-			.replace('{SObject}',     this.sObjectName)
-			.replace('{WHERE}',       this.conditionBlock != null ? ' WHERE '  + this.conditionBlock.toString() : '')
-			.replace('{GROUP BY}',    this.groupBy        != null ? ' ' + this.groupBy.toString() : '')
-			.replace('{ORDER BY}',    this.orderBy        != null ? ' ' + this.orderBy.toString() : '')
-			.replace('{LIMIT}',       this.limitNumber    != null ? ' LIMIT '  + this.limitNumber : '' )
-			.replace('{OFFSET}',      this.offsetNumber   != null ? ' OFFSET ' + this.offsetNumber : '' );
+		return DynamicSOQLConstants.TMPL_QUERY
+			.replace(
+				DynamicSOQLConstants.PH_SELECT_ITEMS,
+				String.join(selectItems, DynamicSOQLConstants.COMMA)
+			).replace(
+				DynamicSOQLConstants.PH_SOBJECT,
+				this.sObjectName
+			).replace(
+				DynamicSOQLConstants.PH_WHERE,
+				this.conditionBlock != null ? 'WHERE ' + this.conditionBlock.stringify(this.sObjectName) : DynamicSOQLConstants.EMPTY_STRING
+			).replace(
+				DynamicSOQLConstants.PH_GROUP_BY,
+				this.groupBy != null ? + this.groupBy.stringify(this.sObjectName) : DynamicSOQLConstants.EMPTY_STRING
+			).replace(
+				DynamicSOQLConstants.PH_ORDER_BY,
+				this.orderBy != null ? + this.orderBy.stringify() : DynamicSOQLConstants.EMPTY_STRING
+			).replace(
+				DynamicSOQLConstants.PH_LIMIT,
+				this.limitNumber != null ? 'LIMIT '  + this.limitNumber : DynamicSOQLConstants.EMPTY_STRING
+			).replace(
+				DynamicSOQLConstants.PH_OFFSET,
+				this.offsetNumber != null ? 'OFFSET ' + this.offsetNumber : DynamicSOQLConstants.EMPTY_STRING
+			)
+			.trim()
+			.normalizeSpace();
 	}
 
 	/* PRIVATE METHODS */
+
+	private List<String> buildSelectFields() {
+		if (this.selectFields == null && this.selectFields.isEmpty()) {
+			return new List<String>();
+		}
+		List<String> result = new List<String>();
+		for (String fieldApiName : this.selectFields) {
+			result.add(String.escapeSingleQuotes(fieldApiName));
+		}
+		return result;
+	}
 
 	private List<String> buildFunctions() {
 		if (this.selectFunctions == null || this.selectFunctions.isEmpty()) {
@@ -171,7 +184,7 @@ public with sharing class DynamicSOQL {
 		}
 		List<String> result = new List<String>();
 		for (DynamicSOQLFunction function : this.selectFunctions) {
-			result.add(function.toString());
+			result.add(function.stringify());
 		}
 		return result;
 	}
@@ -197,7 +210,7 @@ public with sharing class DynamicSOQL {
 						.replace('{sObjectName}', this.sObjectName)
 				);
 			}
-			result.add('(' + subQuery.toString().replace(
+			result.add('(' + subQuery.stringify().replace(
 				'FROM ' + subQuery.sObjectName,
 				'FROM ' + childRelationName
 			) + ')');

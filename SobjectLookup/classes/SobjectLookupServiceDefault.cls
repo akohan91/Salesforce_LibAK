@@ -1,5 +1,5 @@
 public with sharing class SobjectLookupServiceDefault extends SobjectLookupServiceAbstract{
-	
+
 	/* PUBLIC METHODS */
 
 	/**
@@ -20,9 +20,9 @@ public with sharing class SobjectLookupServiceDefault extends SobjectLookupServi
 			.withField(this.titleFieldName)
 			.withLimit(this.limitRecords)
 			.withOffset(this.offsetRecords);
-		return Database.query(soql.toString());
+		return Database.query(soql.stringify());
 	}
-	
+
 	/**
 	 * @description Returns the number of Sobject records.
 	 * @return   { Integer }
@@ -30,7 +30,7 @@ public with sharing class SobjectLookupServiceDefault extends SobjectLookupServi
 	override public Integer recordsCount() {
 		DynamicSOQL soql = this.buildGeneralSoql().withFunction(new DynamicSOQLFunction('COUNT'));
 
-		return Database.countQuery(soql.toString());
+		return Database.countQuery(soql.stringify());
 	}
 
 	/* PRIVATE METHODS */
@@ -41,7 +41,7 @@ public with sharing class SobjectLookupServiceDefault extends SobjectLookupServi
 		if (this.defaultConditionBlock != null) {
 			conditionBlock.addConditionBlock(this.defaultConditionBlock);
 		}
-		
+
 		return new DynamicSOQL(this.sobjectName)
 			.withConditions(conditionBlock);
 	}
