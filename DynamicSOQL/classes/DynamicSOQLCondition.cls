@@ -7,6 +7,7 @@ public with sharing class DynamicSOQLCondition {
 	private String operator;
 	private String value;
 	private List<String> values;
+	private DynamicSOQL soqlValue;
 
 	// CONSTRUCTORS
 
@@ -39,6 +40,11 @@ public with sharing class DynamicSOQLCondition {
 	public DynamicSOQLCondition(String fieldName, String operator, List<String> values) {
 		this(fieldName, operator);
 		this.values = values;
+	}
+
+	public DynamicSOQLCondition(String fieldName, String operator, DynamicSOQL soqlValue) {
+		this(fieldName, operator);
+		this.soqlValue = soqlValue;
 	}
 
 	private DynamicSOQLCondition(String fieldName, String operator) {
@@ -75,11 +81,16 @@ public with sharing class DynamicSOQLCondition {
 				.replace(DynamicSOQLConstants.PH_LEFT_PART, this.function.stringify())
 				.replace(DynamicSOQLConstants.PH_OPERATOR, String.escapeSingleQuotes(this.operator))
 				.replace(DynamicSOQLConstants.PH_RIGHT_PART, String.escapeSingleQuotes(this.value));
-		} else if (this.value == null && this.values != null) {
+		} else if (this.values != null) {
 			return DynamicSOQLConstants.TMPL_CONDITION
 				.replace(DynamicSOQLConstants.PH_LEFT_PART, String.escapeSingleQuotes(this.fieldName))
 				.replace(DynamicSOQLConstants.PH_OPERATOR, String.escapeSingleQuotes(this.operator))
 				.replace(DynamicSOQLConstants.PH_RIGHT_PART, this.stringifyValues(fieldDescribe));
+		}  else if (this.soqlValue != null) {
+			return DynamicSOQLConstants.TMPL_CONDITION
+				.replace(DynamicSOQLConstants.PH_LEFT_PART, String.escapeSingleQuotes(this.fieldName))
+				.replace(DynamicSOQLConstants.PH_OPERATOR, String.escapeSingleQuotes(this.operator))
+				.replace(DynamicSOQLConstants.PH_RIGHT_PART, '(' + this.soqlValue.stringify() + ')');
 		} else {
 			return DynamicSOQLConstants.TMPL_CONDITION
 				.replace(DynamicSOQLConstants.PH_LEFT_PART, String.escapeSingleQuotes(this.fieldName))
