@@ -26,6 +26,11 @@ export class DynamicSOQLCondition {
 	 * @type Array
 	 */
 	values;
+	/**
+	 * @description DynamicSOQL that is used for 'IN', 'NOT IN' operators like "fieldName IN (SELECT Id FROM Account)"
+	 * @type DynamicSOQL
+	 */
+	soqlValue;
 
 	/**
 	 *
@@ -48,10 +53,12 @@ export class DynamicSOQLCondition {
 	}
 
 	_setValue(value) {
-		if (value === null) {
-			this.value = 'null';
-		} else if (Array.isArray(value)) {
+		if (Array.isArray(value)) {
 			this.values = value;
+		} else if (value instanceof Date && !isNaN(value)) {
+			this.value = value;
+		} else if (value === Object(value)) {
+			this.soqlValue = value;
 		} else {
 			this.value = value;
 		}

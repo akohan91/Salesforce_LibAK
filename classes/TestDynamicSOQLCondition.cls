@@ -130,6 +130,30 @@ public with sharing class TestDynamicSOQLCondition {
 	}
 
 	@IsTest
+	static void testConstructorDynamicSOQLAsCondition(){
+		DynamicSOQLCondition condition = new DynamicSOQLCondition('AccountId', 'IN',
+			new DynamicSOQL('Account')
+			.withField('Id')
+			.withConditions(
+				new DynamicSOQLConditionBlock('AND')
+				.addCondition(new DynamicSOQLCondition('Industry', '=', 'Government'))
+			)
+		);
+
+		Test.startTest();
+
+		String result = condition.stringify('Contact');
+
+		Test.stopTest();
+
+		System.assertEquals(
+			'AccountId IN (SELECT Id FROM Account WHERE (Industry = \'Government\'))',
+			result,
+			'The "stringify" method returns wrong value.'
+		);
+	}
+
+	@IsTest
 	static void testConstructorValueAsStringVariable(){
 		DynamicSOQLCondition condition = new DynamicSOQLCondition('Name', '=:', 'variableName');
 
