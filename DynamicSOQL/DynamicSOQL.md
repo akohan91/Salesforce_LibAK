@@ -28,7 +28,23 @@
 # Intro
 <a name="Intro">
 
-The DynamicSOQL library helps to build SOQL strings with more declarative style than via native apex code.
+**Important**
+
+The ***DynamicSOQL*** module depends on the ***DatabaseUtils*** module.
+
+Enter DynamicSOQL, a powerful and flexible library that enables you to retrieve data from Salesforce using Apex Code and JavaScript. This library provides a unique, object-oriented approach to building SOQL queries, making it easier to build and manage complex queries.
+
+DynamicSOQL is built using Apex code and a JavaScript mirror, and it provides a number of features that make it a powerful and versatile solution for working with SOQL. Some of the key features of DynamicSOQL include:
+
+- Apec API: DynamicSOQL provides an easy-to-use API that is fully object-oriented. This makes it easy to build and manage complex queries, as you can use objects to represent the various parts of your query.
+
+- JavaScript API: DynamicSOQL includes a JavaScript API that allows you to build the JSON representation of your query and then send it to the backend to process. This means you can build your query on the frontend and then process it on the backend, providing a seamless and efficient data retrieval solution.
+
+- Granular Control: DynamicSOQL enables you to build your query granularly, meaning you can prepare different parts of the query separately. For example, you can use the DynamicSOQLConditionBlock and DynamicSOQLCondition objects to prepare the JSON representation of your filters, and then build the WHERE clause on the backend.
+
+- Security: DynamicSOQL includes security measures to prevent SOQL injection on the backend. This ensures that your queries are secure and protects your data from malicious attacks.
+
+- Functionality: DynamicSOQL provides a wide range of functionality, including the ability to build simple queries, aggregate queries, subqueries, and more.
 
 The library is built in Object Oriented style and contains the next classes:
 
@@ -113,6 +129,11 @@ System.debug(soql.stringify());
 <a name="Reference_Guide">
 
 # Reference Guide
+
+
+
+
+
 
 ## DynamicSOQL
 <a name="DynamicSOQL">
@@ -291,13 +312,18 @@ new DynamicSOQL('Account')
 .stringify(); // SELECT Id,(SELECT Id FROM Contacts) FROM Account
 ```
 
+
+
+
+
+
 ## DynamicSOQLFunction
 <a name="DynamicSOQLFunction">
 
 ### Constructors
 <a name="DynamicSOQLFunction_Constructors">
 
-The following are constructors for DynamicSOQL.
+The following are constructors for DynamicSOQLFunction.
 - `DynamicSOQLFunction(String functionName)`
 ```java
 DynamicSOQLFunction function = new DynamicSOQLFunction('COUNT');
@@ -317,7 +343,7 @@ System.debug(function.stringify()); // COUNT(Id) recordsCount
 ### Methods
 <a name="DynamicSOQLFunction_Methods">
 
-The following are methods for DynamicSOQL. All are instance methods.
+The following are methods for DynamicSOQLFunction. All are instance methods.
 
 - **fieldApiName** <br>
 `fieldApiName(): String` <br>
@@ -337,13 +363,18 @@ new DynamicSOQLFunction('COUNT', 'Id', 'alias')
 .stringify() // COUNT(Id) alias
 ```
 
+
+
+
+
+
 ## DynamicSOQLConditionBlock
 <a name="DynamicSOQLConditionBlock">
 
 ### Constructors
 <a name="DynamicSOQLConditionBlock_Constructors">
 
-The following are constructors for DynamicSOQL.
+The following are constructors for DynamicSOQLConditionBlock.
 
 - `DynamicSOQLConditionBlock(String operator)`
 
@@ -354,7 +385,7 @@ DynamicSOQLConditionBlock conditionBlock = new DynamicSOQLConditionBlock('AND')
 ### Methods
 <a name="DynamicSOQLConditionBlock_Methods">
 
-The following are methods for DynamicSOQL. All are instance methods.
+The following are methods for DynamicSOQLConditionBlock. All are instance methods.
 
 - **addCondition** <br>
 `addCondition(DynamicSOQLCondition condition): DynamicSOQLConditionBlock` <br>
@@ -421,13 +452,18 @@ conditionBlock.fieldsApiNames(); // {'Phone', 'FirstName', 'LastName'}
 `stringify(String sobjectApiName): String` <br>
 Builds a Dynamic SOQL Condition Block string for WHERE statement
 
+
+
+
+
+
 ## DynamicSOQLCondition
 <a name="DynamicSOQLCondition">
 
 ### Constructors
 <a name="DynamicSOQLCondition_Constructors">
 
-The following are constructors for DynamicSOQL.
+The following are constructors for DynamicSOQLCondition.
 
 - `DynamicSOQLCondition(String fieldName, String operator, Object value)`
 
@@ -471,7 +507,7 @@ DynamicSOQLCondition variableCondition = new DynamicSOQLCondition('Id', 'IN:', '
 ### Methods
 <a name="DynamicSOQLCondition_Methods">
 
-The following are methods for DynamicSOQL. All are instance methods.
+The following are methods for DynamicSOQLCondition. All are instance methods.
 
 - **fieldApiName** <br>
 `fieldApiName(): String` <br>
@@ -481,13 +517,18 @@ Returns the field api name that is used in a condition.
 `stringify(String sobjectApiName): String` <br>
 Builds a SOQL condition string like `Name = 'Andrew'`
 
+
+
+
+
+
 ## DynamicSOQLOrderBy
 <a name="DynamicSOQLOrderBy">
 
 ### Constructors
 <a name="DynamicSOQLOrderBy_Constructors">
 
-The following are constructors for DynamicSOQL.
+The following are constructors for DynamicSOQLOrderBy.
 
 - `DynamicSOQLOrderBy(List<String> orderByFields)`
 ```java
@@ -507,7 +548,7 @@ DynamicSOQLOrderBy orderBy = new DynamicSOQLOrderBy(new List<String>{'Name', 'Id
 ### Methods
 <a name="DynamicSOQLOrderBy_Methods">
 
-The following are methods for DynamicSOQL. All are instance methods.
+The following are methods for DynamicSOQLOrderBy. All are instance methods.
 
 - **fieldsApiNames** <br>
 `fieldsApiNames(): Set<String>` <br>
@@ -517,13 +558,18 @@ Returns list of fields that are used in ORDER BY Statement
 `stringify(): String` <br>
 Returns ORDER BY statement like: "ORDER BY Name ASC NULLS LAST"
 
+
+
+
+
+
 ## DynamicSOQLGroupBy
 <a name="DynamicSOQLGroupBy">
 
 ### Constructors
 <a name="DynamicSOQLGroupBy_Constructors">
 
-The following are constructors for DynamicSOQL.
+The following are constructors for DynamicSOQLGroupBy.
 
 - `DynamicSOQLGroupBy(List<String> fieldGroupByList)`
 ```java
@@ -533,7 +579,7 @@ DynamicSOQLGroupBy groupBy = new DynamicSOQLGroupBy(new List<String>{'StageName'
 ### Methods
 <a name="DynamicSOQLGroupBy_Methods">
 
-The following are methods for DynamicSOQL. All are instance methods.
+The following are methods for DynamicSOQLGroupBy. All are instance methods.
 
 - **fieldsApiNames** <br>
 `fieldsApiNames(): Set<String>` <br>
