@@ -59,6 +59,8 @@ export class DynamicSOQLCondition {
 			this.value = value;
 		} else if (value === Object(value)) {
 			this.soqlValue = value;
+		} else if (value === null) {
+			this.value = 'null';
 		} else {
 			this.value = value;
 		}

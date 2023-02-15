@@ -15,7 +15,7 @@ export class DynamicSOQLOrderBy {
 	 * @param { Boolean } isDESC
 	 * @param { Boolean } isNullsFirst
 	 */
-	constructor(orderByFields, isDESC, isNullsFirst) {
+	constructor(orderByFields, isDESC = false, isNullsFirst = false) {
 		if (!Array.isArray(orderByFields)) {
 			throw new Error('The "orderByFields" parameter should be a String[].');
 		}
