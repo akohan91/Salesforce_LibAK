@@ -15,5 +15,6 @@ The Salesforce LibAK contains the next modules:
     - [Code](SobjectLookup)
 5. SobjectTable
     - [Code](SobjectTable)
-6. WebServerRouter
-    - [Code](WebServerRouter)
+6. RestFramework
+    - [Code](RestFramework)
+    - [Documentation](RestFramework/RestFramework.md)
