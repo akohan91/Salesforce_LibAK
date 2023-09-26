@@ -2,37 +2,31 @@
 global with sharing class DemoRestFramework {
 
 	@HttpGet
-	global static void doGet() { handleRequest(); }
+	global static void doGet() {
+		RestFramework.handleRequest(AccountRestRouter.class);
+	}
 	@HttpPost
-	global static void doPost() { handleRequest(); }
+	global static void doPost() {
+		RestFramework.handleRequest(AccountRestRouter.class);
+	}
 	@HttpPut
-	global static void doPut() { handleRequest(); }
+	global static void doPut() {
+		RestFramework.handleRequest(AccountRestRouter.class);
+	}
 	@HttpDelete
-	global static void doDelete() { handleRequest(); }
-
-	private static void handleRequest() {
-		RestFramework.IRestResponse response;
-		try {
-			RestRouter router = new AccountRestRouter();
-			RestProcessor processor = router.newRestProcessor(RestContext.request);
-			response = processor.process();
-		} catch (Exception exc) {
-			response = new ErrorResponseFactory().newErrorRestResponse(exc);
-		} finally {
-			response.sendResponse();
-		}
+	global static void doDelete() {
+		RestFramework.handleRequest(AccountRestRouter.class);
 	}
 
 	public class AccountRestRouter extends RestRouter {
-		public AccountRestRouter() {
-			super(
-				new Map<String, Type>{
-					'/v1/accounts' => AccountProcessorV1.class,
-					'/v1/accounts/:accountId' => AccountProcessorV1.class,
-					'/v2/accounts' => AccountProcessorV2.class,
-					'/v2/accounts/:accountId' => AccountProcessorV2.class
-				}
-			);
+		override public RestRouter setRoutes() {
+			this.routeToRestProcessorType = new Map<String, Type>{
+				'/v1/accounts' => AccountProcessorV1.class,
+				'/v1/accounts/:accountId' => AccountProcessorV1.class,
+				'/v2/accounts' => AccountProcessorV2.class,
+				'/v2/accounts/:accountId' => AccountProcessorV2.class
+			};
+			return this;
 		}
 	}
 
