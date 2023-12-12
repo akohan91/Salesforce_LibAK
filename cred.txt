@@ -1,9 +1,0 @@
-Username      andrew@libac_0002.dev
-Profile Name  System Administrator
-Id              0051y000009gxy6AAA
-Org Id         00D1y0000000weDEAQ
-Access Token  00D1y0000000weD!AQUAQJfqsRNO3BedXRebEz_eBnULo.GCzb2jYeOsbKDE89G8itWFzenVdZd.5UqVrCwe8lLTGLfrYJaPD8eA8izV7s2eJnlT
-Instance Url  https://innovation-customization-66-dev-ed.cs114.my.salesforce.com
-Login Url      https://CS114.salesforce.com
-Alias          libac_0002
-Password      c*p0Sxvatqufb
