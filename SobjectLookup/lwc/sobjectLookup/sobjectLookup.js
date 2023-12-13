@@ -70,19 +70,18 @@ export default class SobjectLookup extends LightningElement {
 	handleKeyDown(event) {
 		try {
 			const {keyCode} = event;
+			[27, 38, 40, 13].includes(keyCode) && event.preventDefault();
 			switch (keyCode) {
-				// ESC key
-				case 27: this.hideSearchResults(); break;
-				// UP key
-				case 38: this.setFocusItem(-1); break;
-				// DOWN key
-				case 40: this.setFocusItem(+1); break;
-				// LEFT key
-				case 37: this.template.querySelector('.list-pagination').handlePrev(); break;
-				// RIGHT key
-				case 39: this.template.querySelector('.list-pagination').handleNext(); break;
-				// ENTER key
-				case 13: this.sendEvent(); break;
+				case 27 /* ESC    */: this.hideSearchResults(); break;
+				case 38 /* UP    */ : this.setFocusItem(-1); break;
+				case 40 /* DOWN  */ : this.setFocusItem(+1); break;
+				case 13 /* ENTER */ :
+					if (this.show.searchResults) {
+						this.sendEvent();
+					} else {
+						this.search();
+					}
+					break;
 			}
 		} catch (error) {
 			showErrorModal(error, this);
