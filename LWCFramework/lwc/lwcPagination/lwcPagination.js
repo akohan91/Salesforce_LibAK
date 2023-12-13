@@ -112,7 +112,7 @@ export default class Pagination extends LightningElement {
 	dispatchPaginationEvent() {
 		this.dispatchEvent(new CustomEvent('pagination',{
 			detail:{
-				offset: this.startView - 1,
+				offset: this.startView === 0 ? 0 : this.startView - 1,
 				pageSize: this.pageSize
 			}
 		}));
