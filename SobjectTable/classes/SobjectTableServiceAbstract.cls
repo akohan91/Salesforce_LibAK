@@ -12,6 +12,13 @@ public abstract class SobjectTableServiceAbstract {
 	/* ABSTRACT METHODS */
 
 	/**
+	 * @description Builds a new instance of SobjectTableServiceAbstract.
+	 * Was added to have an ability use the 'Decorator Pattern'
+	 * @return   {SobjectTableServiceAbstract}
+	 */
+	abstract public SobjectTableServiceAbstract createService(String inputJSON);
+
+	/**
 	 * @description Returns the list of Sobject records
 	 * @return   { List<SObject> }
 	 */
