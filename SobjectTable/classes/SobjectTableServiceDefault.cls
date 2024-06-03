@@ -45,6 +45,15 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 	/* PUBLIC METHODS */
 
 	/**
+	 * @description Builds a new instance of SobjectTableServiceAbstract.
+	 * Was added to have an ability use the 'Decorator Pattern'
+	 * @return   {SobjectTableServiceAbstract}
+	 */
+	override public SobjectTableServiceAbstract createService(String inputJSON) {
+		return (SobjectTableServiceAbstract)JSON.deserialize(inputJSON, SobjectTableServiceDefault.class);
+	}
+
+	/**
 	 * @description Returns the list of Sobject records
 	 * @return   { List<SObject> }
 	 */
