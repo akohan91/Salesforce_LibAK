@@ -21,7 +21,7 @@ public with sharing class SobjectTableCtrl {
 		try {
 			SobjectTableServiceAbstract sobjectTableService = controllerInstance(controllerName, inputDataJSON);
 			return new Map<String, Object>{
-				'records'             => sobjectTableService.sobjectRecords(),
+				'records'             => sobjectTableService.tableRows(),
 				'recordsCount'        => sobjectTableService.recordsCount(),
 				'referenceFieldPaths' => sobjectTableService.referenceFieldPaths(),
 				'addressFieldPaths'   => sobjectTableService.addressFieldPaths(),
