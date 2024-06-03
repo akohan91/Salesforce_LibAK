@@ -9,7 +9,9 @@ public with sharing class SobjectTableCtrl {
 	/* FACTORY METHOD */
 
 	private static SobjectTableServiceAbstract controllerInstance(String controllerName, String inputDataJSON) {
-		return (SobjectTableServiceAbstract)JSON.deserialize(inputDataJSON, sobjectTableServiceImpl.get(controllerName));
+		Type serviceType = sobjectTableServiceImpl.get(controllerName);
+		return ((SobjectTableServiceAbstract)serviceType.newInstance())
+			.createService(inputDataJSON);
 	}
 
 	/* PUBLIC METHODS */
