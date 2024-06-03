@@ -9,6 +9,14 @@ public abstract class SobjectTableServiceAbstract {
 	@TestVisible protected Integer limitRecords;
 	@TestVisible protected Integer offsetRecords;
 
+	/**
+	 * @description The method allows overriding the table data after it's been selected.
+	 * @return   return {List<Object>}
+	 */
+	virtual public List<Object> tableRows() {
+		return this.sobjectRecords();
+	}
+
 	/* ABSTRACT METHODS */
 
 	/**
