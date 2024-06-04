@@ -8,7 +8,7 @@ import { flattenForDataTable, overrideDataTableColumns } from './sobjectTableUti
 import init from '@salesforce/apex/SobjectTableCtrl.init'
 
 export default class SobjectTable extends LightningElement {
-	@api controllerName = 'default'
+	@api controllerName;
 	@api sobjectName;
 	@api get selectFields() { return this._selectFields; }
 	set selectFields(value) {
