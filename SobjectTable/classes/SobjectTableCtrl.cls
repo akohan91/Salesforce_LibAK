@@ -7,13 +7,13 @@ public with sharing class SobjectTableCtrl {
 
 	private static SobjectTableServiceAbstract controllerInstance(String controllerName, String inputDataJSON) {
 		controllerName = controllerName == null ? SobjectTableServiceDefault.class.getName() : controllerName;
-		controllerName += '.Constructor';
-		Type serviceType = Type.forName(controllerName);
+		String constructorName = controllerName + '.Constructor';
+		Type constructorType = Type.forName(constructorName);
 
-		if (serviceType == null) {
-			throw new SobjectTableException('Service ' + controllerName + ' not found.');
+		if (constructorType == null) {
+			throw new SobjectTableException('Constructor ' + constructorName + ' not found.');
 		}
-		return ((SobjectTableServiceAbstract.IConstructable)serviceType.newInstance()).construct(inputDataJSON);
+		return ((SobjectTableServiceAbstract.IConstructable)constructorType.newInstance()).construct(inputDataJSON);
 	}
 
 	/* PUBLIC METHODS */
