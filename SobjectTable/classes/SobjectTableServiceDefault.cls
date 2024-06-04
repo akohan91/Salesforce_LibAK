@@ -1,5 +1,5 @@
 /**
- * @author Andrew Kohanovskij <akohan91@gmail.com>
+ * @author Andrei Kakhanouski <akohan91@gmail.com>
  * The class is used as a service for the SobjectTableCtrl class.
  *
  * Properties of SobjectTableServiceAbstract class:

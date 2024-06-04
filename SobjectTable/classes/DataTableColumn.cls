@@ -1,5 +1,5 @@
 /**
- * @author Andrew Kohanovskij <akohan91@gmail.com>
+ * @author Andrei Kakhanouski <akohan91@gmail.com>
  * The class represents the column definition of lwc data table column
  * https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation
  */
