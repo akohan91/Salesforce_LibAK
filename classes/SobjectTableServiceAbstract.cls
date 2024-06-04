@@ -8,6 +8,16 @@ public abstract class SobjectTableServiceAbstract {
 	@TestVisible protected DynamicSOQLOrderBy orderBy;
 	@TestVisible protected Integer limitRecords;
 	@TestVisible protected Integer offsetRecords;
+	
+	/**
+	 * @description The IConstructable interface allows to enable reflection for the SobjectTableServiceAbstract
+	 * and prevents using static methods for service instantiation.
+	 * @param  inputJSON inputJSON the JSON string which represents the SobjectTableServiceAbstract
+	 * @return           {SobjectTableServiceAbstract}
+	 */
+	public interface IConstructable {
+		SobjectTableServiceAbstract construct(String inputJSON);
+	}
 
 	/**
 	 * @description The method allows overriding the table data after it's been selected.
@@ -18,13 +28,6 @@ public abstract class SobjectTableServiceAbstract {
 	}
 
 	/* ABSTRACT METHODS */
-
-	/**
-	 * @description Builds a new instance of SobjectTableServiceAbstract.
-	 * Was added to have an ability use the 'Decorator Pattern'
-	 * @return   {SobjectTableServiceAbstract}
-	 */
-	abstract public SobjectTableServiceAbstract createService(String inputJSON);
 
 	/**
 	 * @description Returns the list of Sobject records
