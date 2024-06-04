@@ -1,6 +1,18 @@
 public with sharing class TableWithCustomBackendCtrl extends SobjectTableServiceAbstract {
 	private SobjectTableServiceAbstract service;
 
+	public class Constructor implements SobjectTableServiceAbstract.IConstructable {
+		public SobjectTableServiceAbstract construct(String inputJSON) {
+			return new TableWithCustomBackendCtrl(
+				new SobjectTableServiceDefault.Constructor().construct(inputJSON)
+			);
+		}
+	}
+
+	public TableWithCustomBackendCtrl(SobjectTableServiceAbstract defaultService) {
+		this.service = defaultService;
+	}
+
 	override public List<Object> tableRows() {
 		List<Map<String,Object>> rows = new List<Map<String,Object>>();
 		for (Case caseItem : (List<Case>)this.sobjectRecords()) {
@@ -18,11 +30,6 @@ public with sharing class TableWithCustomBackendCtrl extends SobjectTableService
 			rows.add(row);
 		}
 		return rows;
-	}
-
-	override public SobjectTableServiceAbstract createService(String jsonInputData) {
-		this.service = new SobjectTableServiceDefault().createService(jsonInputData);
-		return this;
 	}
 
 	override public List<SObject> sobjectRecords() {
