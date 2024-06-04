@@ -1,0 +1,24 @@
+<template>
+	<lightning-card title="Simple table">
+		<c-sobject-table
+			sobject-name="Account"
+			select-fields="Name,Phone,Type,Industry,BillingAddress"
+		></c-sobject-table>
+	</lightning-card>
+
+	<lightning-card title="Table with relationships">
+		<c-sobject-table
+			sobject-name="Contact"
+			select-fields="Name,Email,Birthdate,Account.Name,MailingAddress"
+		></c-sobject-table>
+	</lightning-card>
+
+	<lightning-card title="Table with custom backend">
+		<c-sobject-table
+			sobject-name="Case"
+			select-fields="Subject,Status,Priority,Origin,Account.Name,CreatedDate"
+			controller-name={tableWithCustomBackend.controllerName}
+			columns-to-override={tableWithCustomBackend.columnsToOverride}
+		></c-sobject-table>
+	</lightning-card>
+</template>

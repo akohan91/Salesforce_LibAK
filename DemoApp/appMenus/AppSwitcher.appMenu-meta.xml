@@ -61,6 +61,10 @@
         <type>CustomApplication</type>
     </appMenuItems>
     <appMenuItems>
+        <name>standard__Commerce</name>
+        <type>CustomApplication</type>
+    </appMenuItems>
+    <appMenuItems>
         <name>Libak_Demo</name>
         <type>CustomApplication</type>
     </appMenuItems>
