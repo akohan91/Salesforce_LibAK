@@ -9,9 +9,14 @@ public with sharing class SobjectLookupCtrl {
 	/* FACTORY METHOD */
 
 	private static SobjectLookupServiceAbstract serviceInstance(String controllerName, String inputJSON) {
-		Type serviceType = sobjectLookupServiceImpl.get(controllerName);
-		return ((SobjectLookupServiceAbstract)serviceType.newInstance())
-			.createService(inputJSON);
+		controllerName = controllerName == null ? SobjectLookupServiceDefault.class.getName() : controllerName;
+		String constructorName = controllerName + '.Constructor';
+		Type constructorType = Type.forName(constructorName);
+
+		if (constructorType == null) {
+			throw new SobjectLookupException('Constructor ' + constructorName + ' not found.');
+		}
+		return ((SobjectLookupServiceAbstract.IConstructable)constructorType.newInstance()).construct(inputJSON);
 	}
 
 	@AuraEnabled

@@ -12,7 +12,7 @@ const COMBOBOX_CSS = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_
 const FAKE_ID = '000000000000000000';
 
 export default class SobjectLookup extends LightningElement {
-	@api controllerName = 'default';
+	@api controllerName;
 	@api sobjectName;
 	@api searchedByFields = ['Name'];
 	@api titleFieldName = 'Name';
@@ -104,7 +104,7 @@ export default class SobjectLookup extends LightningElement {
 	search() {
 		this.busy();
 		search({
-			controllerName: this.controllerName || 'default',
+			controllerName: this.controllerName,
 			inputJSON: JSON.stringify({
 				sobjectName: this.sobjectName,
 				searchedByFields: this.searchedByFields,
