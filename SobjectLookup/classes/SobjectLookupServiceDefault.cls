@@ -1,15 +1,12 @@
 public with sharing class SobjectLookupServiceDefault extends SobjectLookupServiceAbstract{
 
-	/* PUBLIC METHODS */
-
-	/**
-	 * @description Builds a new instance of SobjectLookupServiceAbstract.
-	 * Was added to have an ability use the 'Decorator Pattern'
-	 * @return   {SobjectLookupServiceAbstract}
-	 */
-	override public SobjectLookupServiceAbstract createService(String inputJSON) {
-		return (SobjectLookupServiceAbstract)JSON.deserialize(inputJSON, SobjectLookupServiceDefault.class);
+	public class Constructor implements SobjectLookupServiceAbstract.IConstructable {
+		public SobjectLookupServiceAbstract construct(String inputJSON) {
+			return (SobjectLookupServiceAbstract)JSON.deserialize(inputJSON, SobjectLookupServiceDefault.class);
+		}
 	}
+
+	/* PUBLIC METHODS */
 
 	/**
 	 * @description Returns the list of Sobject records
