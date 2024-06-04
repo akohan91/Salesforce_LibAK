@@ -42,16 +42,13 @@ public with sharing class SobjectTableServiceDefault extends SobjectTableService
 	private List<DataTableColumn> dataTableColumns;
 	private Map<String, SobjectFieldPathInterface> targetFieldPathItemByPath;
 
-	/* PUBLIC METHODS */
-
-	/**
-	 * @description Builds a new instance of SobjectTableServiceAbstract.
-	 * Was added to have an ability use the 'Decorator Pattern'
-	 * @return   {SobjectTableServiceAbstract}
-	 */
-	override public SobjectTableServiceAbstract createService(String inputJSON) {
-		return (SobjectTableServiceAbstract)JSON.deserialize(inputJSON, SobjectTableServiceDefault.class);
+	public class Constructor implements SobjectTableServiceAbstract.IConstructable {
+		public SobjectTableServiceAbstract construct(String inputJSON) {
+			return (SobjectTableServiceAbstract)JSON.deserialize(inputJSON, SobjectTableServiceDefault.class);
+		}
 	}
+
+	/* PUBLIC METHODS */
 
 	/**
 	 * @description Returns the list of Sobject records
