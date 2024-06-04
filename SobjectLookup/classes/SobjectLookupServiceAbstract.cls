@@ -10,14 +10,17 @@ public abstract class SobjectLookupServiceAbstract {
 	@TestVisible protected Integer limitRecords;
 	@TestVisible protected Integer offsetRecords;
 
-	/* ABSTRACT METHODS */
-
 	/**
-	 * @description Builds a new instance of SobjectLookupServiceAbstract.
-	 * Was added to have an ability use the 'Decorator Pattern'
-	 * @return   {SobjectLookupServiceAbstract}
+	 * @description The IConstructable interface allows to enable reflection for the SobjectLookupServiceAbstract
+	 * and prevents using static methods for service instantiation.
+	 * @param  inputJSON inputJSON the JSON string which represents the SobjectLookupServiceAbstract
+	 * @return           {SobjectLookupServiceAbstract}
 	 */
-	abstract public SobjectLookupServiceAbstract createService(String inputJSON);
+	public interface IConstructable {
+		SobjectLookupServiceAbstract construct(String inputJSON);
+	}
+
+	/* ABSTRACT METHODS */
 
 	/**
 	 * @description Returns the list of Sobject records
