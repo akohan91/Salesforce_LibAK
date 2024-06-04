@@ -6,16 +6,14 @@ public with sharing class SobjectTableCtrl {
 	/* FACTORY METHOD */
 
 	private static SobjectTableServiceAbstract controllerInstance(String controllerName, String inputDataJSON) {
-		if (controllerName == null) {
-			return (SobjectTableServiceAbstract)JSON.deserialize(inputDataJSON, SobjectTableServiceDefault.class);
-		} else {
-			Type serviceType = Type.forName(controllerName);
+		controllerName = controllerName == null ? SobjectTableServiceDefault.class.getName() : controllerName;
+		controllerName += '.Constructor';
+		Type serviceType = Type.forName(controllerName);
 
-			if (serviceType == null) {
-				throw new SobjectTableException('Service ' + controllerName + ' not found.');
-			}
-			return ((SobjectTableServiceAbstract)serviceType.newInstance()).createService(inputDataJSON);
+		if (serviceType == null) {
+			throw new SobjectTableException('Service ' + controllerName + ' not found.');
 		}
+		return ((SobjectTableServiceAbstract.IConstructable)serviceType.newInstance()).construct(inputDataJSON);
 	}
 
 	/* PUBLIC METHODS */
