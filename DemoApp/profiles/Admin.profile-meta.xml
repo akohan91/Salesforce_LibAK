@@ -106,6 +106,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>TableWithCustomBackendCtrl</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>TestDynamicSOQL</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -174,6 +178,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <custom>false</custom>
+    <tabVisibilities>
+        <tab>Demo_Sobject_Lookup</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
     <tabVisibilities>
         <tab>Demo_Sobject_Table</tab>
         <visibility>DefaultOn</visibility>
