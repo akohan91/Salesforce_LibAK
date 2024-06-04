@@ -1,5 +1,5 @@
 /**
- * @author Andrew Kohanovskij <akohan91@gmail.com>
+ * @author Andrei Kakhanouski <akohan91@gmail.com>
  * Represent field path of sobject.
  * Example: For Contact sobject: Account.Name
  */

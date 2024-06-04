@@ -1,5 +1,5 @@
 /**
- * @author Andrew Kohanovskij <akohan91@gmail.com>
+ * @author Andrei Kakhanouski <akohan91@gmail.com>
  */
 import { LightningElement, api } from 'lwc'
 import { showErrorModal } from 'c/lwcUtils'
