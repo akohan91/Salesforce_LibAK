@@ -13,6 +13,7 @@
     <isNavPersonalizationDisabled>true</isNavPersonalizationDisabled>
     <label>Libak Demo</label>
     <navType>Standard</navType>
+    <tabs>Demo_Sobject_Table</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Libak_Demo_UtilityBar</utilityBar>
 </CustomApplication>

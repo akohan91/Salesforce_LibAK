@@ -2,16 +2,20 @@
  * @author Andrew Kohanovskij <akohan91@gmail.com>
  */
 public with sharing class SobjectTableCtrl {
-	private static Map<String, Type> sobjectTableServiceImpl = new Map<String, Type>{
-		'default' => SobjectTableServiceDefault.class
-	};
 
 	/* FACTORY METHOD */
 
 	private static SobjectTableServiceAbstract controllerInstance(String controllerName, String inputDataJSON) {
-		Type serviceType = sobjectTableServiceImpl.get(controllerName);
-		return ((SobjectTableServiceAbstract)serviceType.newInstance())
-			.createService(inputDataJSON);
+		if (controllerName == null) {
+			return (SobjectTableServiceAbstract)JSON.deserialize(inputDataJSON, SobjectTableServiceDefault.class);
+		} else {
+			Type serviceType = Type.forName(controllerName);
+
+			if (serviceType == null) {
+				throw new SobjectTableException('Service ' + controllerName + ' not found.');
+			}
+			return ((SobjectTableServiceAbstract)serviceType.newInstance()).createService(inputDataJSON);
+		}
 	}
 
 	/* PUBLIC METHODS */
