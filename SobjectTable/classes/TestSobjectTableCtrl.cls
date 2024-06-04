@@ -26,7 +26,7 @@ public with sharing class TestSobjectTableCtrl {
 	static void testInit(){
 		Test.startTest();
 		Map<String, Object> result = SobjectTableCtrl.init(
-			'default',
+			null,
 			JSON.serialize(getSobjectTableServiceInstance())
 		);
 		List<Contact> records            = (List<Contact>)result.get('records');
